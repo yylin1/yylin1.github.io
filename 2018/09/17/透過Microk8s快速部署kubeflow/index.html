@@ -5,25 +5,25 @@
     
     <title>透過Microk8s快速部署kubeflow | Yi Yang&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。 在本文的最後，您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow儀表板，進行kubeflow相關測試。">
+    <meta name="description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。 在本文的最後，您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
 <meta name="keywords" content="kubernetes,microk8s,kubeflow,deploy">
 <meta property="og:type" content="article">
 <meta property="og:title" content="透過Microk8s快速部署kubeflow">
 <meta property="og:url" content="http://yylin1.github.io/2018/09/17/透過Microk8s快速部署kubeflow/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。 在本文的最後，您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow儀表板，進行kubeflow相關測試。">
+<meta property="og:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。 在本文的最後，您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="http://yylin1.github.io/2018/09/themes/icarus/source/css/images/microk8s.png">
+<meta property="og:image" content="http://yylin1.github.io/images/microk8s.png">
 <meta property="og:image" content="https://i.imgur.com/5TFCZ7s.png">
 <meta property="og:image" content="https://i.imgur.com/aecctnI.png">
 <meta property="og:image" content="https://i.imgur.com/nEaOr0L.png">
 <meta property="og:image" content="https://i.imgur.com/Acr64W9.png">
 <meta property="og:image" content="https://i.imgur.com/sCqtj53.png">
-<meta property="og:updated_time" content="2018-09-17T08:04:38.633Z">
+<meta property="og:updated_time" content="2018-09-17T08:17:39.007Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過Microk8s快速部署kubeflow">
-<meta name="twitter:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。 在本文的最後，您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow儀表板，進行kubeflow相關測試。">
-<meta name="twitter:image" content="http://yylin1.github.io/2018/09/themes/icarus/source/css/images/microk8s.png">
+<meta name="twitter:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。 在本文的最後，您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
+<meta name="twitter:image" content="http://yylin1.github.io/images/microk8s.png">
     
 
     
@@ -263,9 +263,9 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p><img src="../../themes/icarus/source/css/images/microk8s.png" alt=""></p>
+            <p><img src="/images/microk8s.png" alt=""></p>
 <p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。</p>
-<p>在本文的最後，您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow儀表板，進行kubeflow相關測試。</p>
+<p>在本文的最後，您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。<br>並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p>
 <a id="more"></a>
 <h2 id="什麼是microk8s"><a href="#什麼是microk8s" class="headerlink" title="什麼是microk8s"></a>什麼是microk8s</h2><p><img src="https://i.imgur.com/5TFCZ7s.png" alt=""></p>
 <p>簡單來說，<a href="https://microk8s.io/" target="_blank" rel="noopener">microk8s</a>設計為快速輕巧Kubernetes最新版本安裝與主機隔離但不通過虛擬機。通過在單個快照包<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>中打包 Kubernetes、Docker.io、iptables和CNI的所有上游二進製文件來實現此隔離。<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>是一個應用程序容器，您可以將其想像為Docker容器的輕量級版本。它使用了許多相同的底層技術進行隔離，而不會有網絡隔離的所帶來的開銷。而<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>需使用虛擬化工具來環境隔離創建K8S集群，想必會快照更加耗時。</p>
@@ -316,8 +316,8 @@
 <p>配置過程中有時會後有狀況，可能需要多嘗試[color=#907bf7]</p>
 </blockquote>
 <p>完成後即可在透過Jupyter Notebook 編寫Model進行DL訓練<br><img src="https://i.imgur.com/sCqtj53.png" alt=""></p>
-<p><i class="fa fa-chain"></i> 相關文章:<br>++<a href="https://itnext.io/a-local-kubernetes-with-microk8s-33ee31d1eed9" target="_blank" rel="noopener">[Kubernetes] A local Kubernetes with microk8s</a>++<br>++<a href="https://www.kubeflow.org/docs/started/getting-started-multipass/" target="_blank" rel="noopener">[kubeflow] Microk8s for Kubeflow</a>++</p>
-<p>:::info<br>本篇文章主介紹microk8s部署kubeflow，更多相關kubeflow實作會在後續文章陸續介紹<br><a href="https://www.kubeflow.org/" target="_blank" rel="noopener">https://www.kubeflow.org/</a><br>:::</p>
+<p>相關文章:<br><a href="https://itnext.io/a-local-kubernetes-with-microk8s-33ee31d1eed9" target="_blank" rel="noopener">[Kubernetes] A local Kubernetes with microk8s</a><br><a href="https://www.kubeflow.org/docs/started/getting-started-multipass/" target="_blank" rel="noopener">[kubeflow] Microk8s for Kubeflow</a></p>
+<p>本篇文章主介紹microk8s部署kubeflow，更多相關kubeflow實作會在後續文章陸續介紹<br><a href="https://www.kubeflow.org/" target="_blank" rel="noopener">https://www.kubeflow.org/</a></p>
 
         
         </div>
