@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <meta charset="utf-8">
+    
+    <title>如何自行編譯HPL-GPU來測試Benchmarks | Yi Yang&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
+<meta name="keywords" content="linpack,GPU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何自行編譯HPL-GPU來測試Benchmarks">
+<meta property="og:url" content="http://yylin1.github.io/2018/10/23/build-hpl-gpu/index.html">
+<meta property="og:site_name" content="Yi Yang&#39;s Blog">
+<meta property="og:description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="https://i.imgur.com/9KxitwB.png">
+<meta property="og:updated_time" content="2018-10-23T13:25:40.462Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何自行編譯HPL-GPU來測試Benchmarks">
+<meta name="twitter:description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
+<meta name="twitter:image" content="https://i.imgur.com/9KxitwB.png">
+    
+
+    
+
+    
+        <link rel="icon" href="/images/artificial-intelligence.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">Yi Yang&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories">Categories</a>
+                
+                    <a class="main-nav-link" href="/tags">Tags</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/yiyang.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜尋" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: 'Pages',
+            CATEGORIES: '分類',
+            TAGS: '標籤',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">Categories</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">Tags</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜尋" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/yiyang.png" />
+            <h2 id="name">Yi Yang</h2>
+            <h3 id="title">掙扎中的研究生</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Taichung, Taiwan</span>
+            <a id="follow" target="_blank" href="https://github.com/yylin1/">關注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                3
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                6
+                <span>標籤</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="http://github.com/yylin1" target="_blank" title="github" class=tooltip>
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://twitter.com/yylin12" target="_blank" title="twitter" class=tooltip>
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://medium.com/@frank.yylin/" target="_blank" title="medium" class=tooltip>
+                            <i class="fab fa-medium"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-build-hpl-gpu" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            如何自行編譯HPL-GPU來測試Benchmarks
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2018/10/23/build-hpl-gpu/">
+            <time datetime="2018-10-23T13:11:49.000Z" itemprop="datePublished">2018-10-23</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/GPU/">GPU</a>, <a class="tag-link" href="/tags/linpack/">linpack</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「<a href="http://www.powerxing.com/hybrid-hpl/" target="_blank" rel="noopener">Hybrid HPL(GPU版HPL)安装教程</a>」與「<a href="https://qiita.com/shibacow/items/aa83cfc81ed493a4c25d" target="_blank" rel="noopener">AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる</a>」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。</p>
+<a id="more"></a>
+<h2 id="環境部署資訊"><a href="#環境部署資訊" class="headerlink" title="環境部署資訊"></a>環境部署資訊</h2><h4 id="Linpack-部署的版本資訊："><a href="#Linpack-部署的版本資訊：" class="headerlink" title="Linpack 部署的版本資訊："></a>Linpack 部署的版本資訊：</h4><ul>
+<li>Mpich: v3.2.1</li>
+<li>Openmpi: v1.10.3</li>
+<li>Intel MKL: l_mkl_2019.0.117</li>
+<li>Linpack: hpl-2.0_FERMI_v15</li>
+</ul>
+<h2 id="實驗環境"><a href="#實驗環境" class="headerlink" title="實驗環境"></a>實驗環境</h2><p>安裝作業系統採用Ubuntu 16.04 Desktop，測試環境為實體機器：</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>vCPU</th>
+<th>RAM</th>
+<th>Extra Device</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ubuntu</td>
+<td>8</td>
+<td>16G</td>
+<td>GTX 1060 6G</td>
+</tr>
+</tbody>
+</table>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>:::danger<br>測試 Linkpack 之前，需要確保以下條件達成：<br>確認環境是否安裝以下<code>NVIDIA driver</code>、<code>CUDA</code>、<code>Intel MKL`</code>Openmpi<code>、</code>mpich2`，並設定好環境變數。<br>:::</p>
+<h3 id="安裝-NVIDIA驅動和CUDA-tookit"><a href="#安裝-NVIDIA驅動和CUDA-tookit" class="headerlink" title="安裝 NVIDIA驅動和CUDA tookit"></a>安裝 NVIDIA驅動和CUDA tookit</h3><p>由於CUDA toolkit中，安裝時已包含了NVIDIA Driver，可一併安裝</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb</span><br><span class="line">$ sudo dpkg -i cuda-repo-ubuntu1604_9.1.85-1_amd64.deb</span><br><span class="line">$ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub</span><br><span class="line">$ sudo apt-get update &amp;&amp; sudo apt-get install -y cuda</span><br></pre></td></tr></table></figure>
+<p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">$  lsmod | grep nvidia</span><br><span class="line">nvidia_uvm            790528  0</span><br><span class="line">nvidia_drm             40960  2</span><br><span class="line">nvidia_modeset       1089536  3 nvidia_drm</span><br><span class="line">drm_kms_helper        167936  1 nvidia_drm</span><br><span class="line">drm                   360448  5 nvidia_drm,drm_kms_helper</span><br><span class="line">nvidia              14032896  96 nvidia_modeset,nvidia_uvm</span><br><span class="line">ipmi_msghandler        45056  2 nvidia,ipmi_devintf</span><br><span class="line"></span><br><span class="line">$ cat /usr/<span class="built_in">local</span>/cuda/version.txt</span><br><span class="line">CUDA Version 9.2.148</span><br><span class="line"></span><br><span class="line">$ nvidia-smi</span><br><span class="line">Tue Oct  2 18:15:47 2018</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 396.44                 Driver Version: 396.44                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 106...  Off  | 00000000:03:00.0  On |                  N/A |</span><br><span class="line">| 39%   31C    P8     7W / 120W |     52MiB /  6077MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0      1603      G   /usr/lib/xorg/Xorg                            49MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="準備Linpack"><a href="#準備Linpack" class="headerlink" title="準備Linpack"></a>準備Linpack</h3><p>Link : <a href="https://developer.nvidia.com/rdp/assets/cuda-accelerated-linpack-linux64" target="_blank" rel="noopener">https://developer.nvidia.com/rdp/assets/cuda-accelerated-linpack-linux64</a><br>從上面的連結，登入CUDA註冊開發者會員，下載linpack for Linux64版本，這裡下載到的版本為<code>hpl-2.0_FERMI_v15.tgz</code>。</p>
+<blockquote>
+<p>參考連結<br><a href="http://www.powerxing.com/hybrid-hpl/" target="_blank" rel="noopener">Hybrid HPL(GPU版HPL)安装教程</a><br><a href="https://qiita.com/shibacow/items/aa83cfc81ed493a4c25d" target="_blank" rel="noopener">AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる</a></p>
+</blockquote>
+<hr>
+<h3 id="安裝INTEL-MKL"><a href="#安裝INTEL-MKL" class="headerlink" title="安裝INTEL MKL"></a>安裝INTEL MKL</h3><p>透過連結<code>註冊帳號</code><br><a href="https://software.intel.com/en-us/qualify-for-free-software" target="_blank" rel="noopener">https://software.intel.com/en-us/qualify-for-free-software</a></p>
+<p><img src="https://i.imgur.com/9KxitwB.png" alt=""><br>註冊後，它會向您發送序列號於信箱，以便進行安裝準備。</p>
+<p>這邊是下載最新<a href="http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/13575/l_mkl_2019.0.117.tgz" target="_blank" rel="noopener">l_mkl_2019.0.117.tgz</a>版本</p>
+<p>下載取得<code>l_mkl_2019.0.117.tgz</code>後，即可透過<code>install.sh</code>運行安裝。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ tar zxvf l_mkl_2019.0.117.tgz</span><br><span class="line">$ <span class="built_in">cd</span> l_mkl_2019.0.117</span><br></pre></td></tr></table></figure>
+<p>Intel mkl的安裝很簡單的，每一步也都有說明，按<code>Enter</code>繼續下一步預設設定安裝即可，安裝到某一步會要求輸入序列號，申請30天試用版所給的那個序列號。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ sh ./install.sh</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Initializing, please <span class="built_in">wait</span>...</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Welcome</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Welcome to the Intel(R) Math Kernel Library 2019 <span class="keyword">for</span> Linux*</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">You will complete the following steps:</span><br><span class="line">   1.  Welcome</span><br><span class="line">   2.  License Agreement</span><br><span class="line">   3.  Options</span><br><span class="line">   4.  Installation</span><br><span class="line">   5.  Complete</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Press <span class="string">"Enter"</span> key to <span class="built_in">continue</span> or <span class="string">"q"</span> to quit:</span><br><span class="line">License Agreement</span><br><span class="line">--------------------------------------------------------------------------------</span><br></pre></td></tr></table></figure></p>
+<p>確認後會安裝一些套件，這裡就可以看到MKL預設情況下，會安裝在<code>/opt/intel</code>下面。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">------------------------</span><br><span class="line">Options &gt; Pre-install Summary</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Install location:</span><br><span class="line">    /opt/intel</span><br><span class="line"></span><br><span class="line">Component(s) selected:</span><br><span class="line">    Intel Math Kernel Library 2019 <span class="keyword">for</span> C/C++                               2.6GB</span><br><span class="line">        Intel MKL core libraries <span class="keyword">for</span> C/C++</span><br><span class="line">        Intel TBB threading support</span><br><span class="line">        GNU* C/C++ compiler support</span><br><span class="line"></span><br><span class="line">    Intel Math Kernel Library 2019 <span class="keyword">for</span> Fortran                             2.6GB</span><br><span class="line">        Intel MKL core libraries <span class="keyword">for</span> Fortran</span><br><span class="line">        GNU* Fortran compiler support</span><br><span class="line">        Fortran 95 interfaces <span class="keyword">for</span> BLAS and LAPACK</span><br><span class="line"></span><br><span class="line">   Install space required:  2.8GB</span><br></pre></td></tr></table></figure></p>
+<p>編譯完成後，即會顯示安裝資訊。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">------------------------</span><br><span class="line">Complete</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Thank you <span class="keyword">for</span> installing Intel(R) Math Kernel Library 2019 <span class="keyword">for</span> Linux*.</span><br><span class="line"></span><br><span class="line">If you have not <span class="keyword">done</span> so already, please register your product with Intel</span><br><span class="line">Registration Center to create your support account and take full advantage of</span><br><span class="line">your product purchase.</span><br><span class="line"></span><br><span class="line">Your support account gives you access to free product updates and upgrades</span><br><span class="line">as well as Priority Customer support at the Online Service Center</span><br><span class="line">https://supporttickets.intel.com.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>完整安裝過程於<a href="https://gist.github.com/yylin1/6b30bfb9456f74ae9769e1d65ee60bb2" target="_blank" rel="noopener">Gist</a>。</p>
+</blockquote>
+<hr>
+<h3 id="安装mpich2"><a href="#安装mpich2" class="headerlink" title="安装mpich2"></a>安装mpich2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz</span><br><span class="line">tar zxvf mpich-3.2.1.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> mpich-3.2.1</span><br><span class="line">./configure -prefix=/home/username/mpich</span><br><span class="line">$ make</span><br><span class="line">$ make install</span><br></pre></td></tr></table></figure>
+<h4 id="配置環境"><a href="#配置環境" class="headerlink" title="配置環境"></a>配置環境</h4><p>打開/etc/environment<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/environment</span><br></pre></td></tr></table></figure></p>
+<p>將自己的路徑添加到PATH最後，注意別忘了冒號“：”，添加後的PATH如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=<span class="string">"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/cuda-9.2/bin:/home/username/mpich/bin"</span></span><br></pre></td></tr></table></figure></p>
+<p>保存退出，在終端輸入<code>source /etc/environment</code><br>再輸入<code>echo $PATH</code>測試發現已經更新，環境變量配置成功。</p>
+<hr>
+<p>本文来自 ForTheDreamSMS 的CSDN 博客 ，全文地址请点击：<a href="https://blog.csdn.net/baidu_34045013/article/details/78237842?utm_source=copy" target="_blank" rel="noopener">https://blog.csdn.net/baidu_34045013/article/details/78237842?utm_source=copy</a> </p>
+<blockquote>
+<p>安裝參考:<a href="https://blog.csdn.net/baidu_34045013/article/details/78237842" target="_blank" rel="noopener">ubuntu16.04安裝配置mpich2</a></p>
+</blockquote>
+<h3 id="安裝openmpi"><a href="#安裝openmpi" class="headerlink" title="安裝openmpi"></a>安裝openmpi</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ wget -c https://www.open-mpi.org/software/ompi/v1.10/downloads/openmpi-1.10.3.tar.gz</span><br><span class="line"></span><br><span class="line">$ tar zxvf openmpi-1.10.3.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> openmpi-1.10.3</span><br><span class="line">$ ./configure --prefix=/opt/openmpi</span><br><span class="line">$ make</span><br><span class="line">$ sudo make install</span><br></pre></td></tr></table></figure>
+<p>安裝<code>make</code>和<code>make instal</code>需要一段時間，等待完成即可，openmpi環境配置會在後面統一設定。</p>
+<blockquote>
+<p>參考 : <a href="https://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/543992/" target="_blank" rel="noopener">OpenMPI設定叢集環境</a></p>
+</blockquote>
+<hr>
+<h2 id="配置環境變量"><a href="#配置環境變量" class="headerlink" title="配置環境變量"></a>配置環境變量</h2><p>首先更改環境變量PATH：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/environment</span><br></pre></td></tr></table></figure>
+<p>在PATH變量加上/usr/local/cuda-9.2/bin,前面要有分號，後面沒有，修改後例如下面這樣：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=<span class="string">"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/cuda-9.2/bin:/home/username/mpich/bin"</span></span><br></pre></td></tr></table></figure></p>
+<p>保存文件，然後再執行：<br><code>source /etc/environment</code><br>完成後，可以執行echo $PATH,查看是否修改成功</p>
+<p>接著還需更改<code>ldconfig</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ld.so.conf.d/</span><br><span class="line">sudo vim hpl.conf</span><br></pre></td></tr></table></figure></p>
+<p>輸入如下內容<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/cuda-9.2/lib64</span><br><span class="line">/lib</span><br><span class="line">/opt/intel/mkl/lib/intel64</span><br><span class="line">/opt/intel/lib/intel64</span><br><span class="line">/home/ubuntu/hpl/src/cuda</span><br></pre></td></tr></table></figure></p>
+<p>最後一行<code>/home/使用者/hpl/src/cuda</code>是編譯HPL時才需要改的，在這裡一併修改。這個目錄就是編譯hpl時，hpl的路徑。</p>
+<p>添加上述內容並保存後，執行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudu ldconfig</span><br></pre></td></tr></table></figure></p>
+<p>可以輸入下面命令進行檢驗，有輸出內容就對了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ldconfig -v | grep cuda</span><br></pre></td></tr></table></figure></p>
+<p>接著還要執行Intel MKL的環境變量設置腳本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=/opt/intel/mkl/lib/intel64:/opt/intel/compilers_and_libraries/linux/lib/intel64:/home/ubuntu/hpl/src/cuda:/opt/openmpi/lib</span><br><span class="line"><span class="built_in">export</span> PATH=/opt/openmpi/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /opt/intel/compilers_and_libraries_2019.0.117/linux/mkl/bin/mklvars.sh intel64</span><br></pre></td></tr></table></figure></p>
+<p>請確認以上路徑與當前環境上所有套件的路徑是否對應存在，再執行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure></p>
+<p>這樣，環境變量就設置好了。最好<code>echo $PATH</code>查看下是否多了一行intel的信息，如果沒有配置成功的話，在編譯HPL時會提示/usr/bin/ld: cannot find -liomp5的錯誤。</p>
+<h2 id="開始編譯Linpack-benchmark-for-CUDA"><a href="#開始編譯Linpack-benchmark-for-CUDA" class="headerlink" title="開始編譯Linpack benchmark for CUDA"></a>開始編譯Linpack benchmark for CUDA</h2><p>這邊將<code>hpl-2.0_FERMI_v15.tgz</code>解壓縮放置主目錄下<code>hpl</code>文件夾，可以依照自己設定的路徑對應編譯。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ tar -xvf hpl-2.0_FERMI_v15.tgz –C ~/hpl</span><br><span class="line">$ <span class="built_in">cd</span> ~/hpl</span><br><span class="line"></span><br><span class="line">$ ls</span><br><span class="line">bin  BUGS  COPYRIGHT  CUDA_LINPACK_README.txt  HISTORY  include  INSTALL  lib  Make.CUDA  Makefile  makes  Make.top  man  README  setup  src  testing  TODO  TUNING  www</span><br></pre></td></tr></table></figure>
+<h3 id="編譯Make-CUDA編輯配置"><a href="#編譯Make-CUDA編輯配置" class="headerlink" title="編譯Make.CUDA編輯配置"></a>編譯Make.CUDA編輯配置</h3><p>這時還需要編輯<code>Make.CUDA</code>測試環境參考<a href="https://gist.github.com/yylin1/55fbdb799064837b45478c8b165f5c82#file-make-cuda" target="_blank" rel="noopener">連結</a>，需更改Make.CUDA中的TOPdir為hpl的目錄。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">103  TOPdir = /home/ubuntu/hpl</span><br><span class="line"></span><br><span class="line">132 LAdir        = /opt/intel/mkl/lib/intel64</span><br><span class="line">133 LAMP5dir     = /opt/intel/compilers_and_libraries/linux/lib/intel64</span><br><span class="line"></span><br><span class="line">134 LAinc        = -I/opt/intel/mkl/include</span><br></pre></td></tr></table></figure>
+<p>接著可以開始編譯了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/hpl</span><br><span class="line">make arch=CUDA</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>如果沒有提示錯誤，就是編譯成功了。</p>
+</blockquote>
+<p>編譯完成後，還需要修改<code>~/hpl/bin/CUDA/run_linpack</code>中的<a href="https://gist.github.com/yylin1/55fbdb799064837b45478c8b165f5c82#file-run_linpack" target="_blank" rel="noopener">HPL_DIR</a>為你hpl的路徑</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HPL_DIR=/home/ubuntu/hpl</span><br></pre></td></tr></table></figure>
+<p>修改完成後就可以開始測試了。</p>
+<p>測試之前建議把HPL.dat的參數改小一點，N改成8000，這樣所需的測試時間少。也先把P，Q，PxQ都改成1，保證可以執行測試:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 1 ./run_linpack</span><br></pre></td></tr></table></figure>
+<h3 id="輸出結果"><a href="#輸出結果" class="headerlink" title="輸出結果"></a>輸出結果</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 1 ./run_linpack</span><br><span class="line">================================================================================</span><br><span class="line">HPLinpack 2.0  --  High-Performance Linpack benchmark  --   September 10, 2008</span><br><span class="line">Written by A. Petitet and R. Clint Whaley,  Innovative Computing Laboratory, UTK</span><br><span class="line">Modified by Piotr Luszczek, Innovative Computing Laboratory, UTK</span><br><span class="line">Modified by Julien Langou, University of Colorado Denver</span><br><span class="line">================================================================================</span><br><span class="line"></span><br><span class="line">An explanation of the input/output parameters follows:</span><br><span class="line">T/V    : Wall time / encoded variant.</span><br><span class="line">N      : The order of the coefficient matrix A.</span><br><span class="line">NB     : The partitioning blocking factor.</span><br><span class="line">P      : The number of process rows.</span><br><span class="line">Q      : The number of process columns.</span><br><span class="line">Time   : Time <span class="keyword">in</span> seconds to solve the linear system.</span><br><span class="line">Gflops : Rate of execution <span class="keyword">for</span> solving the linear system.</span><br><span class="line"></span><br><span class="line">The following parameter values will be used:</span><br><span class="line"></span><br><span class="line">N      :   25000    30000</span><br><span class="line">NB     :     768     1024     1280     1536</span><br><span class="line">PMAP   : Row-major process mapping</span><br><span class="line">P      :       1</span><br><span class="line">Q      :       1</span><br><span class="line">PFACT  :    Left</span><br><span class="line">NBMIN  :       2</span><br><span class="line">NDIV   :       2</span><br><span class="line">RFACT  :    Left</span><br><span class="line">BCAST  :   1ring</span><br><span class="line">DEPTH  :       1</span><br><span class="line">SWAP   : Spread-roll (long)</span><br><span class="line">L1     : no-transposed form</span><br><span class="line">U      : no-transposed form</span><br><span class="line">EQUIL  : yes</span><br><span class="line">ALIGN  : 8 double precision words</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">- The matrix A is randomly generated <span class="keyword">for</span> each <span class="built_in">test</span>.</span><br><span class="line">- The following scaled residual check will be computed:</span><br><span class="line">      ||Ax-b||_oo / ( eps * ( || x ||_oo * || A ||_oo + || b ||_oo ) * N )</span><br><span class="line">- The relative machine precision (eps) is taken to be               1.110223e-16</span><br><span class="line">- Computational tests pass <span class="keyword">if</span> scaled residuals are less than                16.0</span><br><span class="line"></span><br><span class="line">================================================================================</span><br><span class="line">T/V                N    NB     P     Q               Time                 Gflops</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">WR10L2L2       25000   768     1     1              43.07              2.419e+02</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">||Ax-b||_oo/(eps*(||A||_oo*||x||_oo+||b||_oo)*N)=        0.0040802 ...... PASSED</span><br><span class="line">================================================================================</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>完整環境配置與設置有放到<a href="https://gist.github.com/yylin1/55fbdb799064837b45478c8b165f5c82#file-make-cuda-L103" target="_blank" rel="noopener">Gits</a>，可以提供參考。</p>
+</blockquote>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://yylin1.github.io/2018/10/23/build-hpl-gpu/" data-id="cjnlrja1i0002uvonqid773yt" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2018/10/23/kubeflow-deploy-v0.3.0/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">快速部署 kubeflow v0.3 容器機器學習平台</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/10/23/build-hpl-gpu/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2018/10/23/build-hpl-gpu/" class="title">如何自行編譯HPL-GPU來測試Benchmarks</a></p>
+                            <p class="item-date"><time datetime="2018-10-23T13:11:49.000Z" itemprop="datePublished">2018-10-23</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/10/23/kubeflow-deploy-v0.3.0/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/kubeflow_deploy.jpeg)" alt="快速部署 kubeflow v0.3 容器機器學習平台" class="thumbnail-image"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/kubeflow/">kubeflow</a></p>
+                            <p class="item-title"><a href="/2018/10/23/kubeflow-deploy-v0.3.0/" class="title">快速部署 kubeflow v0.3 容器機器學習平台</a></p>
+                            <p class="item-date"><time datetime="2018-10-23T12:53:45.000Z" itemprop="datePublished">2018-10-23</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/09/17/microk8s-deploy-kubeflow/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/microk8s.png)" alt="透過Microk8s快速部署kubeflow" class="thumbnail-image"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/kubeflow/">kubeflow</a></p>
+                            <p class="item-title"><a href="/2018/09/17/microk8s-deploy-kubeflow/" class="title">透過Microk8s快速部署kubeflow</a></p>
+                            <p class="item-date"><time datetime="2018-09-17T04:12:02.000Z" itemprop="datePublished">2018-09-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分類</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/kubeflow/">kubeflow</a><span class="category-list-count">2</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">歸檔</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">標籤</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deploy/">deploy</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubeflow/">kubeflow</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linpack/">linpack</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/microk8s/">microk8s</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">標籤雲</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/GPU/" style="font-size: 10px;">GPU</a> <a href="/tags/deploy/" style="font-size: 20px;">deploy</a> <a href="/tags/kubeflow/" style="font-size: 20px;">kubeflow</a> <a href="/tags/kubernetes/" style="font-size: 20px;">kubernetes</a> <a href="/tags/linpack/" style="font-size: 10px;">linpack</a> <a href="/tags/microk8s/" style="font-size: 10px;">microk8s</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">連結</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Yi Yang<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
