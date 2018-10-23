@@ -3,19 +3,22 @@
 <head>
     <meta charset="utf-8">
     
-    <title>Yi Yang&#39;s Blog</title>
+    <title>快速部署 kubeflow v0.3 容器機器學習平台 | Yi Yang&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="test test">
-<meta name="keywords" content="kubernetes, Deep Learning">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Yi Yang&#39;s Blog">
-<meta property="og:url" content="http://yylin1.github.io/index.html">
+    <meta name="description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
+<meta name="keywords" content="kubernetes,kubeflow,deploy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="快速部署 kubeflow v0.3 容器機器學習平台">
+<meta property="og:url" content="http://yylin1.github.io/2018/10/23/容器機器學習平台/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="test test">
+<meta property="og:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
 <meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="http://yylin1.github.io/images/kubeflow_deploy.jpeg">
+<meta property="og:updated_time" content="2018-10-23T12:58:39.241Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Yi Yang&#39;s Blog">
-<meta name="twitter:description" content="test test">
+<meta name="twitter:title" content="快速部署 kubeflow v0.3 容器機器學習平台">
+<meta name="twitter:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
+<meta name="twitter:image" content="http://yylin1.github.io/images/kubeflow_deploy.jpeg">
     
 
     
@@ -200,16 +203,15 @@
 </aside>
 
             
-            <section id="main">
-    <article id="post-容器機器學習平台" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-容器機器學習平台" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
             <header class="article-header">
                 
     
-        <h1 itemprop="name">
-            <a class="article-title" href="/2018/10/23/容器機器學習平台/">快速部署 kubeflow v0.3 容器機器學習平台</a>
+        <h1 class="article-title" itemprop="name">
+            快速部署 kubeflow v0.3 容器機器學習平台
         </h1>
     
 
@@ -505,140 +507,24 @@
         </footer>
     </div>
     
-</article>
-
-
-
-    <article id="post-透過Microk8s快速部署kubeflow" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
         
-        
-            <header class="article-header">
-                
+<nav id="article-nav">
     
-        <h1 itemprop="name">
-            <a class="article-title" href="/2018/09/17/透過Microk8s快速部署kubeflow/">透過Microk8s快速部署kubeflow</a>
-        </h1>
     
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2018/09/17/透過Microk8s快速部署kubeflow/">
-            <time datetime="2018-09-17T04:12:02.000Z" itemprop="datePublished">2018-09-17</time>
+        <a href="/2018/09/17/透過Microk8s快速部署kubeflow/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">透過Microk8s快速部署kubeflow</div>
         </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/kubeflow/">kubeflow</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/deploy/">deploy</a>, <a class="tag-link" href="/tags/kubeflow/">kubeflow</a>, <a class="tag-link" href="/tags/kubernetes/">kubernetes</a>, <a class="tag-link" href="/tags/microk8s/">microk8s</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            <p><p><img src="/images/microk8s.png" alt=""></p>
-<p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p></p>
-            <p class="article-more-link">
-                <a href="/2018/09/17/透過Microk8s快速部署kubeflow/#more">繼續閱讀</a>
-            </p>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="http://yylin1.github.io/2018/09/17/透過Microk8s快速部署kubeflow/" data-id="cjnlqlytp0003m5onrlsuvqr9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
     
+</nav>
 
-        </footer>
-    </div>
+
     
 </article>
 
+
+    
+    
 
 </section>
             
