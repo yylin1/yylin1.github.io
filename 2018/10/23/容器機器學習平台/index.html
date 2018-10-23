@@ -5,19 +5,19 @@
     
     <title>快速部署 kubeflow v0.3 容器機器學習平台 | Yi Yang&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
+    <meta name="description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
 <meta name="keywords" content="kubernetes,kubeflow,deploy">
 <meta property="og:type" content="article">
 <meta property="og:title" content="快速部署 kubeflow v0.3 容器機器學習平台">
 <meta property="og:url" content="http://yylin1.github.io/2018/10/23/容器機器學習平台/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
+<meta property="og:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/kubeflow_deploy.jpeg">
-<meta property="og:updated_time" content="2018-10-23T12:58:39.241Z">
+<meta property="og:updated_time" content="2018-10-23T13:04:20.261Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="快速部署 kubeflow v0.3 容器機器學習平台">
-<meta name="twitter:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
+<meta name="twitter:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
 <meta name="twitter:image" content="http://yylin1.github.io/images/kubeflow_deploy.jpeg">
     
 
@@ -246,7 +246,9 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p><a href="https://v0-3.kubeflow.org/" target="_blank" rel="noopener">Kubeflow</a> 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並執行。</p>
+            <p><img src="/images/kubeflow_deploy.jpeg" alt=""></p>
+<p><a href="https://v0-3.kubeflow.org/" target="_blank" rel="noopener">Kubeflow</a> 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並執行。</p>
+<a id="more"></a>
 <ul>
 <li><p>Kubeflow目標不是在於重建其他服務，而是提供一個最佳開發系統，來部署到任何集群中，有效確保ML在集群之間移動性，並輕鬆將任務擴展任何集群。</p>
 </li>
@@ -419,7 +421,7 @@
 <p>同時，最終用戶需要GPU資源和節點管理。Arena還提供top檢查Kubernetes集群中可用GPU資源的命令。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ arena top node                                     </span><br><span class="line">NAME     IPADDRESS      ROLE    GPU(Total)  GPU(Allocated)</span><br><span class="line">k8s-g1   140.128.18.84  &lt;none&gt;  1           0</span><br><span class="line">k8s-g11  140.128.18.94  &lt;none&gt;  1           0</span><br><span class="line">k8s-g2   140.128.18.97  &lt;none&gt;  1           0</span><br><span class="line">k8s-g3   140.128.18.86  &lt;none&gt;  1           1</span><br><span class="line">k8s-m1   140.128.18.81  master  0           0</span><br><span class="line">k8s-m2   140.128.18.82  master  0           0</span><br><span class="line">k8s-m3   140.128.18.83  master  0           0</span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line">Allocated/Total GPUs In Cluster:</span><br><span class="line">1/5 (20%)</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>透過CLI方式來 <code>watch top node</code>就能很清楚知道節點資源使用狀況。</p>
+<p>透過CLI方式來 <code>watch -n1 arena top node</code>就能很清楚知道節點資源使用狀況。</p>
 </blockquote>
 <h2 id="移除-kubeflow"><a href="#移除-kubeflow" class="headerlink" title="移除 kubeflow"></a>移除 kubeflow</h2><p>這邊部署有特別給kubeflow 命名空間，如果要移除kubeflow，直接刪除kubeflow Namespaces 時，所有物件也會被刪除</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kubeflow delete namespace kubeflow</span><br></pre></td></tr></table></figure>
