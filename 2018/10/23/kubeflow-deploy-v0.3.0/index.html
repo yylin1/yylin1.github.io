@@ -3,20 +3,20 @@
 <head>
     <meta charset="utf-8">
     
-    <title>快速部署 kubeflow v0.3 容器機器學習平台 | Yi Yang&#39;s Blog</title>
+    <title>快速部署 Kubeflow v0.3 容器機器學習平台 | Yi Yang&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
 <meta name="keywords" content="kubernetes,kubeflow,deploy">
 <meta property="og:type" content="article">
-<meta property="og:title" content="快速部署 kubeflow v0.3 容器機器學習平台">
+<meta property="og:title" content="快速部署 Kubeflow v0.3 容器機器學習平台">
 <meta property="og:url" content="http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/kubeflow_deploy.jpeg">
-<meta property="og:updated_time" content="2018-10-23T13:08:36.533Z">
+<meta property="og:updated_time" content="2018-10-28T12:42:04.798Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="快速部署 kubeflow v0.3 容器機器學習平台">
+<meta name="twitter:title" content="快速部署 Kubeflow v0.3 容器機器學習平台">
 <meta name="twitter:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
 <meta name="twitter:image" content="http://yylin1.github.io/images/kubeflow_deploy.jpeg">
     
@@ -211,7 +211,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            快速部署 kubeflow v0.3 容器機器學習平台
+            快速部署 Kubeflow v0.3 容器機器學習平台
         </h1>
     
 
@@ -404,7 +404,7 @@
 <p>這邊我們透過Service查看一下目前pod狀態：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kubeflow get svc  -o wide                   </span><br><span class="line">NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE       SELECTOR</span><br><span class="line">ambassador                 ClusterIP   10.98.216.151    &lt;none&gt;        80/TCP           7m        service=ambassador</span><br><span class="line">ambassador-admin           ClusterIP   10.102.20.172    &lt;none&gt;        8877/TCP         6m        service=ambassador</span><br><span class="line">argo-ui                    NodePort    10.102.36.121    &lt;none&gt;        80:32530/TCP     6m        app=argo-ui</span><br><span class="line">centraldashboard           ClusterIP   10.99.255.3      &lt;none&gt;        80/TCP           6m        app=centraldashboard</span><br><span class="line">k8s-dashboard              ClusterIP   10.110.209.78    &lt;none&gt;        443/TCP          6m        k8s-app=kubernetes-dashboard</span><br><span class="line">modeldb-backend            ClusterIP   10.102.179.187   &lt;none&gt;        6543/TCP         6m        app=modeldb,component=backend</span><br><span class="line">modeldb-db                 ClusterIP   10.102.143.161   &lt;none&gt;        27017/TCP        6m        app=modeldb,component=db</span><br><span class="line">modeldb-frontend           ClusterIP   10.100.76.92     &lt;none&gt;        3000/TCP         6m        app=modeldb,component=frontend</span><br><span class="line">statsd-sink                ClusterIP   10.98.167.5      &lt;none&gt;        9102/TCP         7m        service=ambassador</span><br><span class="line">tf-hub-0                   ClusterIP   None             &lt;none&gt;        8000/TCP         6m        app=tf-hub</span><br><span class="line">tf-hub-lb                  ClusterIP   10.106.99.192    &lt;none&gt;        80/TCP           6m        app=tf-hub</span><br><span class="line">tf-job-dashboard           ClusterIP   10.100.66.145    &lt;none&gt;        80/TCP           6m        name=tf-job-dashboard</span><br><span class="line">vizier-core                NodePort    10.105.154.126   &lt;none&gt;        6789:30678/TCP   6m        app=vizier,component=core</span><br><span class="line">vizier-db                  ClusterIP   10.100.32.162    &lt;none&gt;        3306/TCP         6m        app=vizier,component=db</span><br><span class="line">vizier-suggestion-grid     ClusterIP   10.105.68.247    &lt;none&gt;        6789/TCP         6m        app=vizier,component=suggestion-grid</span><br><span class="line">vizier-suggestion-random   ClusterIP   10.110.164.76    &lt;none&gt;        6789/TCP         6m        app=vizier,component=suggestion-random</span><br></pre></td></tr></table></figure>
 <p>這時候就可以透過kubeflow UI，能引導到 登入JupyterHub，但這邊需要修改 Kubernetes Service，透過以下指令進行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改 svc 將 Type 修改成 LoadBalancer，並且新增 externalIPs 指定為 Master IP。</span></span><br><span class="line">$ kubectl -n kubeflow edit svc tf-hub-lb</span><br><span class="line">...</span><br><span class="line">sessionAffinity: None</span><br><span class="line">  <span class="built_in">type</span>: NodePort</span><br><span class="line">status:</span><br><span class="line">  loadBalancer: &#123;&#125;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改後就可以透過NodePort接上Port進入顯示Jupyter Notebook</span></span><br><span class="line">NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE       SELECTOR</span><br><span class="line">ambassador                 NodePort    10.98.216.151    &lt;none&gt;        80:32752/TCP     15m       service=ambassador</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改 svc 將 Type 修改成 LoadBalancer，並且新增 externalIPs 指定為 Master IP。</span></span><br><span class="line">$ kubectl -n kubeflow edit svc ambassador</span><br><span class="line">...</span><br><span class="line">sessionAffinity: None</span><br><span class="line">  <span class="built_in">type</span>: NodePort</span><br><span class="line">status:</span><br><span class="line">  loadBalancer: &#123;&#125;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改後就可以透過NodePort接上Port進入顯示Jupyter Notebook</span></span><br><span class="line">NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE       SELECTOR</span><br><span class="line">ambassador                 NodePort    10.98.216.151    &lt;none&gt;        80:32752/TCP     15m       service=ambassador</span><br></pre></td></tr></table></figure>
 <p>完成後連接 <code>http://Master_IP:Port</code>即可看到kubeflow UI。</p>
 <p><img src="https://i.imgur.com/dH1fh00.png" alt=""></p>
 <p>可以透過上方連結查看<code>Jupyter Hub</code>、<code>TFjob Dashboard</code>、<code>Kubernetes Dashboard</code> 等。</p>
@@ -581,7 +581,7 @@
                             <a href="/2018/10/23/kubeflow-deploy-v0.3.0/" class="thumbnail">
     
     
-        <span style="background-image:url(/images/kubeflow_deploy.jpeg)" alt="快速部署 kubeflow v0.3 容器機器學習平台" class="thumbnail-image"></span>
+        <span style="background-image:url(/images/kubeflow_deploy.jpeg)" alt="快速部署 Kubeflow v0.3 容器機器學習平台" class="thumbnail-image"></span>
     
 </a>
 
@@ -589,7 +589,7 @@
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/kubeflow/">kubeflow</a></p>
-                            <p class="item-title"><a href="/2018/10/23/kubeflow-deploy-v0.3.0/" class="title">快速部署 kubeflow v0.3 容器機器學習平台</a></p>
+                            <p class="item-title"><a href="/2018/10/23/kubeflow-deploy-v0.3.0/" class="title">快速部署 Kubeflow v0.3 容器機器學習平台</a></p>
                             <p class="item-date"><time datetime="2018-10-23T12:53:45.000Z" itemprop="datePublished">2018-10-23</time></p>
                         </div>
                     </li>
