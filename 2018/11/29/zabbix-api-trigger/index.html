@@ -14,7 +14,7 @@
 <meta property="og:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/zabbix_trigger.png">
-<meta property="og:updated_time" content="2018-11-29T16:14:24.537Z">
+<meta property="og:updated_time" content="2018-11-29T16:19:16.728Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Zabbix API 監測Trigger狀態">
 <meta name="twitter:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
@@ -306,9 +306,9 @@
 <p>從Zabbix 觀察Trigger狀態後，此處出現一個閃爍的紅色’PROBLEM’,顯然，這說明了CPU負載已經超過了你在觸發器裡定義的閾值。<br><img src="https://i.imgur.com/y8zNGRQ.jpg" alt=""></p>
 <hr>
 <h2 id="4-透過Python獲得Zabbix-API-獲取Trigger超標狀態"><a href="#4-透過Python獲得Zabbix-API-獲取Trigger超標狀態" class="headerlink" title="4. 透過Python獲得Zabbix API 獲取Trigger超標狀態"></a>4. 透過Python獲得Zabbix API 獲取Trigger超標狀態</h2><ul>
-<li>GitHub: <a href="https://github.com/yylin1/zabbix-get-api/tree/master/zabbix-API" target="_blank" rel="noopener">連結</a></li>
+<li>參考 GitHub: <a href="https://github.com/yylin1/zabbix-get-api/tree/master/zabbix-API" target="_blank" rel="noopener">連結</a></li>
 </ul>
-<p>:::info<br>此部分主要透過API方式取得Trigger.get欄位超標狀態，如果出現Trigger顯示為紅色閃爍的紅色<code>PROBLEM</code>，即可抓取到<code>status:0</code>的狀態，如果沒有超標則無法獲得資訊。<br>:::</p>
+<p>此部分主要透過API方式取得Trigger.get欄位超標狀態，如果出現Trigger顯示為紅色閃爍的紅色<code>PROBLEM</code>，即可抓取到<code>status:0</code>的狀態，如果沒有超標則無法獲得資訊。</p>
 <ul>
 <li>執行狀態可以直接獲得超標狀態<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python zabbix-get-trigger.py </span><br><span class="line"></span><br><span class="line">Trigger message list:  [ CPU load too high on <span class="string">'node-1.domain.tld'</span> <span class="keyword">for</span> 3 minutes <span class="built_in">limit</span> 50% ] view :status 0</span><br></pre></td></tr></table></figure>
 </li>
