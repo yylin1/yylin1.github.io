@@ -3,30 +3,22 @@
 <head>
     <meta charset="utf-8">
     
-    <title>透過 Zabbix API 抓取Trigger狀態 | Yi Yang&#39;s Blog</title>
+    <title>透過 Zabbix API 監測Trigger狀態 | Yi Yang&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
 <meta name="keywords" content="zabbix,API">
 <meta property="og:type" content="article">
-<meta property="og:title" content="透過 Zabbix API 抓取Trigger狀態">
+<meta property="og:title" content="透過 Zabbix API 監測Trigger狀態">
 <meta property="og:url" content="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="https://i.imgur.com/xX8gHUR.png">
-<meta property="og:image" content="https://i.imgur.com/v9L91MO.jpg">
-<meta property="og:image" content="https://i.imgur.com/p2rUviG.jpg">
-<meta property="og:image" content="https://i.imgur.com/pI0Ztrh.jpg">
-<meta property="og:image" content="https://i.imgur.com/L2o9mzF.jpg">
-<meta property="og:image" content="https://i.imgur.com/pgFiP79.jpg">
-<meta property="og:image" content="https://i.imgur.com/wcVt11H.jpg">
-<meta property="og:image" content="https://i.imgur.com/f59EMx8.jpg">
-<meta property="og:image" content="https://i.imgur.com/y8zNGRQ.jpg">
-<meta property="og:updated_time" content="2018-11-29T15:57:30.255Z">
+<meta property="og:image" content="http://yylin1.github.io/images/zabbix_trigger.png">
+<meta property="og:updated_time" content="2018-11-29T16:11:35.328Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="透過 Zabbix API 抓取Trigger狀態">
+<meta name="twitter:title" content="透過 Zabbix API 監測Trigger狀態">
 <meta name="twitter:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
-<meta name="twitter:image" content="https://i.imgur.com/xX8gHUR.png">
+<meta name="twitter:image" content="http://yylin1.github.io/images/zabbix_trigger.png">
     
 
     
@@ -219,7 +211,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            透過 Zabbix API 抓取Trigger狀態
+            透過 Zabbix API 監測Trigger狀態
         </h1>
     
 
@@ -249,7 +241,7 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p>此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過<code>python</code>直接呼叫Zabbix API獲取所需要的狀態資訊。<br><a id="more"></a></p>
+            <p>此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過<code>python</code>直接呼叫Zabbix API獲取所需要的狀態資訊。<br><a id="more"></a><br><img src="/images/zabbix_trigger.png" alt=""></p>
 <h2 id="1-新建Zabbix-Trigger觸發器"><a href="#1-新建Zabbix-Trigger觸發器" class="headerlink" title="1. 新建Zabbix Trigger觸發器"></a>1. 新建Zabbix Trigger觸發器</h2><p>本節你會學習如何配置一個觸發器（trigger）</p>
 <p>首先登入你Zabbix網頁<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://10.111.200.8/zabbix/</span><br></pre></td></tr></table></figure></p>
 <blockquote>
@@ -456,7 +448,7 @@
                             <a href="/2018/11/29/zabbix-api-trigger/" class="thumbnail">
     
     
-        <span class="thumbnail-image thumbnail-none"></span>
+        <span style="background-image:url(/images/zabbix_trigger.png)" alt="透過 Zabbix API 監測Trigger狀態" class="thumbnail-image"></span>
     
 </a>
 
@@ -464,7 +456,7 @@
                         
                         <div class="item-inner">
                             <p class="item-category"></p>
-                            <p class="item-title"><a href="/2018/11/29/zabbix-api-trigger/" class="title">透過 Zabbix API 抓取Trigger狀態</a></p>
+                            <p class="item-title"><a href="/2018/11/29/zabbix-api-trigger/" class="title">透過 Zabbix API 監測Trigger狀態</a></p>
                             <p class="item-date"><time datetime="2018-11-29T15:55:00.000Z" itemprop="datePublished">2018-11-29</time></p>
                         </div>
                     </li>
