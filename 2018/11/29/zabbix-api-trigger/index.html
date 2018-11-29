@@ -5,19 +5,19 @@
     
     <title>透過 Zabbix API 監測Trigger狀態 | Yi Yang&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
+    <meta name="description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta name="keywords" content="zabbix,API">
 <meta property="og:type" content="article">
 <meta property="og:title" content="透過 Zabbix API 監測Trigger狀態">
 <meta property="og:url" content="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
+<meta property="og:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/zabbix_trigger.png">
-<meta property="og:updated_time" content="2018-11-29T16:11:35.328Z">
+<meta property="og:updated_time" content="2018-11-29T16:13:21.409Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Zabbix API 監測Trigger狀態">
-<meta name="twitter:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
+<meta name="twitter:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta name="twitter:image" content="http://yylin1.github.io/images/zabbix_trigger.png">
     
 
@@ -241,7 +241,9 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p>此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過<code>python</code>直接呼叫Zabbix API獲取所需要的狀態資訊。<br><a id="more"></a><br><img src="/images/zabbix_trigger.png" alt=""></p>
+            <p><img src="/images/zabbix_trigger.png" alt=""></p>
+<p>此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過<code>python</code>直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。</p>
+<a id="more"></a>
 <h2 id="1-新建Zabbix-Trigger觸發器"><a href="#1-新建Zabbix-Trigger觸發器" class="headerlink" title="1. 新建Zabbix Trigger觸發器"></a>1. 新建Zabbix Trigger觸發器</h2><p>本節你會學習如何配置一個觸發器（trigger）</p>
 <p>首先登入你Zabbix網頁<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://10.111.200.8/zabbix/</span><br></pre></td></tr></table></figure></p>
 <blockquote>
