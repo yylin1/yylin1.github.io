@@ -14,7 +14,7 @@
 <meta property="og:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/zabbix_trigger.png">
-<meta property="og:updated_time" content="2018-11-29T16:13:21.409Z">
+<meta property="og:updated_time" content="2018-11-29T16:14:24.537Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Zabbix API 監測Trigger狀態">
 <meta name="twitter:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
@@ -245,10 +245,8 @@
 <p>此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過<code>python</code>直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。</p>
 <a id="more"></a>
 <h2 id="1-新建Zabbix-Trigger觸發器"><a href="#1-新建Zabbix-Trigger觸發器" class="headerlink" title="1. 新建Zabbix Trigger觸發器"></a>1. 新建Zabbix Trigger觸發器</h2><p>本節你會學習如何配置一個觸發器（trigger）</p>
-<p>首先登入你Zabbix網頁<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://10.111.200.8/zabbix/</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>帳號密碼<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin / zabbix</span><br></pre></td></tr></table></figure></p>
-</blockquote>
+<p>首先登入你Zabbix網頁並輸入帳號密碼</p>
+<p>範例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/zabbix/</span><br></pre></td></tr></table></figure></p>
 <p>進入Zabbix網站後，開始配置觸發器（trigger）</p>
 <ul>
 <li>前往配置（Configuration）→ 主機（Hosts）→ 選擇你要進行配置觸發器（trigger）的節點<blockquote>
