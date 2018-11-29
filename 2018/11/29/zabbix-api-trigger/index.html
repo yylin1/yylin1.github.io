@@ -3,19 +3,30 @@
 <head>
     <meta charset="utf-8">
     
-    <title>歸檔: 2018/9 | Yi Yang&#39;s Blog</title>
+    <title>如何透過 Zabbix API 抓取Trigger狀態 | Yi Yang&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="Blog">
-<meta name="keywords" content="kubernetes, Deep Learning">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Yi Yang&#39;s Blog">
-<meta property="og:url" content="http://yylin1.github.io/archives/2018/09/index.html">
+    <meta name="description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
+<meta name="keywords" content="zabbix,API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何透過 Zabbix API 抓取Trigger狀態">
+<meta property="og:url" content="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="Blog">
+<meta property="og:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
 <meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="https://i.imgur.com/xX8gHUR.png">
+<meta property="og:image" content="https://i.imgur.com/v9L91MO.jpg">
+<meta property="og:image" content="https://i.imgur.com/p2rUviG.jpg">
+<meta property="og:image" content="https://i.imgur.com/pI0Ztrh.jpg">
+<meta property="og:image" content="https://i.imgur.com/L2o9mzF.jpg">
+<meta property="og:image" content="https://i.imgur.com/pgFiP79.jpg">
+<meta property="og:image" content="https://i.imgur.com/wcVt11H.jpg">
+<meta property="og:image" content="https://i.imgur.com/f59EMx8.jpg">
+<meta property="og:image" content="https://i.imgur.com/y8zNGRQ.jpg">
+<meta property="og:updated_time" content="2018-11-29T15:56:08.143Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Yi Yang&#39;s Blog">
-<meta name="twitter:description" content="Blog">
+<meta name="twitter:title" content="如何透過 Zabbix API 抓取Trigger狀態">
+<meta name="twitter:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊。">
+<meta name="twitter:image" content="https://i.imgur.com/xX8gHUR.png">
     
 
     
@@ -200,50 +211,234 @@
 </aside>
 
             
-            <section id="main"><div class="timeline timeline-wrap">
-    
-            <div class="timeline-row timeline-row-major">
-                <span class="node"><i class="fas fa-calendar-alt"></i></span>
-                <h1 class="title">2018</h1>
-            </div>
+            <section id="main"><article id="post-zabbix-api-trigger" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
         
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
+        
+            <header class="article-header">
                 
     
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2018/09/17/microk8s-deploy-kubeflow/">透過Microk8s快速部署kubeflow</a>
+        <h1 class="article-title" itemprop="name">
+            如何透過 Zabbix API 抓取Trigger狀態
         </h1>
     
 
-                <div class="article-meta">
-                    
+                
+                    <div class="article-meta">
+                        
     <div class="article-date">
         <i class="fas fa-calendar-alt"></i>
-        <a href="/2018/09/17/microk8s-deploy-kubeflow/">
-            <time datetime="2018-09-17T04:12:02.000Z" itemprop="datePublished">2018-09-17</time>
+        <a href="/2018/11/29/zabbix-api-trigger/">
+            <time datetime="2018-11-29T15:55:00.000Z" itemprop="datePublished">2018-11-29</time>
         </a>
     </div>
 
 
-                    
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/kubeflow/">kubeflow</a>
-    </div>
-
-                    
+                        
+                        
     <div class="article-tag">
         <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/deploy/">deploy</a>, <a class="tag-link" href="/tags/kubeflow/">kubeflow</a>, <a class="tag-link" href="/tags/kubernetes/">kubernetes</a>, <a class="tag-link" href="/tags/microk8s/">microk8s</a>
+        <a class="tag-link" href="/tags/API/">API</a>, <a class="tag-link" href="/tags/zabbix/">zabbix</a>
     </div>
 
-                </div>
-            </div>
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過<code>python</code>直接呼叫Zabbix API獲取所需要的狀態資訊。<br><a id="more"></a></p>
+<h2 id="1-新建Zabbix-Trigger觸發器"><a href="#1-新建Zabbix-Trigger觸發器" class="headerlink" title="1. 新建Zabbix Trigger觸發器"></a>1. 新建Zabbix Trigger觸發器</h2><p>本節你會學習如何配置一個觸發器（trigger）</p>
+<p>首先登入你Zabbix網頁<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://10.111.200.8/zabbix/</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>帳號密碼<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin / zabbix</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>進入Zabbix網站後，開始配置觸發器（trigger）</p>
+<ul>
+<li>前往配置（Configuration）→ 主機（Hosts）→ 選擇你要進行配置觸發器（trigger）的節點<blockquote>
+<p>右側可以選擇要設置的環境，這邊<code>Group</code>我們選擇<code>Compute</code>節點群</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/xX8gHUR.png" alt=""></p>
+<ul>
+<li>接續會顯示<code>Compute</code>節點中可以觀察的三台Node主機 → 這邊我們直接點選<code>node-1.domain.tld</code>預備測試的節點進入設置</li>
+</ul>
+<ul>
+<li>進入節點點擊上方的觸發器（Triggers），然後即可點擊創建觸發器（Create trigger），這將會向我們顯示一個觸發器定義表單</li>
+</ul>
+<p><img src="https://i.imgur.com/v9L91MO.jpg" alt=""></p>
+<ul>
+<li>找到’新增主機（New host）’，點擊旁邊的觸發器（Triggers），然後點擊創建觸發器（Create trigger）。這將會向我們展現一個觸發器定義表單。</li>
+</ul>
+<p><img src="https://i.imgur.com/p2rUviG.jpg" alt=""></p>
+<hr>
+<h2 id="2-設置Zabbix-Trigger表達式"><a href="#2-設置Zabbix-Trigger表達式" class="headerlink" title="2. 設置Zabbix Trigger表達式"></a>2. 設置Zabbix Trigger表達式</h2><p>由於我們需要持續觀察<code>Computer</code>節點上面CPU狀態，Trigger設定這邊可以直接透過語法進行觀察如下:</p>
+<ul>
+<li>需要連續三分鐘<code>CPU使用率平均值超過80%</code>觸發報警</li>
+</ul>
+<pre><code>* 名稱（Name）
+    * 可以輸入: &quot;CPU load too high on &apos;node-1.domain.tld&apos; for 3 minutes&quot;作為值。這個值會作為觸發器的名稱被現實在列表和其他地方。
+
+
+* 表達式（Expression）
+</code></pre><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;node-1.domain.tld:system.cpu.util[,idle].max(3m)&#125;&lt;20</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Trigger 觀察主要透過<code>system.cpu.util[,idle]</code>狀態顯示，反向思考如果CPU能使用空閒小於20%，即CPU佔用超過80%立即觸發報警</p>
+</blockquote>
+<ul>
+<li>把Trigger表達式打在<code>Expression</code>中</li>
+</ul>
+<p><img src="https://i.imgur.com/pI0Ztrh.jpg" alt=""></p>
+<blockquote>
+<p>可以限制Trigger Severity警告提式: 這邊直接設定為<code>High</code>警告</p>
+</blockquote>
+<p>完成後，點擊添加（Add）。新的觸發器將會顯示在觸發器列表中。</p>
+<hr>
+<h2 id="3-顯示觸發器狀態"><a href="#3-顯示觸發器狀態" class="headerlink" title="3. 顯示觸發器狀態"></a>3. 顯示觸發器狀態</h2><ul>
+<li>創建好的Trigger即可馬上列表出目前狀態</li>
+</ul>
+<p><img src="https://i.imgur.com/L2o9mzF.jpg" alt=""></p>
+<p>如果要查看Trigger目前監控狀態可以透過，前往監控（Monitoring） → 觸發器（Triggers），3分鐘後（我們需要等待3分鐘以評估這個觸發器的3分鐘平均值），觸發器會在這裡顯示。應該會有一個綠色的’OK’在’狀態（Status）’列中閃爍。</p>
+<p><img src="https://i.imgur.com/pgFiP79.jpg" alt=""></p>
+<p>接下來可以透過存放於Compute <code>node-1.domain.tld</code>相關VM，來提升CPU使用率，達到Compute超標，這邊範例測試為<code>超標CPU 50%</code>表示為警告。</p>
+<ul>
+<li><p>一般情況，綠色為<code>system.cpu.util[,idle]</code>狀態幾乎是很空閒的<br><img src="https://i.imgur.com/wcVt11H.jpg" alt=""></p>
+</li>
+<li><p>超標狀態，可以明顯看到右側綠色能使用的<code>system.cpu.util[,idle]</code>明顯剩餘50%以下</p>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/f59EMx8.jpg" alt=""></p>
+<p>從Zabbix 觀察Trigger狀態後，此處出現一個閃爍的紅色’PROBLEM’,顯然，這說明了CPU負載已經超過了你在觸發器裡定義的閾值。<br><img src="https://i.imgur.com/y8zNGRQ.jpg" alt=""></p>
+<hr>
+<h2 id="4-透過Python獲得Zabbix-API-獲取Trigger超標狀態"><a href="#4-透過Python獲得Zabbix-API-獲取Trigger超標狀態" class="headerlink" title="4. 透過Python獲得Zabbix API 獲取Trigger超標狀態"></a>4. 透過Python獲得Zabbix API 獲取Trigger超標狀態</h2><ul>
+<li>GitHub: <a href="https://github.com/yylin1/zabbix-get-api/tree/master/zabbix-API" target="_blank" rel="noopener">連結</a></li>
+</ul>
+<p>:::info<br>此部分主要透過API方式取得Trigger.get欄位超標狀態，如果出現Trigger顯示為紅色閃爍的紅色<code>PROBLEM</code>，即可抓取到<code>status:0</code>的狀態，如果沒有超標則無法獲得資訊。<br>:::</p>
+<ul>
+<li>執行狀態可以直接獲得超標狀態<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python zabbix-get-trigger.py </span><br><span class="line"></span><br><span class="line">Trigger message list:  [ CPU load too high on <span class="string">'node-1.domain.tld'</span> <span class="keyword">for</span> 3 minutes <span class="built_in">limit</span> 50% ] view :status 0</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>若無超標及無法抓到<code>Trigger</code>列表的狀態<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python zabbix-get-trigger.py </span><br><span class="line"></span><br><span class="line">No Trigger load high problem <span class="keyword">in</span> list.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h3 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料:"></a>參考資料:</h3><ul>
+<li><a href="https://tech.cuixiangbin.com/?p=757" target="_blank" rel="noopener">[原创]Python利用Zabbix API定时报告存在报警的机器（更新：针对zabbix3.x）</a></li>
+<li><a href="http://pengyao.org/zabbix-trigger-example-1.html" target="_blank" rel="noopener">Zabbix Trigger表達式實例</a></li>
+</ul>
+
+        
         </div>
-    
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
 </div>
+
+    <a data-url="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/" data-id="cjp2s78uv0001qmoni1oabvw0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/">評論</a>
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2018/11/27/use-zabbix-api/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">監控工具Zabbix API 使用記錄</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+        <section id="comments">
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+</section>
+    
+
 </section>
             
                 
@@ -425,11 +620,13 @@
     <script>
     var disqus_config = function () {
         
-        this.page.identifier = '';
+            this.page.url = 'http://yylin1.github.io/2018/11/29/zabbix-api-trigger/';
+        
+        this.page.identifier = 'zabbix-api-trigger';
     };
     (function() { 
         var d = document, s = d.createElement('script');  
-        s.src = '//' + 'yylin' + '.disqus.com/count.js';
+        s.src = '//' + 'yylin' + '.disqus.com/embed.js';
         s.setAttribute('data-timestamp', +new Date());
         (d.head || d.body).appendChild(s);
     })();

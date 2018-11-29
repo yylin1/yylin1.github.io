@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yylin1.github.io/2018/11/29/zabbix-api-trigger/</loc>
+    
+    <lastmod>2018-11-29T15:56:08.143Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yylin1.github.io/2018/11/27/use-zabbix-api/</loc>
     
     <lastmod>2018-11-26T16:58:05.252Z</lastmod>
