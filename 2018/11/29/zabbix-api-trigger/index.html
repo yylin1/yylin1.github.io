@@ -14,7 +14,7 @@
 <meta property="og:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/zabbix_trigger.png">
-<meta property="og:updated_time" content="2018-11-29T16:19:16.728Z">
+<meta property="og:updated_time" content="2018-11-29T16:20:11.588Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Zabbix API 監測Trigger狀態">
 <meta name="twitter:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
@@ -256,10 +256,10 @@
 </ul>
 <p><img src="https://i.imgur.com/xX8gHUR.png" alt=""></p>
 <ul>
-<li>接續會顯示<code>Compute</code>節點中可以觀察的三台Node主機 → 這邊我們直接點選<code>node-1.domain.tld</code>預備測試的節點進入設置</li>
-</ul>
-<ul>
-<li>進入節點點擊上方的觸發器（Triggers），然後即可點擊創建觸發器（Create trigger），這將會向我們顯示一個觸發器定義表單</li>
+<li><p>接續會顯示<code>Compute</code>節點中可以觀察的三台Node主機 → 這邊我們直接點選<code>node-1.domain.tld</code>預備測試的節點進入設置</p>
+</li>
+<li><p>進入節點點擊上方的觸發器（Triggers），然後即可點擊創建觸發器（Create trigger），這將會向我們顯示一個觸發器定義表單</p>
+</li>
 </ul>
 <p><img src="https://i.imgur.com/v9L91MO.jpg" alt=""></p>
 <ul>
@@ -269,14 +269,17 @@
 <hr>
 <h2 id="2-設置Zabbix-Trigger表達式"><a href="#2-設置Zabbix-Trigger表達式" class="headerlink" title="2. 設置Zabbix Trigger表達式"></a>2. 設置Zabbix Trigger表達式</h2><p>由於我們需要持續觀察<code>Computer</code>節點上面CPU狀態，Trigger設定這邊可以直接透過語法進行觀察如下:</p>
 <ul>
-<li>需要連續三分鐘<code>CPU使用率平均值超過80%</code>觸發報警</li>
+<li><p>需要連續三分鐘<code>CPU使用率平均值超過80%</code>觸發報警</p>
+<ul>
+<li>名稱（Name）<ul>
+<li>可以輸入: “CPU load too high on ‘node-1.domain.tld’ for 3 minutes”作為值。這個值會作為觸發器的名稱被現實在列表和其他地方。</li>
 </ul>
-<pre><code>* 名稱（Name）
-    * 可以輸入: &quot;CPU load too high on &apos;node-1.domain.tld&apos; for 3 minutes&quot;作為值。這個值會作為觸發器的名稱被現實在列表和其他地方。
-
-
-* 表達式（Expression）
-</code></pre><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;node-1.domain.tld:system.cpu.util[,idle].max(3m)&#125;&lt;20</span><br></pre></td></tr></table></figure>
+</li>
+<li>表達式（Expression）<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;node-1.domain.tld:system.cpu.util[,idle].max(3m)&#125;&lt;20</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
 <blockquote>
 <p>Trigger 觀察主要透過<code>system.cpu.util[,idle]</code>狀態顯示，反向思考如果CPU能使用空閒小於20%，即CPU佔用超過80%立即觸發報警</p>
 </blockquote>
