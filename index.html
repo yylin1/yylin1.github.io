@@ -160,11 +160,11 @@
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                5
+                6
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                8
+                10
                 <span>標籤</span>
             </div>
         </div>
@@ -201,6 +201,135 @@
 
             
             <section id="main">
+    <article id="post-install-nvidia-driver-problem" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2018/12/01/install-nvidia-driver-problem/">安裝NVIDIA顯卡驅動是可能遇到的問題</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2018/12/01/install-nvidia-driver-problem/">
+            <time datetime="2018-12-01T15:21:20.000Z" itemprop="datePublished">2018-12-01</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/GPU/">GPU</a>, <a class="tag-link" href="/tags/NVIDIA-Driver/">NVIDIA Driver</a>, <a class="tag-link" href="/tags/ubuntu/">ubuntu</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            <p><p><img src="/images/nvidia-driver-problem.png" alt=""></p>
+<p>本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。<br></p>
+            <p class="article-more-link">
+                <a href="/2018/12/01/install-nvidia-driver-problem/#more">繼續閱讀</a>
+            </p>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/" data-id="cjp5mi93t0001pjonhq1nixp0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/">評論</a>
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-zabbix-api-trigger" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -252,7 +381,7 @@
 
 </div>
 
-    <a data-url="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/" data-id="cjp2sdge00002y0onpwiqokfg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/" data-id="cjp5mi93y0003pjon6nqufrvw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -380,7 +509,7 @@
 
 </div>
 
-    <a data-url="http://yylin1.github.io/2018/11/27/use-zabbix-api/" data-id="cjp2sdgk6000qy0onjy06wc45" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="http://yylin1.github.io/2018/11/27/use-zabbix-api/" data-id="cjp5mi95o000wpjone1hd20h0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -508,7 +637,7 @@
 
 </div>
 
-    <a data-url="http://yylin1.github.io/2018/10/23/build-hpl-gpu/" data-id="cjp2sdghb0008y0on5h0xw3eb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="http://yylin1.github.io/2018/10/23/build-hpl-gpu/" data-id="cjp5mi94s000hpjonm8aydwgg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -642,7 +771,7 @@
 
 </div>
 
-    <a data-url="http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/" data-id="cjp2sdgk2000py0on4jbyi96n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/" data-id="cjp5mi95i000vpjonv9rvidz1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -776,7 +905,7 @@
 
 </div>
 
-    <a data-url="http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/" data-id="cjp2sdgi1000ay0onacv9ylxz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/" data-id="cjp5mi94r000gpjonaw5dcnlq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -867,6 +996,25 @@
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2018/12/01/install-nvidia-driver-problem/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/nvidia-driver-problem.png)" alt="安裝NVIDIA顯卡驅動是可能遇到的問題" class="thumbnail-image"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2018/12/01/install-nvidia-driver-problem/" class="title">安裝NVIDIA顯卡驅動是可能遇到的問題</a></p>
+                            <p class="item-date"><time datetime="2018-12-01T15:21:20.000Z" itemprop="datePublished">2018-12-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2018/11/29/zabbix-api-trigger/" class="thumbnail">
     
     
@@ -940,25 +1088,6 @@
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2018/09/17/microk8s-deploy-kubeflow/" class="thumbnail">
-    
-    
-        <span style="background-image:url(/images/microk8s.png)" alt="透過 Microk8s 快速部署 Kubeflow" class="thumbnail-image"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/kubeflow/">kubeflow</a></p>
-                            <p class="item-title"><a href="/2018/09/17/microk8s-deploy-kubeflow/" class="title">透過 Microk8s 快速部署 Kubeflow</a></p>
-                            <p class="item-date"><time datetime="2018-09-17T04:12:02.000Z" itemprop="datePublished">2018-09-17</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -977,7 +1106,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">歸檔</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">1</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">1</span></li></ul>
         </div>
     </div>
 
@@ -986,7 +1115,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">標籤</h3>
         <div class="widget">
-            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/API/">API</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deploy/">deploy</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubeflow/">kubeflow</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linpack/">linpack</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/microk8s/">microk8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zabbix/">zabbix</a><span class="tag-list-count">2</span></li></ul>
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/API/">API</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/">GPU</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA-Driver/">NVIDIA Driver</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deploy/">deploy</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubeflow/">kubeflow</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linpack/">linpack</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/microk8s/">microk8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu/">ubuntu</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zabbix/">zabbix</a><span class="tag-list-count">2</span></li></ul>
         </div>
     </div>
 
@@ -995,7 +1124,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">標籤雲</h3>
         <div class="widget tagcloud">
-            <a href="/tags/API/" style="font-size: 20px;">API</a> <a href="/tags/GPU/" style="font-size: 10px;">GPU</a> <a href="/tags/deploy/" style="font-size: 20px;">deploy</a> <a href="/tags/kubeflow/" style="font-size: 20px;">kubeflow</a> <a href="/tags/kubernetes/" style="font-size: 20px;">kubernetes</a> <a href="/tags/linpack/" style="font-size: 10px;">linpack</a> <a href="/tags/microk8s/" style="font-size: 10px;">microk8s</a> <a href="/tags/zabbix/" style="font-size: 20px;">zabbix</a>
+            <a href="/tags/API/" style="font-size: 20px;">API</a> <a href="/tags/GPU/" style="font-size: 20px;">GPU</a> <a href="/tags/NVIDIA-Driver/" style="font-size: 10px;">NVIDIA Driver</a> <a href="/tags/deploy/" style="font-size: 20px;">deploy</a> <a href="/tags/kubeflow/" style="font-size: 20px;">kubeflow</a> <a href="/tags/kubernetes/" style="font-size: 20px;">kubernetes</a> <a href="/tags/linpack/" style="font-size: 10px;">linpack</a> <a href="/tags/microk8s/" style="font-size: 10px;">microk8s</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/zabbix/" style="font-size: 20px;">zabbix</a>
         </div>
     </div>
 
