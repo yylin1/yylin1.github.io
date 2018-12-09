@@ -14,7 +14,7 @@
 <meta property="og:description" content="本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/nvidia-driver-problem.png">
-<meta property="og:updated_time" content="2018-12-02T09:31:55.590Z">
+<meta property="og:updated_time" content="2018-12-09T14:45:45.498Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="安裝NVIDIA顯卡驅動時可能遇到的問題">
 <meta name="twitter:description" content="本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
@@ -262,13 +262,11 @@
 <p>重啟後即可透過UI介面登入環境，就可以解決<code>循環登入的問題</code>。</p>
 </blockquote>
 <p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nvidia-smi</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 390.87                 Driver Version: 390.87                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 108...  Off  | 00000000:02:00.0  On |                  N/A |</span><br><span class="line">| 26%   40C    P8    16W / 250W |    328MiB / 11173MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0       837      C   python                                       157MiB |</span><br><span class="line">|    0      1250      G   /usr/lib/xorg/Xorg                           159MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure></p>
-<h3 id="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："><a href="#補充：安裝NVIDIA顯卡驅動是可能遇到的問題：" class="headerlink" title="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："></a>補充：安裝NVIDIA顯卡驅動是可能遇到的問題：</h3><p>:::warning<br>出現<code>An error occurred while p    erforming the step : &quot; Building kernel modules &quot;</code>這個問題<br>:::</p>
-<p>問題原因</p>
-<ul>
+<h3 id="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："><a href="#補充：安裝NVIDIA顯卡驅動是可能遇到的問題：" class="headerlink" title="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："></a>補充：安裝NVIDIA顯卡驅動是可能遇到的問題：</h3><p>出現<code>An error occurred while p    erforming the step : &quot; Building kernel modules &quot;</code>這個問題: </p>
+<h4 id="問題原因"><a href="#問題原因" class="headerlink" title="問題原因"></a>問題原因</h4><ul>
 <li>Linix系統的內核是在不斷更新的，而安裝的NVIDIA驅動是之前下載好的，沒有更新，因此安裝過程中無法創建內核。</li>
 </ul>
-<p>解決方法</p>
-<ul>
+<h4 id="解決方法"><a href="#解決方法" class="headerlink" title="解決方法"></a>解決方法</h4><ul>
 <li>這時候從<a href="https://www.nvidia.cn/Download/index.aspx?lang=tw/" target="_blank" rel="noopener">NVIDIA下載驅動</a>對應新版本的驅動，並安裝執行以上步驟即可。</li>
 </ul>
 <hr>
