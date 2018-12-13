@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yylin1.github.io/about/index.html</loc>
+    
+    <lastmod>2018-12-13T15:59:01.242Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yylin1.github.io/2018/12/09/ansible-deploy-kuberentes-with-gpu/</loc>
     
     <lastmod>2018-12-10T03:28:31.690Z</lastmod>
@@ -68,13 +75,6 @@
     <loc>http://yylin1.github.io/categories/index.html</loc>
     
     <lastmod>2018-09-17T09:43:34.603Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yylin1.github.io/about/index.html</loc>
-    
-    <lastmod>2018-09-17T09:37:15.800Z</lastmod>
     
   </url>
   
