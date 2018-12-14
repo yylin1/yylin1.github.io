@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://yylin1.github.io/2018/10/23/build-hpl-gpu/</loc>
+    <lastmod>2018-12-14T04:44:48.448Z</lastmod>
+  </url>  <url>
     <loc>http://yylin1.github.io/2018/12/14/kubecon-china-first/</loc>
     <lastmod>2018-12-13T17:04:30.188Z</lastmod>
   </url>  <url>
@@ -9,9 +12,6 @@
   </url>  <url>
     <loc>http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/</loc>
     <lastmod>2018-12-09T14:45:45.498Z</lastmod>
-  </url>  <url>
-    <loc>http://yylin1.github.io/2018/10/23/build-hpl-gpu/</loc>
-    <lastmod>2018-11-29T16:30:31.590Z</lastmod>
   </url>  <url>
     <loc>http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/</loc>
     <lastmod>2018-11-29T16:30:13.648Z</lastmod>
