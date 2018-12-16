@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://yylin1.github.io/2018/11/29/zabbix-api-trigger/</loc>
+    <lastmod>2018-12-16T04:56:27.796Z</lastmod>
+  </url>  <url>
+    <loc>http://yylin1.github.io/2018/11/27/use-zabbix-api/</loc>
+    <lastmod>2018-12-16T04:56:24.775Z</lastmod>
+  </url>  <url>
     <loc>http://yylin1.github.io/2018/12/14/snap-microk8s-deploy-kubernetes/</loc>
-    <lastmod>2018-12-16T04:52:25.731Z</lastmod>
+    <lastmod>2018-12-16T04:56:21.586Z</lastmod>
+  </url>  <url>
+    <loc>http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/</loc>
+    <lastmod>2018-12-16T04:56:17.434Z</lastmod>
+  </url>  <url>
+    <loc>http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/</loc>
+    <lastmod>2018-12-16T04:56:12.352Z</lastmod>
   </url>  <url>
     <loc>http://yylin1.github.io/2018/12/09/ansible-deploy-kuberentes-with-gpu/</loc>
-    <lastmod>2018-12-16T04:45:52.937Z</lastmod>
+    <lastmod>2018-12-16T04:56:05.689Z</lastmod>
+  </url>  <url>
+    <loc>http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/</loc>
+    <lastmod>2018-12-16T04:55:09.185Z</lastmod>
   </url>  <url>
     <loc>http://yylin1.github.io/2018/10/23/build-hpl-gpu/</loc>
     <lastmod>2018-12-16T04:38:51.083Z</lastmod>
-  </url>  <url>
-    <loc>http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/</loc>
-    <lastmod>2018-12-16T04:38:47.321Z</lastmod>
-  </url>  <url>
-    <loc>http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/</loc>
-    <lastmod>2018-12-16T04:38:41.729Z</lastmod>
-  </url>  <url>
-    <loc>http://yylin1.github.io/2018/11/27/use-zabbix-api/</loc>
-    <lastmod>2018-12-16T04:38:29.215Z</lastmod>
-  </url>  <url>
-    <loc>http://yylin1.github.io/2018/11/29/zabbix-api-trigger/</loc>
-    <lastmod>2018-12-16T04:38:25.211Z</lastmod>
-  </url>  <url>
-    <loc>http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/</loc>
-    <lastmod>2018-12-16T04:34:21.301Z</lastmod>
   </url>  <url>
     <loc>http://yylin1.github.io/2018/12/14/kubecon-china-first/</loc>
     <lastmod>2018-12-14T15:17:38.763Z</lastmod>
