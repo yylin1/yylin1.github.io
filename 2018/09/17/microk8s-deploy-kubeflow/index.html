@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8">
+<title>透過 Microk8s 快速部署 Kubeflow - Yi Yang&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+
+
+    <meta name="description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
+<meta name="keywords" content="kubernetes,kubeflow,deploy,microk8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="透過 Microk8s 快速部署 Kubeflow">
+<meta property="og:url" content="http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/index.html">
+<meta property="og:site_name" content="Yi Yang&#39;s Blog">
+<meta property="og:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="http://yylin1.github.io/images/microk8s.png">
+<meta property="og:image" content="https://i.imgur.com/5TFCZ7s.png">
+<meta property="og:image" content="https://i.imgur.com/aecctnI.png">
+<meta property="og:image" content="https://i.imgur.com/nEaOr0L.png">
+<meta property="og:image" content="https://i.imgur.com/Acr64W9.png">
+<meta property="og:image" content="https://i.imgur.com/sCqtj53.png">
+<meta property="og:updated_time" content="2018-12-15T07:49:33.200Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="透過 Microk8s 快速部署 Kubeflow">
+<meta name="twitter:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
+<meta name="twitter:image" content="http://yylin1.github.io/images/microk8s.png">
+
+
+
+
+
+<link rel="icon" href="/images/artificial-intelligence.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/artificial-intelligence.png" alt="透過 Microk8s 快速部署 Kubeflow" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/">Home</a>
+                
+                <a class="navbar-item"
+                href="/archives">Archives</a>
+                
+                <a class="navbar-item"
+                href="/categories">Categories</a>
+                
+                <a class="navbar-item"
+                href="/tags">Tags</a>
+                
+                <a class="navbar-item"
+                href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/microk8s.png" alt="透過 Microk8s 快速部署 Kubeflow">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-09-17T04:12:02.000Z">2018-09-17</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    12 分鐘 read (About 1809 words)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                透過 Microk8s 快速部署 Kubeflow
+            
+        </h1>
+        <div class="content">
+            <p><img src="/images/microk8s.png" alt=""></p>
+<p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p>
+<a id="more"></a>
+<h2 id="什麼是microk8s"><a href="#什麼是microk8s" class="headerlink" title="什麼是microk8s"></a>什麼是microk8s</h2><p><img src="https://i.imgur.com/5TFCZ7s.png" alt=""></p>
+<p>簡單來說，<a href="https://microk8s.io/" target="_blank" rel="noopener">microk8s</a>設計為快速輕巧Kubernetes最新版本安裝與主機隔離但不通過虛擬機。通過在單個快照包<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>中打包 Kubernetes、Docker.io、iptables和CNI的所有上游二進製文件來實現此隔離。<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>是一個應用程序容器，您可以將其想像為Docker容器的輕量級版本。它使用了許多相同的底層技術進行隔離，而不會有網絡隔離的所帶來的開銷。而<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>需使用虛擬化工具來環境隔離創建K8S集群，想必會快照更加耗時。</p>
+<h2 id="安裝Multipass"><a href="#安裝Multipass" class="headerlink" title="安裝Multipass"></a>安裝Multipass</h2><p>Mac OS X. (本篇文章以Mac環境進行))</p>
+<ul>
+<li>本機Mac OS 安裝程序安裝<a href="https://github.com/CanonicalLtd/multipass/releases/download/2018.6.1/multipass-2018.6.1-full-Darwin-signed.zip" target="_blank" rel="noopener">Multipass</a></li>
+</ul>
+<p>Linux OS</p>
+<ul>
+<li>透過<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>使用指令安裝</li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo snap install multipass --beta --classic</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="啟動Ubuntu虛擬機"><a href="#啟動Ubuntu虛擬機" class="headerlink" title="啟動Ubuntu虛擬機"></a>啟動Ubuntu虛擬機</h2><p>部署前要先下載cloud-init文件<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://bit.ly/2tOfMUA -O kubeflow.init</span><br></pre></td></tr></table></figure></p>
+<p>這邊查看一下文件內容，主要是配置kubeflow環境並去執行kubeflow 已經寫好script能更快速部署，有需要修正自己的環境可以修改後執行<br><figure class="highlight yaml hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># cloud-init for kubeflow</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-attr">package_update:</span> <span class="hljs-literal">true</span></span><br><span class="line"><span class="hljs-attr">package_upgrade:</span> <span class="hljs-literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-attr">runcmd:</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">mkdir</span> <span class="hljs-string">/kubeflow</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">wget</span> <span class="hljs-attr">https://bit.ly/2tp2aOo</span> <span class="hljs-bullet">-O</span> <span class="hljs-string">/kubeflow/install-kubeflow-pre-micro.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">chmod</span> <span class="hljs-string">a+x</span> <span class="hljs-string">/kubeflow/install-kubeflow-pre-micro.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">wget</span> <span class="hljs-attr">https://bit.ly/2tndL0g</span> <span class="hljs-bullet">-O</span> <span class="hljs-string">/kubeflow/install-kubeflow.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">chmod</span> <span class="hljs-string">a+x</span> <span class="hljs-string">/kubeflow/install-kubeflow.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">printf</span> <span class="hljs-string">"\n\nexport KUBECONFIG=/snap/microk8s/current/client.config\n\n"</span> <span class="hljs-string">&gt;&gt;</span> <span class="hljs-string">/home/multipass/.bashrc</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="啟動Multipass-VM"><a href="#啟動Multipass-VM" class="headerlink" title="啟動Multipass VM"></a>啟動Multipass VM</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> multipass launch bionic -n kubeflow -m 8G -d 40G -c 4 --cloud-init kubeflow.init</span></span><br><span class="line"></span><br><span class="line">Retrieving image: 66%</span><br><span class="line">Retrieving image: 87%</span><br><span class="line">Verifying image:  -</span><br><span class="line">Launched: kubeflow</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>預設備至Multipass為Kubeflow部署創建的VM上的<code>最低建議設置</code>，這邊是可以自由地調整根據主機的能力和工作負載需求。</p>
+</blockquote>
+<p>依據環境狀況應該很快速就建立好單節點集群，這邊可以查看一下<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ multipass list                                    </span><br><span class="line">Name                    State       IPv4             Release</span><br><span class="line">kubeflow                RUNNING     192.168.64.2     Ubuntu 18.04 LTS</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>如果部署有問題隨時都可以透過<code>multipass -h</code>查看 </p>
+</blockquote>
+<p>接下來就mount本地文件與multipass配置<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ multipass mount . kubeflow:/multipass</span><br></pre></td></tr></table></figure></p>
+<h3 id="安裝kubernetes"><a href="#安裝kubernetes" class="headerlink" title="安裝kubernetes"></a>安裝kubernetes</h3><p>接下來我們就可以進入vm，安裝由microk8s驅動的kubernetes，以及部署Kubeflow所需的其他工具。</p>
+<p>透過multipass進入vm<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ multipass shell kubeflow</span><br><span class="line"></span><br><span class="line">Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-34-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line">  System information as of Mon Sep 17 09:03:39 CST 2018</span><br><span class="line"></span><br><span class="line">  System load:  0.63              Processes:             153</span><br><span class="line">  Usage of /:   2.9% of 38.60GB   Users logged <span class="hljs-keyword">in</span>:       0</span><br><span class="line">  Memory usage: 2%                IP address <span class="hljs-keyword">for</span> enp0s2: 192.168.64.2</span><br><span class="line">  Swap usage:   0%</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  Get cloud support with Ubuntu Advantage Cloud Guest:</span><br><span class="line">    http://www.ubuntu.com/business/services/cloud</span><br><span class="line"></span><br><span class="line">0 packages can be updated.</span><br><span class="line">0 updates are security updates.</span><br><span class="line">multipass@kubeflow:~$</span><br></pre></td></tr></table></figure></p>
+<h3 id="安裝microk8s、etc"><a href="#安裝microk8s、etc" class="headerlink" title="安裝microk8s、etc"></a>安裝microk8s、etc</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /kubeflow/install-kubeflow-pre-micro.sh</span><br><span class="line"></span><br><span class="line">Saving to: ‘ksonnet.tar.gz’</span><br><span class="line">ksonnet.tar.gz                               100%[============================================================================================&gt;]  14.77M   934KB/s    <span class="hljs-keyword">in</span> 44s</span><br><span class="line"></span><br><span class="line">2018-09-17 09:22:01 (342 KB/s) - ‘ksonnet.tar.gz’ saved [15491217/15491217]</span><br><span class="line"></span><br><span class="line">ks_0.11.0_linux_amd64/CHANGELOG.md</span><br><span class="line">ks_0.11.0_linux_amd64/CODE-OF-CONDUCT.md</span><br><span class="line">ks_0.11.0_linux_amd64/CONTRIBUTING.md</span><br><span class="line">ks_0.11.0_linux_amd64/LICENSE</span><br><span class="line">ks_0.11.0_linux_amd64/README.md</span><br><span class="line">ks_0.11.0_linux_amd64/ks</span><br><span class="line">Checking kube-system status until all pods are running (2 not running)</span><br><span class="line">Checking kube-system status until all pods are running (3 not running)</span><br><span class="line"></span><br><span class="line">Before running install-kubeflow.sh, please <span class="hljs-string">'export GITHUB_TOKEN=&lt;your token&gt;'</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>這邊提供GitHub Token是為了避免<a href="https://github.com/ksonnet/ksonnet/blob/master/docs/troubleshooting.md" target="_blank" rel="noopener">ksonnet</a>部署反覆部署可能會造成GitHub限速問題，可以<a href="https://ephrain.net/mac-homebrew-%E5%87%BA%E7%8F%BE-github-api-rate-limit-exceed-%E7%9A%84%E8%A8%8A%E6%81%AF/" target="_blank" rel="noopener">參考</a>建立Token。</p>
+</blockquote>
+<h3 id="更換自己的Token"><a href="#更換自己的Token" class="headerlink" title="更換自己的Token"></a>更換自己的Token</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="hljs-built_in">export</span> GITHUB_TOKEN=972702e4fb348d3dba52f5dd3b99d7ae83e857ab</span><br></pre></td></tr></table></figure>
+<h3 id="kubeflow-部署"><a href="#kubeflow-部署" class="headerlink" title="kubeflow 部署"></a>kubeflow 部署</h3><p>在vm環境中執行kubeflow script，就可以快速完成kubeflow部署，而這邊會有<code>Checking kubeflow status until all pods are running (7 not running). Sleeping for 10 seconds.</code>狀況就依照環境是否把所有應該生成的Pod建立完成，就執行結束。</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ multipass@kubeflow:~$ /kubeflow/install-kubeflow.sh</span><br><span class="line">namespace/kubeflow created</span><br><span class="line">INFO Using context <span class="hljs-string">"microk8s"</span> from kubeconfig file <span class="hljs-string">"/snap/microk8s/current/client.config"</span></span><br><span class="line">INFO Creating environment <span class="hljs-string">"default"</span> with namespace <span class="hljs-string">"default"</span>, pointing to cluster at address <span class="hljs-string">"http://127.0.0.1:8080"</span></span><br><span class="line">INFO Generating ksonnet-lib data at path <span class="hljs-string">'/home/multipass/my-kubeflow/lib/v1.11.1'</span></span><br><span class="line">INFO Retrieved 22 files</span><br><span class="line">INFO Retrieved 5 files</span><br><span class="line">INFO Retrieved 5 files</span><br><span class="line">·</span><br><span class="line">·</span><br><span class="line">·</span><br><span class="line">Checking kubeflow status until all pods are running (7 not running). Sleeping <span class="hljs-keyword">for</span> 10 seconds.</span><br><span class="line"></span><br><span class="line">JupyterHub Port: 31808</span><br></pre></td></tr></table></figure>
+<p>以上就完成<code>microk8s+kubeflow</code>部署</p>
+<hr>
+<h2 id="部署完成後環境"><a href="#部署完成後環境" class="headerlink" title="部署完成後環境"></a>部署完成後環境</h2><p>完成後檢查 Kubeflow 元件部署結果：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">multipass@kubeflow:~$ kubectl -n kubeflow get po -o wide</span><br><span class="line">NAME                                  READY     STATUS    RESTARTS   AGE       IP          NODE</span><br><span class="line">ambassador-68954d75f4-2n6lv           2/2       Running   4          4h        10.1.1.55   kubeflow</span><br><span class="line">ambassador-68954d75f4-7dgvl           2/2       Running   4          4h        10.1.1.56   kubeflow</span><br><span class="line">ambassador-68954d75f4-bgs8h           2/2       Running   5          4h        10.1.1.44   kubeflow</span><br><span class="line">mxnet-operator-f46557c4f-wmntn        1/1       Running   2          3h        10.1.1.52   kubeflow</span><br><span class="line">spartakus-volunteer-d54b65666-klrfk   1/1       Running   2          4h        10.1.1.45   kubeflow</span><br><span class="line">tf-hub-0                              1/1       Running   2          4h        10.1.1.47   kubeflow</span><br><span class="line">tf-job-dashboard-784cdcbb4f-j2cjx     1/1       Running   2          4h        10.1.1.51   kubeflow</span><br><span class="line">tf-job-operator-85b46d47b7-xfwmp      1/1       Running   2          4h        10.1.1.48   kubeflow</span><br></pre></td></tr></table></figure>
+<h3 id="運行JupyterHub測試"><a href="#運行JupyterHub測試" class="headerlink" title="運行JupyterHub測試"></a>運行JupyterHub測試</h3><p>透過查看vm狀態中，<code>完成後連接 http://IP:Port</code>，並輸入<code>任意帳號密碼</code>進行登入。</p>
+<p><img src="https://i.imgur.com/aecctnI.png" alt=""></p>
+<p><strong>Spawner options</strong>可以自行配置Jupyter Notebook 資源狀態</p>
+<blockquote>
+<p>Image: 預設會有多種映像檔可以使用<br>其他參數可調整 CPU、Memory、GPU資源限制</p>
+</blockquote>
+<p><img src="https://i.imgur.com/nEaOr0L.png" alt=""></p>
+<p>按下Spawn kubeflow就會啟動一個pod配置資源給Jupyter notebook，部署過程時Image下載需要花一點時間。</p>
+<p><img src="https://i.imgur.com/Acr64W9.png" alt=""></p>
+<blockquote>
+<p>配置過程中有時會後有狀況，可能需要多嘗試</p>
+</blockquote>
+<p>完成後即可在透過Jupyter Notebook 編寫Model進行DL訓練<br><img src="https://i.imgur.com/sCqtj53.png" alt=""></p>
+<h2 id="Kubernetes-Addons"><a href="#Kubernetes-Addons" class="headerlink" title="Kubernetes Addons"></a>Kubernetes Addons</h2><p>microk8s在Kubernetes安裝了一個<code>準系統</code>。這代表只要安裝和運行api-server、controller-manager、scheduler、kubelet，cni、kube-proxy。可以使用該<code>microk8s.enable</code>命令運行kube-dns和Dashboard等附加服務。</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">microk8s.enable dns dashboard</span><br></pre></td></tr></table></figure>
+<p>使用該<code>disable</code>命令隨時禁用這些插件<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">microk8s.disable dashboard dns</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.kubectl cluster-info</span><br><span class="line">Kubernetes master is running at http://127.0.0.1:8080</span><br><span class="line">Heapster is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/heapster/proxy</span><br><span class="line">KubeDNS is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</span><br><span class="line">Grafana is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy</span><br><span class="line">InfluxDB is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/monitoring-influxdb:http/proxy</span><br><span class="line"></span><br><span class="line">To further debug and diagnose cluster problems, use <span class="hljs-string">'kubectl cluster-info dump'</span>.</span><br></pre></td></tr></table></figure>
+<h2 id="停止並重新啟動microk8-測試環境為Mac"><a href="#停止並重新啟動microk8-測試環境為Mac" class="headerlink" title="停止並重新啟動microk8 (測試環境為Mac)"></a>停止並重新啟動microk8 (測試環境為Mac)</h2><blockquote>
+<p>在 Linx 環境指令都是偷過<code>snap</code> enable/disable 來管理microk8s</p>
+</blockquote>
+<p>Mac環境可以透過<code>multipass -h</code>查詢可執行指令</p>
+<h3 id="暫時關閉vm運行"><a href="#暫時關閉vm運行" class="headerlink" title="暫時關閉vm運行"></a>暫時關閉vm運行</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">multipass  stop kubeflow</span><br></pre></td></tr></table></figure>
+<h3 id="啟動vm運行"><a href="#啟動vm運行" class="headerlink" title="啟動vm運行"></a>啟動vm運行</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">multipass  stop kubeflow</span><br></pre></td></tr></table></figure>
+<h3 id="查看multipass目前vm狀態"><a href="#查看multipass目前vm狀態" class="headerlink" title="查看multipass目前vm狀態"></a>查看multipass目前vm狀態</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Name                    State       IPv4             Release</span><br><span class="line">kubeflow                STOPPED     --               Ubuntu 18.04 LTS</span><br></pre></td></tr></table></figure>
+<h3 id="刪除microk8s"><a href="#刪除microk8s" class="headerlink" title="刪除microk8s"></a>刪除microk8s</h3><p>透過<code>multipass list</code> 檢查instances狀態</p>
+<p>如果只下delete只有instances狀態刪除，是可以透過recover恢復已刪除的instances<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">multipass delete kubeflow</span><br><span class="line">Name                    State       IPv4             Release</span><br><span class="line">kubeflow                DELETED     --               Not Available</span><br></pre></td></tr></table></figure></p>
+<p>所以我們要透過<code>purge</code>來清除永久清除所有已刪除的instances<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">multipass purge</span><br></pre></td></tr></table></figure></p>
+<p>相關文章:<br><a href="https://itnext.io/a-local-kubernetes-with-microk8s-33ee31d1eed9" target="_blank" rel="noopener">[Kubernetes] A local Kubernetes with microk8s</a><br><a href="https://www.kubeflow.org/docs/started/getting-started-multipass/" target="_blank" rel="noopener">[kubeflow] Microk8s for Kubeflow</a></p>
+<p><strong> 本篇文章主介紹microk8s部署kubeflow，更多相關<a href="https://www.kubeflow.org/" target="_blank" rel="noopener">kubeflow</a> 實作會在後續文章陸續介紹</strong></p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/deploy/">deploy</a>, <a class="has-link-grey -link" href="/tags/kubeflow/">kubeflow</a>, <a class="has-link-grey -link" href="/tags/kubernetes/">kubernetes</a>, <a class="has-link-grey -link" href="/tags/microk8s/">microk8s</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2018/10/23/kubeflow-deploy-v0.3.0/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">快速部署 Kubeflow v0.3 容器機器學習平台</span>
+            </a>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" src="/images/yiyang.png" alt="Yi Yang">
+                    
+                    <p class="is-size-4 is-block">
+                        Yi Yang
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        掙扎中的研究生
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Taichung, Taiwan</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        9
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分類
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        3
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        標籤
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        12
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/yylin1/">
+                關注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Github" href="https://github.com/yylin1/">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Facebook" href="https://www.facebook.com/frank.yiyanglin">
+                
+                <i class="fab fa-facebook"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Twitter" href="https://twitter.com/yylin12">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Dribbble" href="http://dribbble.com">
+                
+                <i class="fab fa-dribbble"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            連結
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Hexo</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://hexo.io</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">PPOffice</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://github.com/ppoffice</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分類
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Linkpack/">
+            <span class="level-start">
+                <span class="level-item">Linkpack</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/ansible/">
+            <span class="level-start">
+                <span class="level-item">ansible</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/kubeflow/">
+            <span class="level-start">
+                <span class="level-item">kubeflow</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            標籤雲
+        </h3>
+        <a href="/tags/API/" style="font-size: 13.33px;">API</a> <a href="/tags/GPU/" style="font-size: 16.67px;">GPU</a> <a href="/tags/NVIDIA-Driver/" style="font-size: 13.33px;">NVIDIA Driver</a> <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/benchmark/" style="font-size: 10px;">benchmark</a> <a href="/tags/deploy/" style="font-size: 16.67px;">deploy</a> <a href="/tags/kubeflow/" style="font-size: 16.67px;">kubeflow</a> <a href="/tags/kubernetes/" style="font-size: 20px;">kubernetes</a> <a href="/tags/linpack/" style="font-size: 10px;">linpack</a> <a href="/tags/microk8s/" style="font-size: 13.33px;">microk8s</a> <a href="/tags/ubuntu/" style="font-size: 13.33px;">ubuntu</a> <a href="/tags/zabbix/" style="font-size: 13.33px;">zabbix</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/artificial-intelligence.png" alt="透過 Microk8s 快速部署 Kubeflow" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2018 Yi Yang&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-TW");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="Back to Top" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: 'Pages',
+                CATEGORIES: '分類',
+                TAGS: '標籤',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

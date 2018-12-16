@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8">
+<title>透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試） - Yi Yang&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+
+
+    <meta name="description" content="先前文章參考：透過 Microk8s 快速部署 Kubeflow  此篇想重新介紹透過 microk8s，近期剛好看到Using GPGPUs with Kubernetes這邊文章介紹，想起之前在實驗kubeflow時候有於Mac上執行過Microk8s，這次重新測試於單機 Linux 環境並測試相關 Addons 與GPU環境中實驗。">
+<meta name="keywords" content="kubernetes,kubeflow,deploy,microk8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+<meta property="og:url" content="http://yylin1.github.io/2018/12/14/snap-microk8s-deploy-kubernetes/index.html">
+<meta property="og:site_name" content="Yi Yang&#39;s Blog">
+<meta property="og:description" content="先前文章參考：透過 Microk8s 快速部署 Kubeflow  此篇想重新介紹透過 microk8s，近期剛好看到Using GPGPUs with Kubernetes這邊文章介紹，想起之前在實驗kubeflow時候有於Mac上執行過Microk8s，這次重新測試於單機 Linux 環境並測試相關 Addons 與GPU環境中實驗。">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="http://yylin1.github.io/images/microk8s-deploy-kubernetes.png">
+<meta property="og:updated_time" content="2018-12-15T07:49:29.401Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+<meta name="twitter:description" content="先前文章參考：透過 Microk8s 快速部署 Kubeflow  此篇想重新介紹透過 microk8s，近期剛好看到Using GPGPUs with Kubernetes這邊文章介紹，想起之前在實驗kubeflow時候有於Mac上執行過Microk8s，這次重新測試於單機 Linux 環境並測試相關 Addons 與GPU環境中實驗。">
+<meta name="twitter:image" content="http://yylin1.github.io/images/microk8s-deploy-kubernetes.png">
+
+
+
+
+
+<link rel="icon" href="/images/artificial-intelligence.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/artificial-intelligence.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/">Home</a>
+                
+                <a class="navbar-item"
+                href="/archives">Archives</a>
+                
+                <a class="navbar-item"
+                href="/categories">Categories</a>
+                
+                <a class="navbar-item"
+                href="/tags">Tags</a>
+                
+                <a class="navbar-item"
+                href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    15 分鐘 read (About 2249 words)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）
+            
+        </h1>
+        <div class="content">
+            <p><img src="/images/microk8s-deploy-kubernetes.png" alt=""></p>
+<p>先前文章參考：<a href="https://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/">透過 Microk8s 快速部署 Kubeflow
+</a></p>
+<p>此篇想重新介紹透過 microk8s，近期剛好看到<a href="https://blog.ubuntu.com/2018/12/10/using-gpgpus-with-kubernetes?fbclid=IwAR05YY0s2aOifQQj6prD7phDyvdgXDJM_UIriMcwzsoLorni97ovVFnJ8yI" target="_blank" rel="noopener">Using GPGPUs with Kubernetes</a>這邊文章介紹，想起之前在實驗kubeflow時候有於Mac上執行過Microk8s，這次重新測試於單機 Linux 環境並測試相關 Addons 與GPU環境中實驗。</p>
+<a id="more"></a>
+<h2 id="什麼是-microk8s"><a href="#什麼是-microk8s" class="headerlink" title="什麼是 microk8s?"></a>什麼是 microk8s?</h2><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># What is microk8s? </span></span><br><span class="line">           _                _    ___</span><br><span class="line"> _ __ ___ (_) ___ _ __ ___ | | _( _ ) ___</span><br><span class="line">| <span class="hljs-string">'_ ` _ \| |/ __| '</span>__/ _ \| |/ / _ \/ __|</span><br><span class="line">| | | | | | | (__| | | (_) |   &lt; (_) \__ \</span><br><span class="line">|_| |_| |_|_|\___|_|  \___/|_|\_\___/|___/</span><br></pre></td></tr></table></figure>
+<p>由 Ubuntu 子公司 <a href="https://www.canonical.com/" target="_blank" rel="noopener">Canonica</a> 推出的 <a href="https://microk8s.io/" target="_blank" rel="noopener">microK8s</a>， 這是一種快速建置Kubernetes單節點的快照包，目前支援可安裝在42種Linux系統上，只要任何支持<code>Snap</code> Linux發行都可以透過 MicroK8s 快速部署。藉由小磁區和內存佔用，MicroK8s提供了一種在幾秒鐘內部署Kubernetes最新上游版本的有效解決方案，無論是在個人主機、伺服器、雲服務設備上，都能快速執行測試。</p>
+<p>為了進一步加速Kubernetes採用並簡化常見的開發人員使用情境，MicroK8s包括越來越多的<code>Add-on</code>服務，包括容器映像檔儲存、存儲傳遞和本機GPGPU支援，所有這些服務都可直接通過單個命令啟用。對於資料科學家和機器學習工程師而言，單節點測試環境有GPGPU支持，簡化實驗過程中環境應用上相關的工作流程。</p>
+<h2 id="實驗環境"><a href="#實驗環境" class="headerlink" title="實驗環境"></a>實驗環境</h2><ul>
+<li>測試機器為Ubuntu 16.04並包含一張GTX 1060 GPU卡</li>
+<li>已經事先安裝完成<code>CUDA Version 10.0.130</code>、<code>Nvidia Driver 410.79</code></li>
+</ul>
+<h2 id="Installing-snap-on-Ubuntu-若環境沒有安裝"><a href="#Installing-snap-on-Ubuntu-若環境沒有安裝" class="headerlink" title="Installing snap on Ubuntu (若環境沒有安裝)"></a>Installing snap on Ubuntu (若環境沒有安裝)</h2><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt update</span><br><span class="line">$ sudo apt install snapd</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ snap version</span><br><span class="line">snap    2.36.1</span><br><span class="line">snapd   2.36.1</span><br><span class="line">series  16</span><br><span class="line">ubuntu  18.04</span><br><span class="line">kernel  4.15.0-39-generic</span><br></pre></td></tr></table></figure>
+<h2 id="部署-microk8s"><a href="#部署-microk8s" class="headerlink" title="部署 microk8s"></a>部署 microk8s</h2><p>最快的入門方法是通過單擊<code>snap store</code>按鈕直接從快照存儲中安裝microk8s。</p>
+<p>這邊還是使用CLI命令列介面安裝microk8s，並讓它更新到最新的穩定上游Kubernetes版本：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo snap install microk8s --classic</span><br><span class="line"></span><br><span class="line">microk8s v1.13.0 from Canonical✓ installed</span><br></pre></td></tr></table></figure>
+<p>若要指定不同kubernetes版本，我們可以在安裝過程選擇版本。例如要指定v1.12 version：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo snap install microk8s --classic --channel=1.12/stable</span><br><span class="line"></span><br><span class="line">microk8s (1.12/stable) v1.12.3 from Canonical✓ installed</span><br></pre></td></tr></table></figure>
+<p>可以透過<code>snap info microk8s</code>看查看當前發布的穩定版、測試版等多個版本: </p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">$ snap info microk8s</span><br><span class="line"></span><br><span class="line">name:      microk8s</span><br><span class="line">summary:   Kubernetes <span class="hljs-keyword">for</span> workstations and appliances</span><br><span class="line">publisher: Canonical✓</span><br><span class="line">contact:   https://github.com/ubuntu/microk8s</span><br><span class="line">license:   <span class="hljs-built_in">unset</span></span><br><span class="line">description: |</span><br><span class="line">  MicroK8s is a small, fast, secure, single node Kubernetes that installs on just</span><br><span class="line">  about any Linux box. Use it <span class="hljs-keyword">for</span> offline development, prototyping, testing, or use</span><br><span class="line">  it on a VM as a small, cheap, reliable k8s <span class="hljs-keyword">for</span> CI/CD. It<span class="hljs-string">'s also a great k8s for</span></span><br><span class="line"><span class="hljs-string">  appliances - develop your IoT apps for k8s and deploy them to MicroK8s on your</span></span><br><span class="line"><span class="hljs-string">  boxes.</span></span><br><span class="line"><span class="hljs-string">commands:</span></span><br><span class="line"><span class="hljs-string">  - microk8s.config</span></span><br><span class="line"><span class="hljs-string">  - microk8s.disable</span></span><br><span class="line"><span class="hljs-string">  - microk8s.docker</span></span><br><span class="line"><span class="hljs-string">  - microk8s.enable</span></span><br><span class="line"><span class="hljs-string">  - microk8s.inspect</span></span><br><span class="line"><span class="hljs-string">  - microk8s.istioctl</span></span><br><span class="line"><span class="hljs-string">  - microk8s.kubectl</span></span><br><span class="line"><span class="hljs-string">  - microk8s.reset</span></span><br><span class="line"><span class="hljs-string">  - microk8s.start</span></span><br><span class="line"><span class="hljs-string">  - microk8s.status</span></span><br><span class="line"><span class="hljs-string">  - microk8s.stop</span></span><br><span class="line"><span class="hljs-string">services:</span></span><br><span class="line"><span class="hljs-string">  microk8s.daemon-apiserver:          simple, enabled, active</span></span><br><span class="line"><span class="hljs-string">  microk8s.daemon-apiserver-kicker:   simple, enabled, active</span></span><br><span class="line"><span class="hljs-string">  microk8s.daemon-controller-manager: simple, enabled, active</span></span><br><span class="line"><span class="hljs-string">  microk8s.daemon-docker:             simple, enabled, active</span></span><br><span class="line"><span class="hljs-string">  microk8s.daemon-etcd:               simple, enabled, active</span></span><br><span class="line"><span class="hljs-string">  microk8s.daemon-kubelet:            simple, enabled, active</span></span><br><span class="line"><span class="hljs-string">  microk8s.daemon-proxy:              simple, enabled, active</span></span><br><span class="line"><span class="hljs-string">  microk8s.daemon-scheduler:          simple, enabled, active</span></span><br><span class="line"><span class="hljs-string">snap-id:      EaXqgt1lyCaxKaQCU349mlodBkDCXRcg</span></span><br><span class="line"><span class="hljs-string">tracking:     stable</span></span><br><span class="line"><span class="hljs-string">refresh-date: today at 13:44 CST</span></span><br><span class="line"><span class="hljs-string">channels:</span></span><br><span class="line"><span class="hljs-string">  stable:         v1.13.0  (340) 204MB classic</span></span><br><span class="line"><span class="hljs-string">  candidate:      v1.13.0  (340) 204MB classic</span></span><br><span class="line"><span class="hljs-string">  beta:           v1.13.0  (340) 204MB classic</span></span><br><span class="line"><span class="hljs-string">  edge:           v1.13.1  (350) 229MB classic</span></span><br><span class="line"><span class="hljs-string">  1.13/stable:    v1.13.0  (340) 204MB classic</span></span><br><span class="line"><span class="hljs-string">  1.13/candidate: v1.13.0  (340) 204MB classic</span></span><br><span class="line"><span class="hljs-string">  1.13/beta:      v1.13.0  (340) 204MB classic</span></span><br><span class="line"><span class="hljs-string">  1.13/edge:      v1.13.1  (351) 229MB classic</span></span><br><span class="line"><span class="hljs-string">  1.12/stable:    v1.12.3  (336) 226MB classic</span></span><br><span class="line"><span class="hljs-string">  1.12/candidate: v1.12.3  (336) 226MB classic</span></span><br><span class="line"><span class="hljs-string">  1.12/beta:      v1.12.3  (336) 226MB classic</span></span><br><span class="line"><span class="hljs-string">  1.12/edge:      v1.12.3  (336) 226MB classic</span></span><br><span class="line"><span class="hljs-string">  1.11/stable:    v1.11.5  (322) 219MB classic</span></span><br><span class="line"><span class="hljs-string">  1.11/candidate: v1.11.5  (322) 219MB classic</span></span><br><span class="line"><span class="hljs-string">  1.11/beta:      v1.11.5  (322) 219MB classic</span></span><br><span class="line"><span class="hljs-string">  1.11/edge:      v1.11.5  (322) 219MB classic</span></span><br><span class="line"><span class="hljs-string">  1.10/stable:    v1.10.11 (321) 175MB classic</span></span><br><span class="line"><span class="hljs-string">  1.10/candidate: v1.10.11 (321) 175MB classic</span></span><br><span class="line"><span class="hljs-string">  1.10/beta:      v1.10.11 (321) 175MB classic</span></span><br><span class="line"><span class="hljs-string">  1.10/edge:      v1.10.11 (321) 175MB classic</span></span><br><span class="line"><span class="hljs-string">installed:        v1.13.0  (340) 204MB classic</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>下指令操作環境請使用<code>User</code>執行，使用root user執行會<code>command not found</code>。</p>
+</blockquote>
+<p>通過<code>microk8s.status</code>檢查 microk8s目前狀態：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.status</span><br><span class="line"></span><br><span class="line">microk8s is running</span><br><span class="line">addons:</span><br><span class="line">ingress: disabled</span><br><span class="line">dns: disabled</span><br><span class="line">metrics-server: disabled</span><br><span class="line">istio: disabled</span><br><span class="line">gpu: disabled</span><br><span class="line">storage: disabled</span><br><span class="line">dashboard: disabled</span><br><span class="line">registry: disabled</span><br></pre></td></tr></table></figure></p>
+<h2 id="訪問Kubernetes"><a href="#訪問Kubernetes" class="headerlink" title="訪問Kubernetes"></a>訪問Kubernetes</h2><p>為了避免與<code>kubectl</code>已安裝在原環境導致發生衝突並避免覆蓋任何現有的Kubernetes配置文件，MicroK8s添加了一個microk8s.kubectl命令，配置為專門訪問新的MicroK8s安裝。</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.kubectl get nodes</span><br><span class="line"></span><br><span class="line">NAME          STATUS   ROLES    AGE     VERSION</span><br><span class="line">k8s-testing   Ready    &lt;none&gt;   2m30s   v1.13.0</span><br></pre></td></tr></table></figure>
+<h3 id="microk8s-config"><a href="#microk8s-config" class="headerlink" title="microk8s.config"></a>microk8s.config</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.config</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">clusters:</span><br><span class="line">- cluster:</span><br><span class="line">    server: http://192.0.0.10:8080</span><br><span class="line">  name: microk8s-cluster</span><br><span class="line">contexts:</span><br><span class="line">- context:</span><br><span class="line">    cluster: microk8s-cluster</span><br><span class="line">    user: admin</span><br><span class="line">  name: microk8s</span><br><span class="line">current-context: microk8s</span><br><span class="line">kind: Config</span><br><span class="line">preferences: &#123;&#125;</span><br><span class="line">users:</span><br><span class="line">- name: admin</span><br><span class="line">  user:</span><br><span class="line">    username: admin</span><br></pre></td></tr></table></figure>
+<h3 id="microk8s-docker"><a href="#microk8s-docker" class="headerlink" title="microk8s.docker"></a>microk8s.docker</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.docker -v</span><br><span class="line">Docker version 17.03.2-ce, build f5ec1e2</span><br></pre></td></tr></table></figure>
+<h3 id="microk8s-start-stop"><a href="#microk8s-start-stop" class="headerlink" title="microk8s.start / stop"></a>microk8s.start / stop</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.stop</span><br><span class="line">Stopped.</span><br><span class="line">$ microk8s.start</span><br><span class="line">Started.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>若無與原生<code>kubectl</code>衝突影響，這邊可以透過<code>alias</code>指定名稱省去輸入指令時間。</p>
+</blockquote>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo snap <span class="hljs-built_in">alias</span> microk8s.kubectl kubectl</span><br><span class="line">Added:</span><br><span class="line">  - microk8s.kubectl as kubectl</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>解除alias設定</p>
+</blockquote>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ snap <span class="hljs-built_in">unalias</span> kubectl</span><br></pre></td></tr></table></figure>
+<h2 id="啟動-microk8s-enable"><a href="#啟動-microk8s-enable" class="headerlink" title="啟動 microk8s.enable"></a>啟動 microk8s.enable</h2><p>默認情況下，我們在Kubernetes上游獲得了一個準系統。可以使用以下microk8s.enable命令運行其他服務，例如kube-dns和儀表板：</p>
+<p>最重要的插件列表:</p>
+<ul>
+<li>dns：部署kube dns。其他人可能需要此插件，因此我們建議您始終啟用它。</li>
+<li>儀表板：部署kubernetes儀表板以及grafana和Influxdb。</li>
+<li>storage：創建默認存儲類。此存儲類使用指向主機上目錄的hostpath-provisioner。</li>
+<li>ingress：創建入口控制器。</li>
+<li>gpu：通過啟用nvidia-docker運行時和nvidia-device-plugin-daemonset，將GPU暴露給microk8s。需要已在主機系統上安裝NVIDIA驅動程序。</li>
+<li>istio：部署核心Istio服務。您可以使用該microk8s.istioctl命令來管理部署。</li>
+<li>registry：部署docker私有註冊表並在localhost：32000上公開它。存儲插件將作為此插件的一部分啟用。</li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.enable dashboard</span><br><span class="line"></span><br><span class="line">Enabling dashboard</span><br><span class="line">secret/kubernetes-dashboard-certs created</span><br><span class="line">serviceaccount/kubernetes-dashboard created</span><br><span class="line">deployment.apps/kubernetes-dashboard created</span><br><span class="line">service/kubernetes-dashboard created</span><br><span class="line">service/monitoring-grafana created</span><br><span class="line">service/monitoring-influxdb created</span><br><span class="line">service/heapster created</span><br><span class="line">deployment.extensions/monitoring-influxdb-grafana-v4 created</span><br><span class="line">serviceaccount/heapster created</span><br><span class="line">configmap/heapster-config created</span><br><span class="line">configmap/eventer-config created</span><br><span class="line">deployment.extensions/heapster-v1.5.2 created</span><br><span class="line">dashboard enabled</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.kubectl -n kube-system get pod,svc -o wide                                                                                           Sat Dec 15 14:48:45 2018</span><br><span class="line"></span><br><span class="line">NAME                                                  READY   STATUS    RESTARTS   AGE     IP          NODE          NOMINATED NODE   READINESS GATES</span><br><span class="line">pod/heapster-v1.5.2-64874f6bc6-nt72k                  4/4     Running   0          94s     10.1.1.17   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">pod/kubernetes-dashboard-654cfb4879-xm8kp             1/1     Running   0          2m26s   10.1.1.13   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">pod/monitoring-influxdb-grafana-v4-6679c46745-4kv5s   2/2     Running   0          2m25s   10.1.1.14   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">NAME                           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE     SELECTOR</span><br><span class="line">service/heapster               ClusterIP   10.152.183.62    &lt;none&gt;        80/TCP              2m25s   k8s-app=heapster</span><br><span class="line">service/kubernetes-dashboard   ClusterIP   10.152.183.54    &lt;none&gt;        443/TCP             2m26s   k8s-app=kubernetes-dashboard</span><br><span class="line">service/monitoring-grafana     ClusterIP   10.152.183.188   &lt;none&gt;        80/TCP              2m26s   k8s-app=influxGrafana</span><br><span class="line">service/monitoring-influxdb    ClusterIP   10.152.183.117   &lt;none&gt;        8083/TCP,8086/TCP   2m25s   k8s-app=influxGrafana</span><br></pre></td></tr></table></figure>
+<p>可以使用<code>disable</code>命令隨時停用這些插件</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.disable dashboard dns</span><br></pre></td></tr></table></figure>
+<p>可隨時透過<code>microk8s.status</code>你可以看到當前啟用與可用插件列表。</p>
+<p>k8s barebone:</p>
+<ul>
+<li>api-server</li>
+<li>controller-manager</li>
+<li>scheduler</li>
+<li>kubelet</li>
+<li>cni</li>
+<li>kube-proxy</li>
+</ul>
+<p>除了 Dashboard 和 private registry，還可以選擇<code>GPU</code>和<code>Istio</code>服務：</p>
+<ul>
+<li>DNS：部署kube dns。</li>
+<li>Dasnboard：部署kubernetes Dashboard 以及 grafana 和 Influxdb。</li>
+<li>storage：創建默認存儲區。此存儲使區指向主機上目錄的hostpath-provisioner。</li>
+<li>ingress</li>
+<li>gpu：通過啟用<code>nvidia-docker</code>運行時和<code>nvidia-device-plugin-daemonset</code>，將GPU掛給microk8s。需要已在主機系統上安裝<code>NVIDIA驅動程序</code>。</li>
+<li>istio：部署核心Istio服務。您可以使用該microk8s.istioctl命令來管理部署。</li>
+<li>registry</li>
+</ul>
+<h3 id="啟用GPU-microk8s-enable-gpu"><a href="#啟用GPU-microk8s-enable-gpu" class="headerlink" title="啟用GPU microk8s.enable gpu"></a>啟用GPU microk8s.enable gpu</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.enable gpu</span><br><span class="line"></span><br><span class="line">Enabling NVIDIA GPU</span><br><span class="line">NVIDIA kernel module detected</span><br><span class="line">Enabling DNS</span><br><span class="line">Applying manifest</span><br><span class="line">service/kube-dns created</span><br><span class="line">serviceaccount/kube-dns created</span><br><span class="line">configmap/kube-dns created</span><br><span class="line">deployment.extensions/kube-dns created</span><br><span class="line">Restarting kubelet</span><br><span class="line">DNS is enabled</span><br><span class="line">Applying manifest</span><br><span class="line">daemonset.extensions/nvidia-device-plugin-daemonset created</span><br><span class="line">NVIDIA is enabled</span><br></pre></td></tr></table></figure>
+<p>檢查enable後<code>nvidia-divice-plugin</code>狀態：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.status</span><br><span class="line"></span><br><span class="line">microk8s is running</span><br><span class="line">addons:</span><br><span class="line">ingress: disabled</span><br><span class="line">dns: enabled</span><br><span class="line">metrics-server: disabled</span><br><span class="line">istio: disabled</span><br><span class="line">gpu: enabled</span><br><span class="line">storage: disabled</span><br><span class="line">dashboard: enabled</span><br><span class="line">registry: disabled</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.kubectl -n kube-system get pod,svc -o wide</span><br><span class="line"></span><br><span class="line">NAME                                                  READY   STATUS    RESTARTS   AGE   IP          NODE          NOMINATED NODE   READINESS GATES</span><br><span class="line">pod/heapster-v1.5.2-64874f6bc6-wkxtm                  4/4     Running   4          14m   10.1.1.25   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">pod/kube-dns-6ccd496668-gv9pm                         3/3     Running   0          38s   10.1.1.26   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">pod/kubernetes-dashboard-654cfb4879-wbzkz             1/1     Running   1          14m   10.1.1.23   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">pod/monitoring-influxdb-grafana-v4-6679c46745-n4j74   2/2     Running   3          14m   10.1.1.24   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">pod/nvidia-device-plugin-daemonset-w828l              1/1     Running   0          32s   10.1.1.27   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">NAME                           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE   SELECTOR</span><br><span class="line">service/heapster               ClusterIP   10.152.183.11    &lt;none&gt;        80/TCP              14m   k8s-app=heapster</span><br><span class="line">service/kube-dns               ClusterIP   10.152.183.10    &lt;none&gt;        53/UDP,53/TCP       38s   k8s-app=kube-dns</span><br><span class="line">service/kubernetes-dashboard   NodePort    10.152.183.201   &lt;none&gt;        443:32560/TCP       14m   k8s-app=kubernetes-dashboard</span><br><span class="line">service/monitoring-grafana     ClusterIP   10.152.183.191   &lt;none&gt;        80/TCP              14m   k8s-app=influxGrafana</span><br><span class="line">service/monitoring-influxdb    ClusterIP   10.152.183.68    &lt;none&gt;        8083/TCP,8086/TCP   14m   k8s-app=influxGrafana</span><br></pre></td></tr></table></figure>
+<h2 id="測試GPU節點是否可以正常運作"><a href="#測試GPU節點是否可以正常運作" class="headerlink" title="測試GPU節點是否可以正常運作"></a>測試GPU節點是否可以正常運作</h2><p>這邊簡易部署<code>gpu-pod</code>測試節點divice pligin 可以正常使用</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: gpu-pod</span><br><span class="line">spec:</span><br><span class="line">  restartPolicy: Never</span><br><span class="line">  containers:</span><br><span class="line">  - image: nvidia/cuda</span><br><span class="line">    name: cuda</span><br><span class="line">    <span class="hljs-built_in">command</span>: [<span class="hljs-string">"nvidia-smi"</span>]</span><br><span class="line">    resources:</span><br><span class="line">      limits:</span><br><span class="line">        nvidia.com/gpu: 1</span><br><span class="line">EOF</span><br><span class="line">pod <span class="hljs-string">"gpu-pod"</span> created</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get pod -o wide                                                                                                                       Sat Dec 15 15:20:54 2018</span><br><span class="line"></span><br><span class="line">NAME      READY   STATUS      RESTARTS   AGE     IP          NODE          NOMINATED NODE   READINESS GATES</span><br><span class="line">gpu-pod   0/1     Completed   0          3m29s   10.1.1.28   k8s-testing   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<p>查看Pod log 狀態：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl logs gpu-pod</span><br><span class="line">Sat Dec 15 07:18:53 2018</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 410.79       Driver Version: 410.79       CUDA Version: 10.0     |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 106...  Off  | 00000000:03:00.0 Off |                  N/A |</span><br><span class="line">| 37%   25C    P8     5W / 120W |      0MiB /  6077MiB |      1%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|  No running processes found                                                 |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure></p>
+<h2 id="刪除-microk8s"><a href="#刪除-microk8s" class="headerlink" title="刪除 microk8s"></a>刪除 microk8s</h2><p>在移除microk8s之前，請先使用<code>microk8s.reset</code>停止所有正在運行的pod</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.reset</span><br><span class="line">$ snap remove microk8s</span><br></pre></td></tr></table></figure>
+<h2 id="相關參考"><a href="#相關參考" class="headerlink" title="相關參考"></a>相關參考</h2><p><a href="https://github.com/ubuntu/microk8s" target="_blank" rel="noopener">[Github/microk8s]</a><br><a href="https://blog.ubuntu.com/2018/12/10/using-gpgpus-with-kubernetes?fbclid=IwAR05YY0s2aOifQQj6prD7phDyvdgXDJM_UIriMcwzsoLorni97ovVFnJ8yI" target="_blank" rel="noopener">[Using GPGPUs with Kubernetes]</a><br><a href="https://tutorials.ubuntu.com/tutorial/install-a-local-kubernetes-with-microk8s#0" target="_blank" rel="noopener">[install a local kubernetes with microk8s]</a><br><a href="https://qiita.com/niiku-y/items/e5285af4f12b1318cf4e#snap-remove" target="_blank" rel="noopener">[MicroK8sを使ってみる]</a></p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/deploy/">deploy</a>, <a class="has-link-grey -link" href="/tags/kubeflow/">kubeflow</a>, <a class="has-link-grey -link" href="/tags/kubernetes/">kubernetes</a>, <a class="has-link-grey -link" href="/tags/microk8s/">microk8s</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/12/14/kubecon-china-first/">
+                <span class="level-item">人生首次 KubeCon 領航船長旅程</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" src="/images/yiyang.png" alt="Yi Yang">
+                    
+                    <p class="is-size-4 is-block">
+                        Yi Yang
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        掙扎中的研究生
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Taichung, Taiwan</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        9
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分類
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        3
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        標籤
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        12
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/yylin1/">
+                關注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Github" href="https://github.com/yylin1/">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Facebook" href="https://www.facebook.com/frank.yiyanglin">
+                
+                <i class="fab fa-facebook"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Twitter" href="https://twitter.com/yylin12">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Dribbble" href="http://dribbble.com">
+                
+                <i class="fab fa-dribbble"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            連結
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Hexo</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://hexo.io</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">PPOffice</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://github.com/ppoffice</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分類
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Linkpack/">
+            <span class="level-start">
+                <span class="level-item">Linkpack</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/ansible/">
+            <span class="level-start">
+                <span class="level-item">ansible</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/kubeflow/">
+            <span class="level-start">
+                <span class="level-item">kubeflow</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            標籤雲
+        </h3>
+        <a href="/tags/API/" style="font-size: 13.33px;">API</a> <a href="/tags/GPU/" style="font-size: 16.67px;">GPU</a> <a href="/tags/NVIDIA-Driver/" style="font-size: 13.33px;">NVIDIA Driver</a> <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/benchmark/" style="font-size: 10px;">benchmark</a> <a href="/tags/deploy/" style="font-size: 16.67px;">deploy</a> <a href="/tags/kubeflow/" style="font-size: 16.67px;">kubeflow</a> <a href="/tags/kubernetes/" style="font-size: 20px;">kubernetes</a> <a href="/tags/linpack/" style="font-size: 10px;">linpack</a> <a href="/tags/microk8s/" style="font-size: 13.33px;">microk8s</a> <a href="/tags/ubuntu/" style="font-size: 13.33px;">ubuntu</a> <a href="/tags/zabbix/" style="font-size: 13.33px;">zabbix</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/artificial-intelligence.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2018 Yi Yang&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-TW");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="Back to Top" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: 'Pages',
+                CATEGORIES: '分類',
+                TAGS: '標籤',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

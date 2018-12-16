@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8">
+<title>監控工具 Zabbix API 使用記錄 - Yi Yang&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+
+
+    <meta name="description" content="此篇主要記錄為，在Openstack環境下觀察第三方監控工具Zabbix使用API獲取歷史數據。">
+<meta name="keywords" content="zabbix,API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="監控工具 Zabbix API 使用記錄">
+<meta property="og:url" content="http://yylin1.github.io/2018/11/27/use-zabbix-api/index.html">
+<meta property="og:site_name" content="Yi Yang&#39;s Blog">
+<meta property="og:description" content="此篇主要記錄為，在Openstack環境下觀察第三方監控工具Zabbix使用API獲取歷史數據。">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="http://yylin1.github.io/images/zabbix_api.png">
+<meta property="og:image" content="http://yylin1.github.io/images/zabbix_architecture.png">
+<meta property="og:updated_time" content="2018-11-29T16:29:58.696Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="監控工具 Zabbix API 使用記錄">
+<meta name="twitter:description" content="此篇主要記錄為，在Openstack環境下觀察第三方監控工具Zabbix使用API獲取歷史數據。">
+<meta name="twitter:image" content="http://yylin1.github.io/images/zabbix_api.png">
+
+
+
+
+
+<link rel="icon" href="/images/artificial-intelligence.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/artificial-intelligence.png" alt="監控工具 Zabbix API 使用記錄" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/">Home</a>
+                
+                <a class="navbar-item"
+                href="/archives">Archives</a>
+                
+                <a class="navbar-item"
+                href="/categories">Categories</a>
+                
+                <a class="navbar-item"
+                href="/tags">Tags</a>
+                
+                <a class="navbar-item"
+                href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/zabbix_api.png" alt="監控工具 Zabbix API 使用記錄">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-11-26T16:36:51.000Z">2018-11-27</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    18 分鐘 read (About 2672 words)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                監控工具 Zabbix API 使用記錄
+            
+        </h1>
+        <div class="content">
+            <p><img src="/images/zabbix_api.png" alt=""><br>此篇主要記錄為，在Openstack環境下觀察第三方監控工具Zabbix使用API獲取歷史數據。<br><a id="more"></a></p>
+<h2 id="Zabbix-API-監控架構"><a href="#Zabbix-API-監控架構" class="headerlink" title="Zabbix API 監控架構"></a>Zabbix API 監控架構</h2><p><img src="/images/zabbix_architecture.png" alt=""></p>
+<h2 id="透過-Python-zabbix-api-amp-CURL"><a href="#透過-Python-zabbix-api-amp-CURL" class="headerlink" title="透過 Python zabbix api &amp; CURL"></a>透過 Python zabbix api &amp; CURL</h2><h3 id="1-user-login方法獲取-zabbix-server-的認證結果"><a href="#1-user-login方法獲取-zabbix-server-的認證結果" class="headerlink" title="1. user.login方法獲取 zabbix server 的認證結果"></a>1. user.login方法獲取 zabbix server 的認證結果</h3><h4 id="curl-命令："><a href="#curl-命令：" class="headerlink" title="curl 命令："></a>curl 命令：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -i -X POST -H <span class="hljs-string">'Content-Type:application/json'</span> -d <span class="hljs-string">'&#123;"jsonrpc":</span></span><br><span class="line"><span class="hljs-string">"2.0","method":"user.login","params":&#123;"user":"admin","password":"zabbix"&#125;,"auth":</span></span><br><span class="line"><span class="hljs-string">null,"id":0&#125;'</span> http://10.111.200.8/zabbix/api_jsonrpc.php</span><br></pre></td></tr></table></figure>
+<h4 id="curl-命令運行結果："><a href="#curl-命令運行結果：" class="headerlink" title="curl 命令運行結果："></a>curl 命令運行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,<span class="hljs-string">"result"</span>:<span class="hljs-string">"df432b915671b77035d5e26f85c8bf5c"</span>,<span class="hljs-string">"id"</span>:0&#125;</span><br></pre></td></tr></table></figure>
+<p>or </p>
+<h4 id="Python-腳本："><a href="#Python-腳本：" class="headerlink" title="Python 腳本："></a>Python 腳本：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">$ vim auth.py </span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">#/usr/bin/env python2.7</span></span><br><span class="line"><span class="hljs-comment">#coding=utf-8</span></span><br><span class="line">import json</span><br><span class="line">import urllib2</span><br><span class="line"><span class="hljs-comment"># based url and required header</span></span><br><span class="line">url = <span class="hljs-string">"http://10.111.200.8/zabbix/api_jsonrpc.php"</span></span><br><span class="line">header = &#123;<span class="hljs-string">"Content-Type"</span>:<span class="hljs-string">"application/json"</span>&#125;</span><br><span class="line"><span class="hljs-comment"># auth user and password</span></span><br><span class="line">data = json.dumps(</span><br><span class="line">&#123;</span><br><span class="line">   <span class="hljs-string">"jsonrpc"</span>: <span class="hljs-string">"2.0"</span>,</span><br><span class="line">   <span class="hljs-string">"method"</span>: <span class="hljs-string">"user.login"</span>,</span><br><span class="line">   <span class="hljs-string">"params"</span>: &#123;</span><br><span class="line">   <span class="hljs-string">"user"</span>: <span class="hljs-string">"admin"</span>,</span><br><span class="line">   <span class="hljs-string">"password"</span>: <span class="hljs-string">"zabbix"</span></span><br><span class="line">&#125;,</span><br><span class="line"><span class="hljs-string">"id"</span>: 0</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment"># create request object</span></span><br><span class="line">request = urllib2.Request(url,data)</span><br><span class="line"><span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> header:</span><br><span class="line">   request.add_header(key,header[key])</span><br><span class="line"><span class="hljs-comment"># auth and get authid</span></span><br><span class="line">try:</span><br><span class="line">   result = urllib2.urlopen(request)</span><br><span class="line">except URLError as e:</span><br><span class="line">   <span class="hljs-built_in">print</span> <span class="hljs-string">"Auth Failed, Please Check Your Name AndPassword:"</span>,e.code</span><br><span class="line"><span class="hljs-keyword">else</span>:</span><br><span class="line">   response = json.loads(result.read())</span><br><span class="line">   result.close()</span><br><span class="line"><span class="hljs-built_in">print</span><span class="hljs-string">"Auth Successful. The Auth ID Is:"</span>,response[<span class="hljs-string">'result'</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="Python-腳本運行結果："><a href="#Python-腳本運行結果：" class="headerlink" title="Python 腳本運行結果："></a>Python 腳本運行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python auth.py</span><br><span class="line">Auth Successful. The Auth ID Is: df432b915671b77035d5e26f85c8bf5c</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="2-hostgroup-get方法獲取所有主機組-ID"><a href="#2-hostgroup-get方法獲取所有主機組-ID" class="headerlink" title="2. hostgroup.get方法獲取所有主機組 ID"></a>2. hostgroup.get方法獲取所有主機組 ID</h3><h4 id="curl-命令：-1"><a href="#curl-命令：-1" class="headerlink" title="curl 命令："></a>curl 命令：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -i -X POST -H <span class="hljs-string">'Content-Type:application/json'</span> -d <span class="hljs-string">'&#123;"jsonrpc": "2.0","method":"hostgroup.get","params":&#123;"output":["groupid","name"]&#125;,"auth":"1d152c36140c245665ec8dc717675fb1","id": 0&#125;'</span> http://10.111.200.8/zabbix/api_jsonrpc.php</span><br></pre></td></tr></table></figure>
+<h4 id="curl-執行結果："><a href="#curl-執行結果：" class="headerlink" title="curl 執行結果："></a>curl 執行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,<span class="hljs-string">"result"</span>:[&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"7"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Ceph Cluster"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"6"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Ceph MONs"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"10"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Ceph OSDs"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"11"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Computes"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"9"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Controllers"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"5"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Discovered hosts"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"2"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Linux servers"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"12"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Load Balancers"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"8"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"ManagedByPuppet"</span>&#125;,&#123;<span class="hljs-string">"groupid"</span>:<span class="hljs-string">"1"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"Templates"</span>&#125;],<span class="hljs-string">"id"</span>:0&#125;</span><br></pre></td></tr></table></figure>
+<p>or</p>
+<h4 id="python-腳本："><a href="#python-腳本：" class="headerlink" title="python 腳本："></a>python 腳本：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">$ vim get_hostgroup_list.py</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">#!/usr/bin/env python2.7</span></span><br><span class="line"><span class="hljs-comment">#coding=utf-8</span></span><br><span class="line">import json</span><br><span class="line">import urllib2</span><br><span class="line"><span class="hljs-comment"># based url and required header</span></span><br><span class="line">url = <span class="hljs-string">"http://10.111.200.8/zabbix/api_jsonrpc.php"</span></span><br><span class="line">header = &#123;<span class="hljs-string">"Content-Type"</span>:<span class="hljs-string">"application/json"</span>&#125;</span><br><span class="line"><span class="hljs-comment"># request json</span></span><br><span class="line">data = json.dumps(</span><br><span class="line">&#123;</span><br><span class="line">   <span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,</span><br><span class="line">   <span class="hljs-string">"method"</span>:<span class="hljs-string">"hostgroup.get"</span>,</span><br><span class="line">   <span class="hljs-string">"params"</span>:&#123;</span><br><span class="line">       <span class="hljs-string">"output"</span>:[<span class="hljs-string">"groupid"</span>,<span class="hljs-string">"name"</span>],</span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="hljs-string">"auth"</span>:<span class="hljs-string">"df432b915671b77035d5e26f85c8bf5c"</span>, <span class="hljs-comment"># theauth id is what auth script returns, remeber it is string</span></span><br><span class="line">   <span class="hljs-string">"id"</span>:1,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment"># create request object</span></span><br><span class="line">request = urllib2.Request(url,data)</span><br><span class="line"><span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> header:</span><br><span class="line">   request.add_header(key,header[key])</span><br><span class="line"><span class="hljs-comment"># get host list</span></span><br><span class="line">try:</span><br><span class="line">   result = urllib2.urlopen(request)</span><br><span class="line">except URLError as e:</span><br><span class="line">   <span class="hljs-keyword">if</span> hasattr(e, <span class="hljs-string">'reason'</span>):</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'We failed to reach a server.'</span></span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'Reason: '</span>, e.reason</span><br><span class="line">   <span class="hljs-keyword">elif</span> hasattr(e, <span class="hljs-string">'code'</span>):</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'The server could not fulfill the request.'</span></span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'Error code: '</span>, e.code</span><br><span class="line"><span class="hljs-keyword">else</span>:</span><br><span class="line">   response = json.loads(result.read())</span><br><span class="line">   result.close()</span><br><span class="line">   <span class="hljs-built_in">print</span> <span class="hljs-string">"Number Of Hosts: "</span>, len(response[<span class="hljs-string">'result'</span>])</span><br><span class="line">   <span class="hljs-comment">#print response</span></span><br><span class="line">   <span class="hljs-keyword">for</span> group <span class="hljs-keyword">in</span> response[<span class="hljs-string">'result'</span>]:</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">"Group ID:"</span>,group[<span class="hljs-string">'groupid'</span>],<span class="hljs-string">"\tGroupName:"</span>,group[<span class="hljs-string">'name'</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="python-腳本執行結果："><a href="#python-腳本執行結果：" class="headerlink" title="python 腳本執行結果："></a>python 腳本執行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ python get_hostgroup_list.py </span><br><span class="line">Number Of Hosts:  10</span><br><span class="line">Group ID: 7 	GroupName: Ceph Cluster</span><br><span class="line">Group ID: 6 	GroupName: Ceph MONs</span><br><span class="line">Group ID: 10 	GroupName: Ceph OSDs</span><br><span class="line">Group ID: 11 	GroupName: Computes</span><br><span class="line">Group ID: 9 	GroupName: Controllers</span><br><span class="line">Group ID: 5 	GroupName: Discovered hosts</span><br><span class="line">Group ID: 2 	GroupName: Linux servers</span><br><span class="line">Group ID: 12 	GroupName: Load Balancers</span><br><span class="line">Group ID: 8 	GroupName: ManagedByPuppet</span><br><span class="line">Group ID: 1 	GroupName: Templates</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-host-get方法獲取單個主機組下所有的主機-ID"><a href="#3-host-get方法獲取單個主機組下所有的主機-ID" class="headerlink" title="3. host.get方法獲取單個主機組下所有的主機 ID"></a>3. host.get方法獲取單個主機組下所有的主機 ID</h3><h4 id="curl-命令：-2"><a href="#curl-命令：-2" class="headerlink" title="curl 命令："></a>curl 命令：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -i -X POST -H<span class="hljs-string">'Content-Type: application/json'</span> -d <span class="hljs-string">'&#123;"jsonrpc":"2.0","method":"host.get","params":&#123;"output":["hostid","name"],"groupids":"11"&#125;,"auth":"1d152c36140c245665ec8dc717675fb1","id": 0&#125;'</span> http://10.111.200.8/zabbix/api_jsonrpc.php</span><br></pre></td></tr></table></figure>
+<h4 id="curl-命令執行結果："><a href="#curl-命令執行結果：" class="headerlink" title="curl 命令執行結果："></a>curl 命令執行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,<span class="hljs-string">"result"</span>:[</span><br><span class="line">&#123;<span class="hljs-string">"hostid"</span>:<span class="hljs-string">"54"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"node-1.domain.tld"</span>&#125;,</span><br><span class="line">&#123;<span class="hljs-string">"hostid"</span>:<span class="hljs-string">"55"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"node-3.domain.tld"</span>&#125;,</span><br><span class="line">&#123;<span class="hljs-string">"hostid"</span>:<span class="hljs-string">"56"</span>,<span class="hljs-string">"name"</span>:<span class="hljs-string">"node-2.domain.tld"</span>&#125;],<span class="hljs-string">"id"</span>:0&#125;</span><br></pre></td></tr></table></figure>
+<p>or </p>
+<h4 id="python-腳本：-1"><a href="#python-腳本：-1" class="headerlink" title="python 腳本："></a>python 腳本：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">#!/usr/bin/env python2.7</span></span><br><span class="line"><span class="hljs-comment">#coding=utf-8</span></span><br><span class="line">import json</span><br><span class="line">import urllib2</span><br><span class="line"><span class="hljs-comment"># based url and required header</span></span><br><span class="line">url = <span class="hljs-string">"http://10.111.200.8/zabbix/api_jsonrpc.php"</span></span><br><span class="line">header = &#123;<span class="hljs-string">"Content-Type"</span>:<span class="hljs-string">"application/json"</span>&#125;</span><br><span class="line"><span class="hljs-comment"># request json</span></span><br><span class="line">data = json.dumps(</span><br><span class="line">&#123;</span><br><span class="line">   <span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,</span><br><span class="line">   <span class="hljs-string">"method"</span>:<span class="hljs-string">"host.get"</span>,</span><br><span class="line">   <span class="hljs-string">"params"</span>:&#123;</span><br><span class="line">       <span class="hljs-string">"output"</span>:[<span class="hljs-string">"hostid"</span>,<span class="hljs-string">"name"</span>],</span><br><span class="line">       <span class="hljs-string">"groupids"</span>:<span class="hljs-string">"11"</span>,</span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="hljs-string">"auth"</span>:<span class="hljs-string">"df432b915671b77035d5e26f85c8bf5c"</span>, <span class="hljs-comment"># theauth id is what auth script returns, remeber it is string</span></span><br><span class="line">   <span class="hljs-string">"id"</span>:1,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment"># create request object</span></span><br><span class="line">request = urllib2.Request(url,data)</span><br><span class="line"><span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> header:</span><br><span class="line">   request.add_header(key,header[key])</span><br><span class="line"><span class="hljs-comment"># get host list</span></span><br><span class="line">try:</span><br><span class="line">   result = urllib2.urlopen(request)</span><br><span class="line">except URLError as e:</span><br><span class="line">   <span class="hljs-keyword">if</span> hasattr(e, <span class="hljs-string">'reason'</span>):</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'We failed to reach a server.'</span></span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'Reason: '</span>, e.reason</span><br><span class="line">   <span class="hljs-keyword">elif</span> hasattr(e, <span class="hljs-string">'code'</span>):</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'The server could not fulfill the request.'</span></span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'Error code: '</span>, e.code</span><br><span class="line"><span class="hljs-keyword">else</span>:</span><br><span class="line">   response = json.loads(result.read())</span><br><span class="line">   result.close()</span><br><span class="line">   <span class="hljs-built_in">print</span> <span class="hljs-string">"Number Of Hosts: "</span>, len(response[<span class="hljs-string">'result'</span>])</span><br><span class="line">   <span class="hljs-keyword">for</span> host <span class="hljs-keyword">in</span> response[<span class="hljs-string">'result'</span>]:</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">"Host ID:"</span>,host[<span class="hljs-string">'hostid'</span>],<span class="hljs-string">"HostName:"</span>,host[<span class="hljs-string">'name'</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="python-腳本執行結果：-1"><a href="#python-腳本執行結果：-1" class="headerlink" title="python 腳本執行結果："></a>python 腳本執行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ python get_group_one.py</span><br><span class="line">Number Of Hosts:  3</span><br><span class="line">Host ID: 54 HostName: node-1.domain.tld</span><br><span class="line">Host ID: 55 HostName: node-3.domain.tld</span><br><span class="line">Host ID: 56 HostName: node-2.domain.tld</span><br></pre></td></tr></table></figure>
+<h3 id="4-itemsid-get方法獲取單個主機下所有的監控項-ID"><a href="#4-itemsid-get方法獲取單個主機下所有的監控項-ID" class="headerlink" title="4. itemsid.get方法獲取單個主機下所有的監控項 ID"></a>4. itemsid.get方法獲取單個主機下所有的監控項 ID</h3><p>根據標題 3 中獲取到的所有主機 id 與名稱，找到你想要獲取的主機 id ，獲取它下面的所有 items</p>
+<h4 id="curl-命令：-3"><a href="#curl-命令：-3" class="headerlink" title="curl 命令："></a>curl 命令：</h4><p>這邊選擇觀察 <code>Host ID: 54 HostName: node-1.domain.tld</code><br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -i -X POST -H <span class="hljs-string">'Content-Type:application/json'</span> -d <span class="hljs-string">'&#123;"jsonrpc":"2.0","method":"item.get","params":&#123;"output":"itemids","hostids":"54"&#125;,"auth":"df432b915671b77035d5e26f85c8bf5c","id": 0&#125;'</span> http://10.111.200.8/zabbix/api_jsonrpc.php</span><br></pre></td></tr></table></figure></p>
+<h4 id="curl-命令執行結果：-1"><a href="#curl-命令執行結果：-1" class="headerlink" title="curl 命令執行結果："></a>curl 命令執行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,<span class="hljs-string">"result"</span>:[&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"572"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"573"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"574"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"416"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"417"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"418"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"419"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"420"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"421"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"422"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"423"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"458"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"459"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"460"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3527"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3541"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3555"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3528"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3542"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3556"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3519"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3533"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3547"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3517"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3531"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3545"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3522"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3536"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3550"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3518"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3532"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3546"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3516"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3530"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3544"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3524"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3538"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3552"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3515"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3529"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3543"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3520"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3534"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3548"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3523"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3537"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3551"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3525"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3539"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3553"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3521"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3535"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3549"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3526"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3540"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3554"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4982"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4986"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4990"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4154"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4159"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4164"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4741"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4745"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4749"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4888"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4892"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4896"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4649"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4653"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4657"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4863"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4867"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4871"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4290"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4294"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4298"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4481"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4485"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4489"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4433"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4437"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4441"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4933"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4937"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4941"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4763"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4767"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4771"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4981"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4985"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4989"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4152"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4157"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4162"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4740"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4744"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4748"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4886"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4890"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4894"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4651"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4655"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4659"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4861"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4865"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4869"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4292"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4296"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4300"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4484"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4488"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4492"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4436"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4440"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4444"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4936"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4940"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4944"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4766"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4770"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4774"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4984"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4988"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4992"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4151"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4156"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4161"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4739"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4743"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4747"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4887"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4891"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4895"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4652"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4656"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4660"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4862"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4866"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4870"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4289"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4293"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4297"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4483"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4487"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4491"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4435"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4439"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4443"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4935"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4939"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4943"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4765"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4769"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4773"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4983"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4987"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4991"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4155"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4160"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4165"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4742"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4746"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4750"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4885"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4889"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4893"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4650"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4654"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4658"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4864"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4868"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4872"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4291"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4295"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4299"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4482"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4486"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4490"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4434"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4438"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4442"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4934"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4938"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4942"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4764"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4768"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4772"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4153"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4158"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4163"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3569"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3583"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3597"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3570"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3584"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3598"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3561"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3575"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3589"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3559"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3573"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3587"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3564"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3578"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3592"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3560"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3574"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3588"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3558"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3572"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3586"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3566"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3580"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3594"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3557"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3571"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3585"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3562"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3576"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3590"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3565"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3579"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3593"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3567"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3581"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3595"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3563"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3577"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3591"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3568"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3582"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3596"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4994"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4998"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"5002"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4169"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4174"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4179"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4753"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4757"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4761"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4900"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4904"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4908"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4661"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4665"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4669"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4875"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4879"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4883"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4302"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4306"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4310"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4493"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4497"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4501"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4445"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4449"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4453"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4945"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4949"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4953"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4775"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4779"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4783"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4993"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4997"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"5001"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4167"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4172"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4177"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4752"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4756"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4760"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4898"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4902"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4906"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4663"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4667"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4671"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4873"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4877"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4881"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4304"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4308"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4312"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4496"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4500"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4504"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4448"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4452"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4456"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4948"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4952"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4956"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4778"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4782"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4786"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4996"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"5000"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"5004"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4166"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4171"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4176"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4751"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4755"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4759"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4899"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4903"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4907"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4664"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4668"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4672"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4874"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4878"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4882"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4301"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4305"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4309"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4495"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4499"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4503"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4447"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4451"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4455"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4947"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4951"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4955"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4777"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4781"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4785"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4995"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4999"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"5003"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4170"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4175"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4180"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4754"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4758"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4762"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4897"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4901"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4905"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4662"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4666"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4670"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4876"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4880"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4884"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4303"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4307"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4311"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4494"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4498"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4502"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4446"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4450"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4454"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4946"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4950"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4954"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4776"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4780"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4784"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4168"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4173"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"4178"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"461"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"357"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"509"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"462"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"565"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"567"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"356"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"412"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"498"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"499"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"429"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"463"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"464"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"465"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"466"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"467"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"468"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"469"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"470"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"471"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"472"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"473"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"474"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"475"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"476"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"477"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"478"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"479"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"480"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"481"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"482"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"483"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"484"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"485"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"486"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"487"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"488"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"489"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3599"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3600"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3601"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3602"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"490"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3603"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3604"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3606"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3605"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3607"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3611"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3615"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3619"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3608"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3612"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3616"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3620"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3610"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3614"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3618"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3622"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3609"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3613"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3617"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"3621"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"491"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"5038"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"492"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"5031"</span>&#125;],<span class="hljs-string">"id"</span>:0&#125;</span><br></pre></td></tr></table></figure>
+<p>or </p>
+<h4 id="python-腳本：-2"><a href="#python-腳本：-2" class="headerlink" title="python 腳本："></a>python 腳本：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">$ vim get_items.py</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">#!/usr/bin/env python2.7</span></span><br><span class="line"><span class="hljs-comment">#coding=utf-8</span></span><br><span class="line">import json</span><br><span class="line">import urllib2</span><br><span class="line"><span class="hljs-comment"># based url and required header</span></span><br><span class="line">url = <span class="hljs-string">"http://10.111.200.8/zabbix/api_jsonrpc.php"</span></span><br><span class="line">header = &#123;<span class="hljs-string">"Content-Type"</span>:<span class="hljs-string">"application/json"</span>&#125;</span><br><span class="line"><span class="hljs-comment"># request json</span></span><br><span class="line">data = json.dumps(</span><br><span class="line">&#123;</span><br><span class="line">   <span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,</span><br><span class="line">   <span class="hljs-string">"method"</span>:<span class="hljs-string">"item.get"</span>,</span><br><span class="line">   <span class="hljs-string">"params"</span>:&#123;</span><br><span class="line">       <span class="hljs-string">"output"</span>:[<span class="hljs-string">"itemids"</span>,<span class="hljs-string">"key_"</span>],</span><br><span class="line">       <span class="hljs-string">"hostids"</span>:<span class="hljs-string">"55"</span>,</span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="hljs-string">"auth"</span>:<span class="hljs-string">"df432b915671b77035d5e26f85c8bf5c"</span>, <span class="hljs-comment"># theauth id is what auth script returns, remeber it is string</span></span><br><span class="line">   <span class="hljs-string">"id"</span>:1,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment"># create request object</span></span><br><span class="line">request = urllib2.Request(url,data)</span><br><span class="line"><span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> header:</span><br><span class="line">   request.add_header(key,header[key])</span><br><span class="line"><span class="hljs-comment"># get host list</span></span><br><span class="line">try:</span><br><span class="line">   result = urllib2.urlopen(request)</span><br><span class="line">except URLError as e:</span><br><span class="line">   <span class="hljs-keyword">if</span> hasattr(e, <span class="hljs-string">'reason'</span>):</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'We failed to reach a server.'</span></span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'Reason: '</span>, e.reason</span><br><span class="line">   <span class="hljs-keyword">elif</span> hasattr(e, <span class="hljs-string">'code'</span>):</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'The server could not fulfill the request.'</span></span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'Error code: '</span>, e.code</span><br><span class="line"><span class="hljs-keyword">else</span>:</span><br><span class="line">   response = json.loads(result.read())</span><br><span class="line">   result.close()</span><br><span class="line">   <span class="hljs-built_in">print</span> <span class="hljs-string">"Number Of Hosts: "</span>, len(response[<span class="hljs-string">'result'</span>])</span><br><span class="line">   <span class="hljs-keyword">for</span> host <span class="hljs-keyword">in</span> response[<span class="hljs-string">'result'</span>]:</span><br><span class="line">       <span class="hljs-built_in">print</span> host</span><br><span class="line">       <span class="hljs-comment">#print "Host ID:",host['hostid'],"HostName:",host['name']</span></span><br></pre></td></tr></table></figure>
+<h4 id="python-腳本運行結果："><a href="#python-腳本運行結果：" class="headerlink" title="python 腳本運行結果："></a>python 腳本運行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ python get_items.py </span><br><span class="line">Number Of Hosts:  435</span><br><span class="line">… …</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'469'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.intr'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'470'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.load[percpu,avg15]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'471'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.load[percpu,avg1]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'472'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.load[percpu,avg5]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'473'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.switches'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'474'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.util[,idle]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'475'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.util[,interrupt]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'476'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.util[,iowait]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'477'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.util[,nice]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'478'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.util[,softirq]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'479'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.util[,steal]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.util[,system]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'481'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'system.cpu.util[,user]'</span>&#125;</span><br><span class="line">… …</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'491'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'vm.memory.size[available]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'5038'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'vm.memory.size[cached]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'492'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'vm.memory.size[total]'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'5031'</span>, u<span class="hljs-string">'key_'</span>: u<span class="hljs-string">'vm.memory.size[used]'</span>&#125;</span><br><span class="line">… …</span><br></pre></td></tr></table></figure>
+<h3 id="5-history-get方法獲取單個監控項的歷史數據"><a href="#5-history-get方法獲取單個監控項的歷史數據" class="headerlink" title="5. history.get方法獲取單個監控項的歷史數據"></a>5. history.get方法獲取單個監控項的歷史數據</h3><h4 id="curl-命令：-4"><a href="#curl-命令：-4" class="headerlink" title="curl 命令："></a>curl 命令：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -i -X POST -H <span class="hljs-string">'Content-Type:application/json'</span> -d <span class="hljs-string">'&#123;"jsonrpc":"2.0","method":"history.get","params":&#123;"history":3,"itemids":"480","output":"extend","limit":10&#125;,"auth":"df432b915671b77035d5e26f85c8bf5c","id": 0&#125;'</span> http://10.111.200.8/zabbix/api_jsonrpc.php</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>有些值結果會顯示為0, 暫時還要查看<code>history.get</code>獲得歷史數據的參數設定</p>
+</blockquote>
+<h4 id="curl-命令運行結果：-1"><a href="#curl-命令運行結果：-1" class="headerlink" title="curl 命令運行結果："></a>curl 命令運行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,<span class="hljs-string">"result"</span>:[&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744134"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"4840"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"375754276"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744314"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"5408"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"839852515"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744374"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"7040"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"964558609"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744554"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"4072"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"943177771"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744614"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"8696"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"995289716"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744674"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"6144"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"992462863"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744734"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"6472"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"152634327"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744794"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"4312"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"479599424"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744854"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"4456"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"263314898"</span>&#125;,&#123;<span class="hljs-string">"itemid"</span>:<span class="hljs-string">"25154"</span>,<span class="hljs-string">"clock"</span>:<span class="hljs-string">"1410744914"</span>,<span class="hljs-string">"value"</span>:<span class="hljs-string">"8656"</span>,<span class="hljs-string">"ns"</span>:<span class="hljs-string">"840460009"</span>&#125;],<span class="hljs-string">"id"</span>:0&#125;</span><br></pre></td></tr></table></figure>
+<p>or </p>
+<h4 id="python-腳本：-3"><a href="#python-腳本：-3" class="headerlink" title="python 腳本："></a>python 腳本：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">$ get_items_history.py</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">#!/usr/bin/env python2.7</span></span><br><span class="line"><span class="hljs-comment">#coding=utf-8</span></span><br><span class="line">import json</span><br><span class="line">import urllib2</span><br><span class="line"><span class="hljs-comment"># based url and required header</span></span><br><span class="line">url = <span class="hljs-string">"http://10.111.200.8/zabbix/api_jsonrpc.php"</span></span><br><span class="line">header = &#123;<span class="hljs-string">"Content-Type"</span>:<span class="hljs-string">"application/json"</span>&#125;</span><br><span class="line"><span class="hljs-comment"># request json</span></span><br><span class="line"></span><br><span class="line">itemids_id = input(<span class="hljs-string">'Pluse input itemids number: '</span>)</span><br><span class="line"><span class="hljs-built_in">print</span>(<span class="hljs-string">'id '</span>, itemids_id)</span><br><span class="line"></span><br><span class="line">data = json.dumps(</span><br><span class="line">&#123;</span><br><span class="line">   <span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,</span><br><span class="line">   <span class="hljs-string">"method"</span>:<span class="hljs-string">"history.get"</span>,</span><br><span class="line">   <span class="hljs-string">"params"</span>:&#123;</span><br><span class="line">       <span class="hljs-string">"output"</span>:<span class="hljs-string">"extend"</span>,</span><br><span class="line">       <span class="hljs-string">"history"</span>:0,</span><br><span class="line">       <span class="hljs-string">"itemids"</span>: itemids_id,</span><br><span class="line">       <span class="hljs-string">"sortfield"</span> : <span class="hljs-string">"clock"</span>,</span><br><span class="line">       <span class="hljs-string">"limit"</span>: 10</span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="hljs-string">"auth"</span>:<span class="hljs-string">"df432b915671b77035d5e26f85c8bf5c"</span>, <span class="hljs-comment"># theauth id is what auth script returns, remeber it is string</span></span><br><span class="line">   <span class="hljs-string">"id"</span>:1,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment"># create request object</span></span><br><span class="line">request = urllib2.Request(url,data)</span><br><span class="line"><span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> header:</span><br><span class="line">   request.add_header(key,header[key])</span><br><span class="line"><span class="hljs-comment"># get host list</span></span><br><span class="line">try:</span><br><span class="line">   result = urllib2.urlopen(request)</span><br><span class="line">except URLError as e:</span><br><span class="line">   <span class="hljs-keyword">if</span> hasattr(e, <span class="hljs-string">'reason'</span>):</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'We failed to reach a server.'</span></span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'Reason: '</span>, e.reason</span><br><span class="line">   <span class="hljs-keyword">elif</span> hasattr(e, <span class="hljs-string">'code'</span>):</span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'The server could not fulfill the request.'</span></span><br><span class="line">       <span class="hljs-built_in">print</span> <span class="hljs-string">'Error code: '</span>, e.code</span><br><span class="line"><span class="hljs-keyword">else</span>:</span><br><span class="line">   response = json.loads(result.read())</span><br><span class="line">   result.close()</span><br><span class="line">   <span class="hljs-built_in">print</span> <span class="hljs-string">"Number Of Hosts: "</span>, len(response[<span class="hljs-string">'result'</span>])</span><br><span class="line">   <span class="hljs-keyword">for</span> host <span class="hljs-keyword">in</span> response[<span class="hljs-string">'result'</span>]:</span><br><span class="line">       <span class="hljs-built_in">print</span> host</span><br><span class="line">       <span class="hljs-comment">#print "Host ID:",host['hostid'],"HostName:",host['name']</span></span><br></pre></td></tr></table></figure>
+<h4 id="python-腳本執行結果：-2"><a href="#python-腳本執行結果：-2" class="headerlink" title="python 腳本執行結果："></a>python 腳本執行結果：</h4><p>這邊觀察<code>{u&#39;itemid&#39;: u&#39;480&#39;, u&#39;key_&#39;: u&#39;system.cpu.util[,system]&#39;}</code>狀態</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ python get_items_history.py</span><br><span class="line">Pluse input itemids number: 480</span><br><span class="line">(<span class="hljs-string">'id '</span>, 480)</span><br><span class="line">Number Of Hosts:  10</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'366027868'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'2.3541'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254040'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'409639017'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'2.3193'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254100'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'476390125'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'2.2133'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254160'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'609209011'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'2.1803'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254220'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'8006955'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'3.6697'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254281'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'676841696'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'5.0511'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254340'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'652330397'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'3.6032'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254400'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'567671572'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'3.1112'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254460'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'553946907'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'2.5180'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254520'</span>&#125;</span><br><span class="line">&#123;u<span class="hljs-string">'itemid'</span>: u<span class="hljs-string">'480'</span>, u<span class="hljs-string">'ns'</span>: u<span class="hljs-string">'496168653'</span>, u<span class="hljs-string">'value'</span>: u<span class="hljs-string">'2.3969'</span>, u<span class="hljs-string">'clock'</span>: u<span class="hljs-string">'1542254580'</span>&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="獲取下2018-11-21到2018-11-21期間的數據"><a href="#獲取下2018-11-21到2018-11-21期間的數據" class="headerlink" title="獲取下2018-11-21到2018-11-21期間的數據"></a>獲取下2018-11-21到2018-11-21期間的數據</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl -i -X POST -H <span class="hljs-string">'Content-Type: application/json'</span> -d <span class="hljs-string">'&#123;"jsonrpc":"2.0","method":"history.get","params":&#123;"history":0,"itemids":["480"],"time_from":"1542844800.0","time_till":"1542758400.0" ,"output":"extend"&#125;,"auth": </span></span><br><span class="line"><span class="hljs-string">"df432b915671b77035d5e26f85c8bf5c","id": 0&#125;'</span> http://10.111.200.8/zabbix/api_jsonrpc.php</span><br></pre></td></tr></table></figure>
+<h3 id="備註參考1-獲取對應監控項一段時間內的歷史數據並格式化輸出"><a href="#備註參考1-獲取對應監控項一段時間內的歷史數據並格式化輸出" class="headerlink" title="#備註參考1:獲取對應監控項一段時間內的歷史數據並格式化輸出"></a>#備註參考1:獲取對應監控項一段時間內的歷史數據並格式化輸出</h3><ul>
+<li><a href="https://www.yangcs.net/posts/zabbix-api-introduce-and-use/" target="_blank" rel="noopener">https://www.yangcs.net/posts/zabbix-api-introduce-and-use/</a></li>
+</ul>
+<h4 id="python-腳本"><a href="#python-腳本" class="headerlink" title="python 腳本:"></a>python 腳本:</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">$ vim history_data.py</span><br><span class="line"><span class="hljs-comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="hljs-comment"># encoding: utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-string">""</span><span class="hljs-string">"</span></span><br><span class="line"><span class="hljs-string">Retrieves history data for a given numeric (either int or float) item_id</span></span><br><span class="line"><span class="hljs-string">"</span><span class="hljs-string">""</span></span><br><span class="line"></span><br><span class="line">from zabbix_api import ZabbixAPI</span><br><span class="line">import pprint</span><br><span class="line">from datetime import datetime</span><br><span class="line">import time</span><br><span class="line">server = <span class="hljs-string">"http://172.16.241.130/zabbix"</span></span><br><span class="line">username = <span class="hljs-string">"Admin"</span></span><br><span class="line">password = <span class="hljs-string">"zabbix"</span></span><br><span class="line">zapi = ZabbixAPI(server=server)</span><br><span class="line">zapi.login(username, password)</span><br><span class="line">item_id = <span class="hljs-string">"23296"</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Create a time range</span></span><br><span class="line">time_till = time.mktime(datetime.now().timetuple())</span><br><span class="line">time_from = time_till - 60 * 60 * 24 * 10  <span class="hljs-comment"># &lt;span id="inline-toc"&gt;1.&lt;/span&gt; days</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Query item's history (integer) data</span></span><br><span class="line"><span class="hljs-built_in">history</span> = zapi.history.get(&#123;<span class="hljs-string">"itemids"</span>: item_id, <span class="hljs-string">"time_from"</span>: time_from, <span class="hljs-string">"time_till"</span>: time_till, <span class="hljs-string">"output"</span>: <span class="hljs-string">"extend"</span>, <span class="hljs-string">"limit"</span>: <span class="hljs-string">"10"</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># If nothing was found, try getting it from history (float) data</span></span><br><span class="line"><span class="hljs-keyword">if</span> not len(<span class="hljs-built_in">history</span>):</span><br><span class="line">    <span class="hljs-built_in">history</span> = zapi.history.get(&#123;<span class="hljs-string">"itemids"</span>: item_id, <span class="hljs-string">"time_from"</span>: time_from, <span class="hljs-string">"time_till"</span>: time_till, <span class="hljs-string">"output"</span>: <span class="hljs-string">"extend"</span>, <span class="hljs-string">"limit"</span>: <span class="hljs-string">"10"</span>, <span class="hljs-string">"history"</span>: 0&#125;)</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">for</span> point <span class="hljs-keyword">in</span> <span class="hljs-built_in">history</span>:</span><br><span class="line">        <span class="hljs-built_in">print</span>(<span class="hljs-string">"&#123;0&#125;: &#123;1&#125;"</span>.format(datetime.fromtimestamp(int(point[<span class="hljs-string">'clock'</span>]))</span><br><span class="line">                                .strftime(<span class="hljs-string">"%x %X"</span>), point[<span class="hljs-string">'value'</span>]))</span><br></pre></td></tr></table></figure>
+<h4 id="python-運行結果"><a href="#python-運行結果" class="headerlink" title="python 運行結果:"></a>python 運行結果:</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ python history_data.py</span><br><span class="line">12/29/16 09:40:16: 0.4900</span><br><span class="line">12/29/16 09:41:16: 0.1800</span><br><span class="line">12/29/16 09:42:16: 0.1600</span><br><span class="line">12/29/16 09:43:16: 0.2000</span><br><span class="line">12/29/16 09:44:16: 0.0700</span><br><span class="line">12/29/16 09:45:16: 0.1000</span><br><span class="line">12/29/16 09:46:16: 0.2100</span><br><span class="line">12/29/16 09:47:16: 0.0700</span><br><span class="line">12/29/16 09:48:16: 0.5100</span><br><span class="line">12/29/16 09:49:16: 0.2200</span><br></pre></td></tr></table></figure>
+<h3 id="備註參考2-時間格式化輸出"><a href="#備註參考2-時間格式化輸出" class="headerlink" title="#備註參考2:時間格式化輸出"></a>#備註參考2:時間格式化輸出</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">#!/usr/bin/python</span></span><br><span class="line"><span class="hljs-comment"># coding=utf-8</span></span><br><span class="line"></span><br><span class="line">import time</span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">while</span> True:</span><br><span class="line"></span><br><span class="line">  choose = input(<span class="hljs-string">"請選擇轉換時間格式, 輸入1 : 時間轉秒, 輸入2: 秒轉時間: "</span>)</span><br><span class="line"></span><br><span class="line">  <span class="hljs-built_in">print</span> (<span class="hljs-string">'Your input: '</span>,choose )</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">if</span> choose==1 :</span><br><span class="line">    turn_sec = raw_input (<span class="hljs-string">'請輸入轉換時間: 2017-04-13 00:00:00: '</span>)</span><br><span class="line">    <span class="hljs-built_in">print</span> (<span class="hljs-string">'input: '</span>,turn_sec)</span><br><span class="line">    a = turn_sec</span><br><span class="line">    <span class="hljs-comment">#輸出: 1492012800.0</span></span><br><span class="line">    <span class="hljs-built_in">print</span> time.mktime(time.strptime(a,<span class="hljs-string">'%Y-%m-%d %H:%M:%S'</span>))</span><br><span class="line">  <span class="hljs-keyword">elif</span> choose == 2:</span><br><span class="line">    turn_date = <span class="hljs-built_in">float</span>(raw_input(<span class="hljs-string">'請輸入轉換時間: 1492012800.0: '</span>))</span><br><span class="line">    <span class="hljs-comment">#输出： 2017-04-13 00:00:00</span></span><br><span class="line">    <span class="hljs-built_in">print</span> (<span class="hljs-string">'input: '</span>,turn_date)</span><br><span class="line">    x = time.localtime(turn_date)</span><br><span class="line">    <span class="hljs-built_in">print</span> time.strftime(<span class="hljs-string">'%Y-%m-%d %H:%M:%S'</span>,x)</span><br><span class="line">  <span class="hljs-keyword">else</span> :</span><br><span class="line">    <span class="hljs-built_in">print</span> (<span class="hljs-string">"Inpute Error"</span>)</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="引用參考資料"><a href="#引用參考資料" class="headerlink" title="引用參考資料"></a>引用參考資料</h2><ul>
+<li><a href="https://www.jianshu.com/p/f5282dfc438c" target="_blank" rel="noopener">[Zabbix API 使用]</a></li>
+<li><a href="http://blog.51cto.com/yangrong/1559123" target="_blank" rel="noopener">[python調用zabbix api接口實時展示數據]</a></li>
+<li><a href="http://blog.51cto.com/swq499809608/1552912" target="_blank" rel="noopener">[zabbix API 獲取CPU 信息]</a></li>
+<li><a href="https://www.yangcs.net/posts/zabbix-api-introduce-and-use/" target="_blank" rel="noopener">[Zabbix Api 简介和使用]</a></li>
+</ul>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/API/">API</a>, <a class="has-link-grey -link" href="/tags/zabbix/">zabbix</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2018/11/29/zabbix-api-trigger/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">透過 Zabbix API 監測Trigger狀態</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/10/23/build-hpl-gpu/">
+                <span class="level-item">如何自行編譯 HPL-GPU 來測試 Benchmarks</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" src="/images/yiyang.png" alt="Yi Yang">
+                    
+                    <p class="is-size-4 is-block">
+                        Yi Yang
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        掙扎中的研究生
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Taichung, Taiwan</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        9
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分類
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        3
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        標籤
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        12
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/yylin1/">
+                關注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Github" href="https://github.com/yylin1/">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Facebook" href="https://www.facebook.com/frank.yiyanglin">
+                
+                <i class="fab fa-facebook"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Twitter" href="https://twitter.com/yylin12">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Dribbble" href="http://dribbble.com">
+                
+                <i class="fab fa-dribbble"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            連結
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Hexo</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://hexo.io</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">PPOffice</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://github.com/ppoffice</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分類
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Linkpack/">
+            <span class="level-start">
+                <span class="level-item">Linkpack</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/ansible/">
+            <span class="level-start">
+                <span class="level-item">ansible</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/kubeflow/">
+            <span class="level-start">
+                <span class="level-item">kubeflow</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            標籤雲
+        </h3>
+        <a href="/tags/API/" style="font-size: 13.33px;">API</a> <a href="/tags/GPU/" style="font-size: 16.67px;">GPU</a> <a href="/tags/NVIDIA-Driver/" style="font-size: 13.33px;">NVIDIA Driver</a> <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/benchmark/" style="font-size: 10px;">benchmark</a> <a href="/tags/deploy/" style="font-size: 16.67px;">deploy</a> <a href="/tags/kubeflow/" style="font-size: 16.67px;">kubeflow</a> <a href="/tags/kubernetes/" style="font-size: 20px;">kubernetes</a> <a href="/tags/linpack/" style="font-size: 10px;">linpack</a> <a href="/tags/microk8s/" style="font-size: 13.33px;">microk8s</a> <a href="/tags/ubuntu/" style="font-size: 13.33px;">ubuntu</a> <a href="/tags/zabbix/" style="font-size: 13.33px;">zabbix</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/artificial-intelligence.png" alt="監控工具 Zabbix API 使用記錄" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2018 Yi Yang&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-TW");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="Back to Top" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: 'Pages',
+                CATEGORIES: '分類',
+                TAGS: '標籤',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

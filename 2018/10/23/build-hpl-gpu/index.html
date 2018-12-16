@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8">
+<title>如何自行編譯 HPL-GPU 來測試 Benchmarks - Yi Yang&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+
+
+    <meta name="description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
+<meta name="keywords" content="GPU,linpack,benchmark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何自行編譯 HPL-GPU 來測試 Benchmarks">
+<meta property="og:url" content="http://yylin1.github.io/2018/10/23/build-hpl-gpu/index.html">
+<meta property="og:site_name" content="Yi Yang&#39;s Blog">
+<meta property="og:description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="http://yylin1.github.io/images/hpl_gpu.png">
+<meta property="og:image" content="https://i.imgur.com/9KxitwB.png">
+<meta property="og:updated_time" content="2018-12-14T15:16:14.811Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何自行編譯 HPL-GPU 來測試 Benchmarks">
+<meta name="twitter:description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
+<meta name="twitter:image" content="http://yylin1.github.io/images/hpl_gpu.png">
+
+
+
+
+
+<link rel="icon" href="/images/artificial-intelligence.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/artificial-intelligence.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmarks" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/">Home</a>
+                
+                <a class="navbar-item"
+                href="/archives">Archives</a>
+                
+                <a class="navbar-item"
+                href="/categories">Categories</a>
+                
+                <a class="navbar-item"
+                href="/tags">Tags</a>
+                
+                <a class="navbar-item"
+                href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/hpl_gpu.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmarks">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-10-23T13:11:49.000Z">2018-10-23</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Linkpack/">Linkpack</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    15 分鐘 read (About 2247 words)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                如何自行編譯 HPL-GPU 來測試 Benchmarks
+            
+        </h1>
+        <div class="content">
+            <p><img src="/images/hpl_gpu.png" alt=""><br>構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「<a href="http://www.powerxing.com/hybrid-hpl/" target="_blank" rel="noopener">Hybrid HPL(GPU版HPL)安装教程</a>」與「<a href="https://qiita.com/shibacow/items/aa83cfc81ed493a4c25d" target="_blank" rel="noopener">AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる</a>」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。</p>
+<a id="more"></a>
+<h2 id="環境部署資訊"><a href="#環境部署資訊" class="headerlink" title="環境部署資訊"></a>環境部署資訊</h2><h4 id="Linpack-部署的版本資訊："><a href="#Linpack-部署的版本資訊：" class="headerlink" title="Linpack 部署的版本資訊："></a>Linpack 部署的版本資訊：</h4><ul>
+<li>Mpich: v3.2.1</li>
+<li>Openmpi: v1.10.3</li>
+<li>Intel MKL: l_mkl_2019.0.117</li>
+<li>Linpack: hpl-2.0_FERMI_v15</li>
+</ul>
+<h2 id="實驗環境"><a href="#實驗環境" class="headerlink" title="實驗環境"></a>實驗環境</h2><p>安裝作業系統採用Ubuntu 16.04 Desktop，測試環境為實體機器：</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>vCPU</th>
+<th>RAM</th>
+<th>Extra Device</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ubuntu</td>
+<td>8</td>
+<td>16G</td>
+<td>GTX 1060 6G</td>
+</tr>
+</tbody>
+</table>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><ul>
+<li>測試 Linkpack 之前，需要確保以下條件達成：<br>確認環境是否安裝以下<code>NVIDIA driver</code>、<code>CUDA</code>、<code>Intel MKL`</code>Openmpi<code>、</code>mpich2`，並設定好環境變數。</li>
+</ul>
+<h3 id="安裝-NVIDIA驅動和CUDA-tookit"><a href="#安裝-NVIDIA驅動和CUDA-tookit" class="headerlink" title="安裝 NVIDIA驅動和CUDA tookit"></a>安裝 NVIDIA驅動和CUDA tookit</h3><p>由於CUDA toolkit中，安裝時已包含了NVIDIA Driver，可一併安裝</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb</span><br><span class="line">$ sudo dpkg -i cuda-repo-ubuntu1604_9.1.85-1_amd64.deb</span><br><span class="line">$ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub</span><br><span class="line">$ sudo apt-get update &amp;&amp; sudo apt-get install -y cuda</span><br></pre></td></tr></table></figure>
+<p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">$  lsmod | grep nvidia</span><br><span class="line">nvidia_uvm            790528  0</span><br><span class="line">nvidia_drm             40960  2</span><br><span class="line">nvidia_modeset       1089536  3 nvidia_drm</span><br><span class="line">drm_kms_helper        167936  1 nvidia_drm</span><br><span class="line">drm                   360448  5 nvidia_drm,drm_kms_helper</span><br><span class="line">nvidia              14032896  96 nvidia_modeset,nvidia_uvm</span><br><span class="line">ipmi_msghandler        45056  2 nvidia,ipmi_devintf</span><br><span class="line"></span><br><span class="line">$ cat /usr/<span class="hljs-built_in">local</span>/cuda/version.txt</span><br><span class="line">CUDA Version 9.2.148</span><br><span class="line"></span><br><span class="line">$ nvidia-smi</span><br><span class="line">Tue Oct  2 18:15:47 2018</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 396.44                 Driver Version: 396.44                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 106...  Off  | 00000000:03:00.0  On |                  N/A |</span><br><span class="line">| 39%   31C    P8     7W / 120W |     52MiB /  6077MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0      1603      G   /usr/lib/xorg/Xorg                            49MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="準備Linpack"><a href="#準備Linpack" class="headerlink" title="準備Linpack"></a>準備Linpack</h3><p>Link : <a href="https://developer.nvidia.com/rdp/assets/cuda-accelerated-linpack-linux64" target="_blank" rel="noopener">https://developer.nvidia.com/rdp/assets/cuda-accelerated-linpack-linux64</a><br>從上面的連結，登入CUDA註冊開發者會員，下載linpack for Linux64版本，這裡下載到的版本為<code>hpl-2.0_FERMI_v15.tgz</code>。</p>
+<blockquote>
+<p>參考連結<br><a href="http://www.powerxing.com/hybrid-hpl/" target="_blank" rel="noopener">Hybrid HPL(GPU版HPL)安装教程</a><br><a href="https://qiita.com/shibacow/items/aa83cfc81ed493a4c25d" target="_blank" rel="noopener">AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる</a></p>
+</blockquote>
+<hr>
+<h3 id="安裝INTEL-MKL"><a href="#安裝INTEL-MKL" class="headerlink" title="安裝INTEL MKL"></a>安裝INTEL MKL</h3><p>透過連結<code>註冊帳號</code><br><a href="https://software.intel.com/en-us/qualify-for-free-software" target="_blank" rel="noopener">https://software.intel.com/en-us/qualify-for-free-software</a></p>
+<p><img src="https://i.imgur.com/9KxitwB.png" alt=""><br>註冊後，它會向您發送序列號於信箱，以便進行安裝準備。</p>
+<p>這邊是下載最新<a href="http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/13575/l_mkl_2019.0.117.tgz" target="_blank" rel="noopener">l_mkl_2019.0.117.tgz</a>版本</p>
+<p>下載取得<code>l_mkl_2019.0.117.tgz</code>後，即可透過<code>install.sh</code>運行安裝。</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ tar zxvf l_mkl_2019.0.117.tgz</span><br><span class="line">$ <span class="hljs-built_in">cd</span> l_mkl_2019.0.117</span><br></pre></td></tr></table></figure>
+<p>Intel mkl的安裝很簡單的，每一步也都有說明，按<code>Enter</code>繼續下一步預設設定安裝即可，安裝到某一步會要求輸入序列號，申請30天試用版所給的那個序列號。<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ sh ./install.sh</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Initializing, please <span class="hljs-built_in">wait</span>...</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Welcome</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Welcome to the Intel(R) Math Kernel Library 2019 <span class="hljs-keyword">for</span> Linux*</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">You will complete the following steps:</span><br><span class="line">   1.  Welcome</span><br><span class="line">   2.  License Agreement</span><br><span class="line">   3.  Options</span><br><span class="line">   4.  Installation</span><br><span class="line">   5.  Complete</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Press <span class="hljs-string">"Enter"</span> key to <span class="hljs-built_in">continue</span> or <span class="hljs-string">"q"</span> to quit:</span><br><span class="line">License Agreement</span><br><span class="line">--------------------------------------------------------------------------------</span><br></pre></td></tr></table></figure></p>
+<p>確認後會安裝一些套件，這裡就可以看到MKL預設情況下，會安裝在<code>/opt/intel</code>下面。<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">------------------------</span><br><span class="line">Options &gt; Pre-install Summary</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Install location:</span><br><span class="line">    /opt/intel</span><br><span class="line"></span><br><span class="line">Component(s) selected:</span><br><span class="line">    Intel Math Kernel Library 2019 <span class="hljs-keyword">for</span> C/C++                               2.6GB</span><br><span class="line">        Intel MKL core libraries <span class="hljs-keyword">for</span> C/C++</span><br><span class="line">        Intel TBB threading support</span><br><span class="line">        GNU* C/C++ compiler support</span><br><span class="line"></span><br><span class="line">    Intel Math Kernel Library 2019 <span class="hljs-keyword">for</span> Fortran                             2.6GB</span><br><span class="line">        Intel MKL core libraries <span class="hljs-keyword">for</span> Fortran</span><br><span class="line">        GNU* Fortran compiler support</span><br><span class="line">        Fortran 95 interfaces <span class="hljs-keyword">for</span> BLAS and LAPACK</span><br><span class="line"></span><br><span class="line">   Install space required:  2.8GB</span><br></pre></td></tr></table></figure></p>
+<p>編譯完成後，即會顯示安裝資訊。</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">------------------------</span><br><span class="line">Complete</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">Thank you <span class="hljs-keyword">for</span> installing Intel(R) Math Kernel Library 2019 <span class="hljs-keyword">for</span> Linux*.</span><br><span class="line"></span><br><span class="line">If you have not <span class="hljs-keyword">done</span> so already, please register your product with Intel</span><br><span class="line">Registration Center to create your support account and take full advantage of</span><br><span class="line">your product purchase.</span><br><span class="line"></span><br><span class="line">Your support account gives you access to free product updates and upgrades</span><br><span class="line">as well as Priority Customer support at the Online Service Center</span><br><span class="line">https://supporttickets.intel.com.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>完整安裝過程於<a href="https://gist.github.com/yylin1/6b30bfb9456f74ae9769e1d65ee60bb2" target="_blank" rel="noopener">Gist</a>。</p>
+</blockquote>
+<hr>
+<h3 id="安装mpich2"><a href="#安装mpich2" class="headerlink" title="安装mpich2"></a>安装mpich2</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz</span><br><span class="line">tar zxvf mpich-3.2.1.tar.gz</span><br><span class="line">$ <span class="hljs-built_in">cd</span> mpich-3.2.1</span><br><span class="line">./configure -prefix=/home/username/mpich</span><br><span class="line">$ make</span><br><span class="line">$ make install</span><br></pre></td></tr></table></figure>
+<h4 id="配置環境"><a href="#配置環境" class="headerlink" title="配置環境"></a>配置環境</h4><p>打開/etc/environment<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/environment</span><br></pre></td></tr></table></figure></p>
+<p>將自己的路徑添加到PATH最後，注意別忘了冒號“：”，添加後的PATH如下<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=<span class="hljs-string">"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/cuda-9.2/bin:/home/username/mpich/bin"</span></span><br></pre></td></tr></table></figure></p>
+<p>保存退出，在終端輸入<code>source /etc/environment</code><br>再輸入<code>echo $PATH</code>測試發現已經更新，環境變量配置成功。</p>
+<hr>
+<p>本文来自 ForTheDreamSMS 的CSDN 博客 ，全文地址请点击：<a href="https://blog.csdn.net/baidu_34045013/article/details/78237842?utm_source=copy" target="_blank" rel="noopener">https://blog.csdn.net/baidu_34045013/article/details/78237842?utm_source=copy</a> </p>
+<blockquote>
+<p>安裝參考:<a href="https://blog.csdn.net/baidu_34045013/article/details/78237842" target="_blank" rel="noopener">ubuntu16.04安裝配置mpich2</a></p>
+</blockquote>
+<h3 id="安裝openmpi"><a href="#安裝openmpi" class="headerlink" title="安裝openmpi"></a>安裝openmpi</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ wget -c https://www.open-mpi.org/software/ompi/v1.10/downloads/openmpi-1.10.3.tar.gz</span><br><span class="line"></span><br><span class="line">$ tar zxvf openmpi-1.10.3.tar.gz</span><br><span class="line">$ <span class="hljs-built_in">cd</span> openmpi-1.10.3</span><br><span class="line">$ ./configure --prefix=/opt/openmpi</span><br><span class="line">$ make</span><br><span class="line">$ sudo make install</span><br></pre></td></tr></table></figure>
+<p>安裝<code>make</code>和<code>make instal</code>需要一段時間，等待完成即可，openmpi環境配置會在後面統一設定。</p>
+<blockquote>
+<p>參考 : <a href="https://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/543992/" target="_blank" rel="noopener">OpenMPI設定叢集環境</a></p>
+</blockquote>
+<hr>
+<h2 id="配置環境變量"><a href="#配置環境變量" class="headerlink" title="配置環境變量"></a>配置環境變量</h2><p>首先更改環境變量PATH：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/environment</span><br></pre></td></tr></table></figure>
+<p>在PATH變量加上/usr/local/cuda-9.2/bin,前面要有分號，後面沒有，修改後例如下面這樣：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=<span class="hljs-string">"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/cuda-9.2/bin:/home/username/mpich/bin"</span></span><br></pre></td></tr></table></figure></p>
+<p>保存文件，然後再執行：<br><code>source /etc/environment</code><br>完成後，可以執行echo $PATH,查看是否修改成功</p>
+<p>接著還需更改<code>ldconfig</code><br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">cd</span> /etc/ld.so.conf.d/</span><br><span class="line">sudo vim hpl.conf</span><br></pre></td></tr></table></figure></p>
+<p>輸入如下內容<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="hljs-built_in">local</span>/cuda-9.2/lib64</span><br><span class="line">/lib</span><br><span class="line">/opt/intel/mkl/lib/intel64</span><br><span class="line">/opt/intel/lib/intel64</span><br><span class="line">/home/ubuntu/hpl/src/cuda</span><br></pre></td></tr></table></figure></p>
+<p>最後一行<code>/home/使用者/hpl/src/cuda</code>是編譯HPL時才需要改的，在這裡一併修改。這個目錄就是編譯hpl時，hpl的路徑。</p>
+<p>添加上述內容並保存後，執行<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudu ldconfig</span><br></pre></td></tr></table></figure></p>
+<p>可以輸入下面命令進行檢驗，有輸出內容就對了<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ldconfig -v | grep cuda</span><br></pre></td></tr></table></figure></p>
+<p>接著還要執行Intel MKL的環境變量設置腳本<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">export</span> LD_LIBRARY_PATH=/opt/intel/mkl/lib/intel64:/opt/intel/compilers_and_libraries/linux/lib/intel64:/home/ubuntu/hpl/src/cuda:/opt/openmpi/lib</span><br><span class="line"><span class="hljs-built_in">export</span> PATH=/opt/openmpi/bin:<span class="hljs-variable">$PATH</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-built_in">source</span> /opt/intel/compilers_and_libraries_2019.0.117/linux/mkl/bin/mklvars.sh intel64</span><br></pre></td></tr></table></figure></p>
+<p>請確認以上路徑與當前環境上所有套件的路徑是否對應存在，再執行<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure></p>
+<p>這樣，環境變量就設置好了。最好<code>echo $PATH</code>查看下是否多了一行intel的信息，如果沒有配置成功的話，在編譯HPL時會提示/usr/bin/ld: cannot find -liomp5的錯誤。</p>
+<h2 id="開始編譯Linpack-benchmark-for-CUDA"><a href="#開始編譯Linpack-benchmark-for-CUDA" class="headerlink" title="開始編譯Linpack benchmark for CUDA"></a>開始編譯Linpack benchmark for CUDA</h2><p>這邊將<code>hpl-2.0_FERMI_v15.tgz</code>解壓縮放置主目錄下<code>hpl</code>文件夾，可以依照自己設定的路徑對應編譯。</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ tar -xvf hpl-2.0_FERMI_v15.tgz –C ~/hpl</span><br><span class="line">$ <span class="hljs-built_in">cd</span> ~/hpl</span><br><span class="line"></span><br><span class="line">$ ls</span><br><span class="line">bin  BUGS  COPYRIGHT  CUDA_LINPACK_README.txt  HISTORY  include  INSTALL  lib  Make.CUDA  Makefile  makes  Make.top  man  README  setup  src  testing  TODO  TUNING  www</span><br></pre></td></tr></table></figure>
+<h3 id="編譯Make-CUDA編輯配置"><a href="#編譯Make-CUDA編輯配置" class="headerlink" title="編譯Make.CUDA編輯配置"></a>編譯Make.CUDA編輯配置</h3><p>這時還需要編輯<code>Make.CUDA</code>測試環境參考<a href="https://gist.github.com/yylin1/55fbdb799064837b45478c8b165f5c82#file-make-cuda" target="_blank" rel="noopener">連結</a>，需更改Make.CUDA中的TOPdir為hpl的目錄。</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">103  TOPdir = /home/ubuntu/hpl</span><br><span class="line"></span><br><span class="line">132 LAdir        = /opt/intel/mkl/lib/intel64</span><br><span class="line">133 LAMP5dir     = /opt/intel/compilers_and_libraries/linux/lib/intel64</span><br><span class="line"></span><br><span class="line">134 LAinc        = -I/opt/intel/mkl/include</span><br></pre></td></tr></table></figure>
+<p>接著可以開始編譯了<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-built_in">cd</span> ~/hpl</span><br><span class="line">make arch=CUDA</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>如果沒有提示錯誤，就是編譯成功了。</p>
+</blockquote>
+<p>編譯完成後，還需要修改<code>~/hpl/bin/CUDA/run_linpack</code>中的<a href="https://gist.github.com/yylin1/55fbdb799064837b45478c8b165f5c82#file-run_linpack" target="_blank" rel="noopener">HPL_DIR</a>為你hpl的路徑</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HPL_DIR=/home/ubuntu/hpl</span><br></pre></td></tr></table></figure>
+<p>修改完成後就可以開始測試了。</p>
+<p>測試之前建議把HPL.dat的參數改小一點，N改成8000，這樣所需的測試時間少。也先把P，Q，PxQ都改成1，保證可以執行測試:</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 1 ./run_linpack</span><br></pre></td></tr></table></figure>
+<h3 id="輸出結果"><a href="#輸出結果" class="headerlink" title="輸出結果"></a>輸出結果</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">$ mpirun -n 1 ./run_linpack</span><br><span class="line">================================================================================</span><br><span class="line">HPLinpack 2.0  --  High-Performance Linpack benchmark  --   September 10, 2008</span><br><span class="line">Written by A. Petitet and R. Clint Whaley,  Innovative Computing Laboratory, UTK</span><br><span class="line">Modified by Piotr Luszczek, Innovative Computing Laboratory, UTK</span><br><span class="line">Modified by Julien Langou, University of Colorado Denver</span><br><span class="line">================================================================================</span><br><span class="line"></span><br><span class="line">An explanation of the input/output parameters follows:</span><br><span class="line">T/V    : Wall time / encoded variant.</span><br><span class="line">N      : The order of the coefficient matrix A.</span><br><span class="line">NB     : The partitioning blocking factor.</span><br><span class="line">P      : The number of process rows.</span><br><span class="line">Q      : The number of process columns.</span><br><span class="line">Time   : Time <span class="hljs-keyword">in</span> seconds to solve the linear system.</span><br><span class="line">Gflops : Rate of execution <span class="hljs-keyword">for</span> solving the linear system.</span><br><span class="line"></span><br><span class="line">The following parameter values will be used:</span><br><span class="line"></span><br><span class="line">N      :   25000    30000</span><br><span class="line">NB     :     768     1024     1280     1536</span><br><span class="line">PMAP   : Row-major process mapping</span><br><span class="line">P      :       1</span><br><span class="line">Q      :       1</span><br><span class="line">PFACT  :    Left</span><br><span class="line">NBMIN  :       2</span><br><span class="line">NDIV   :       2</span><br><span class="line">RFACT  :    Left</span><br><span class="line">BCAST  :   1ring</span><br><span class="line">DEPTH  :       1</span><br><span class="line">SWAP   : Spread-roll (long)</span><br><span class="line">L1     : no-transposed form</span><br><span class="line">U      : no-transposed form</span><br><span class="line">EQUIL  : yes</span><br><span class="line">ALIGN  : 8 double precision words</span><br><span class="line"></span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">- The matrix A is randomly generated <span class="hljs-keyword">for</span> each <span class="hljs-built_in">test</span>.</span><br><span class="line">- The following scaled residual check will be computed:</span><br><span class="line">      ||Ax-b||_oo / ( eps * ( || x ||_oo * || A ||_oo + || b ||_oo ) * N )</span><br><span class="line">- The relative machine precision (eps) is taken to be               1.110223e-16</span><br><span class="line">- Computational tests pass <span class="hljs-keyword">if</span> scaled residuals are less than                16.0</span><br><span class="line"></span><br><span class="line">================================================================================</span><br><span class="line">T/V                N    NB     P     Q               Time                 Gflops</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">WR10L2L2       25000   768     1     1              43.07              2.419e+02</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">||Ax-b||_oo/(eps*(||A||_oo*||x||_oo+||b||_oo)*N)=        0.0040802 ...... PASSED</span><br><span class="line">================================================================================</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>完整環境配置與設置有放到<a href="https://gist.github.com/yylin1/55fbdb799064837b45478c8b165f5c82#file-make-cuda-L103" target="_blank" rel="noopener">Gits</a>，可以提供參考。</p>
+</blockquote>
+<h4 id="補充-直接使用-Docker測試HPL-GPU-參考連結"><a href="#補充-直接使用-Docker測試HPL-GPU-參考連結" class="headerlink" title="#補充-直接使用 Docker測試HPL GPU: 參考連結"></a>#補充-直接使用 Docker測試HPL GPU: <a href="https://qiita.com/shibacow/items/459949bb3bc81a58526a" target="_blank" rel="noopener">參考連結</a></h4>
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/GPU/">GPU</a>, <a class="has-link-grey -link" href="/tags/benchmark/">benchmark</a>, <a class="has-link-grey -link" href="/tags/linpack/">linpack</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2018/11/27/use-zabbix-api/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">監控工具 Zabbix API 使用記錄</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/10/23/kubeflow-deploy-v0.3.0/">
+                <span class="level-item">快速部署 Kubeflow v0.3 容器機器學習平台</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" src="/images/yiyang.png" alt="Yi Yang">
+                    
+                    <p class="is-size-4 is-block">
+                        Yi Yang
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        掙扎中的研究生
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Taichung, Taiwan</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        9
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分類
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        3
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        標籤
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        12
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/yylin1/">
+                關注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Github" href="https://github.com/yylin1/">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Facebook" href="https://www.facebook.com/frank.yiyanglin">
+                
+                <i class="fab fa-facebook"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Twitter" href="https://twitter.com/yylin12">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Dribbble" href="http://dribbble.com">
+                
+                <i class="fab fa-dribbble"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            連結
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Hexo</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://hexo.io</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">PPOffice</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://github.com/ppoffice</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分類
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Linkpack/">
+            <span class="level-start">
+                <span class="level-item">Linkpack</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/ansible/">
+            <span class="level-start">
+                <span class="level-item">ansible</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/kubeflow/">
+            <span class="level-start">
+                <span class="level-item">kubeflow</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            標籤雲
+        </h3>
+        <a href="/tags/API/" style="font-size: 13.33px;">API</a> <a href="/tags/GPU/" style="font-size: 16.67px;">GPU</a> <a href="/tags/NVIDIA-Driver/" style="font-size: 13.33px;">NVIDIA Driver</a> <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/benchmark/" style="font-size: 10px;">benchmark</a> <a href="/tags/deploy/" style="font-size: 16.67px;">deploy</a> <a href="/tags/kubeflow/" style="font-size: 16.67px;">kubeflow</a> <a href="/tags/kubernetes/" style="font-size: 20px;">kubernetes</a> <a href="/tags/linpack/" style="font-size: 10px;">linpack</a> <a href="/tags/microk8s/" style="font-size: 13.33px;">microk8s</a> <a href="/tags/ubuntu/" style="font-size: 13.33px;">ubuntu</a> <a href="/tags/zabbix/" style="font-size: 13.33px;">zabbix</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/artificial-intelligence.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmarks" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2018 Yi Yang&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-TW");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="Back to Top" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: 'Pages',
+                CATEGORIES: '分類',
+                TAGS: '標籤',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

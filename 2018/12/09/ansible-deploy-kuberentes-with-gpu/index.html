@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8">
+<title>如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集 - Yi Yang&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+
+
+    <meta name="description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成">
+<meta name="keywords" content="ubuntu,GPU,NVIDIA Driver,kubernetes,ansible">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+<meta property="og:url" content="http://yylin1.github.io/2018/12/09/ansible-deploy-kuberentes-with-gpu/index.html">
+<meta property="og:site_name" content="Yi Yang&#39;s Blog">
+<meta property="og:description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="http://yylin1.github.io/images/ansible-deploy-kubernetes-with-gpu.png">
+<meta property="og:image" content="https://i.imgur.com/sxMHIiQ.png">
+<meta property="og:updated_time" content="2018-12-15T07:18:35.702Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+<meta name="twitter:description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成">
+<meta name="twitter:image" content="http://yylin1.github.io/images/ansible-deploy-kubernetes-with-gpu.png">
+
+
+
+
+
+<link rel="icon" href="/images/artificial-intelligence.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/artificial-intelligence.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/">Home</a>
+                
+                <a class="navbar-item"
+                href="/archives">Archives</a>
+                
+                <a class="navbar-item"
+                href="/categories">Categories</a>
+                
+                <a class="navbar-item"
+                href="/tags">Tags</a>
+                
+                <a class="navbar-item"
+                href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    14 分鐘 read (About 2069 words)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集
+            
+        </h1>
+        <div class="content">
+            <p><img src="/images/ansible-deploy-kubernetes-with-gpu.png" alt=""></p>
+<p>本篇記錄部署過程，主要參考「<a href="https://kairen.github.io/2018/08/12/kubernetes/deploy/k8s-ansible-ha/" target="_blank" rel="noopener">開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集</a>」延伸<code>[kube-ansible](https://github.com/kairen/kube-ansible)</code>感謝<code>KaiRen</code>改版後增加<code>Nvidia Docker</code>為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成Node節點環境的GPU資源使用（內文部署GPU過程記錄延伸）。</p>
+<a id="more"></a>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用Ubuntu 16.04 Desktop，測試環境為實體主機：</p>
+<p>本次 Kubernetes 安裝版本：</p>
+<ul>
+<li>Kubernetes v1.11.2</li>
+<li>Etcd v3.2.9</li>
+<li>containerd v1.1.2</li>
+</ul>
+<h2 id="節點資訊-1"><a href="#節點資訊-1" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用Ubuntu 16.04 Desktop，測試環境為實體主機：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Hostname</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>192.168.0.98</td>
+<td>VIP</td>
+<td></td>
+</tr>
+<tr>
+<td>192.168.0.81</td>
+<td>k8s-m1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>192.168.0.82</td>
+<td>k8s-m2</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>192.168.0.83</td>
+<td>k8s-m3</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>192.168.0.84</td>
+<td>k8s-g1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>192.168.0.85</td>
+<td>k8s-g2</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>192.168.0.86</td>
+<td>k8s-g3</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>192.168.0.87</td>
+<td>k8s-g4</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="所有節點事前準備"><a href="#所有節點事前準備" class="headerlink" title="所有節點事前準備"></a>所有節點事前準備</h2><p>安裝前需要確認以下幾個項目：</p>
+<ul>
+<li>所有節點的網路之間可以互相溝通。</li>
+<li>部署節點對其他節點不需要 SSH 密碼即可登入。</li>
+<li>所有節點都擁有 Sudoer 權限，並且不需要輸入密碼。</li>
+<li>所有節點需要安裝 Python。</li>
+<li>所有節點需要設定/etc/host解析到所有主機。</li>
+<li>部署節點需要安裝 Ansible。</li>
+</ul>
+<p>部署節點對其他節點不需要 SSH 密碼即可登入: </p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$  <span class="hljs-built_in">echo</span> <span class="hljs-string">"ubuntu ALL = (root) NOPASSWD:ALL"</span> | sudo tee /etc/sudoers.d/ubuntu &amp;&amp; sudo chmod 440 /etc/sudoers.d/ubuntu</span><br></pre></td></tr></table></figure>
+<p>確認環境網路DNS設定:</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="hljs-built_in">echo</span> <span class="hljs-string">"nameserver 8.8.8.8"</span> &gt;&gt; /etc/resolvconf/resolv.conf.d/tail</span><br><span class="line">$ resolvconf -u</span><br><span class="line"></span><br><span class="line">$ cat /etc/resolv.conf</span><br><span class="line"><span class="hljs-comment"># Dynamic resolv.conf(5) file for glibc resolver(3) generated by resolvconf(8)</span></span><br><span class="line"><span class="hljs-comment">#     DO NOT EDIT THIS FILE BY HAND -- YOUR CHANGES WILL BE OVERWRITTEN</span></span><br><span class="line">nameserver 127.0.1.1</span><br><span class="line">nameserver 8.8.8.8</span><br></pre></td></tr></table></figure>
+<h2 id="GPU節點事前準備-Node"><a href="#GPU節點事前準備-Node" class="headerlink" title="GPU節點事前準備 (Node)"></a>GPU節點事前準備 (Node)</h2><p>由於GPU使用需要事先安裝 CUDA &amp; NVIDIA Driver於環境部分：</p>
+<blockquote>
+<p>透過 APT 安裝 NVIDIA Driver(v410.79) 與 CUDA 10</p>
+</blockquote>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_10.0.130-1_amd64.deb</span><br><span class="line">$ sudo dpkg -i cuda-repo-ubuntu1604_10.0.130-1_amd64.deb</span><br><span class="line">$ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub</span><br><span class="line">$ sudo apt-get update &amp;&amp; sudo apt-get install -y cuda</span><br></pre></td></tr></table></figure>
+<h2 id="部署節點（Master）"><a href="#部署節點（Master）" class="headerlink" title="部署節點（Master）"></a>部署節點（Master）</h2><p>Ubuntu 16.04 安裝 Ansible:<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install -y software-properties-common git cowsay</span><br><span class="line">$ sudo apt-add-repository -y ppa:ansible/ansible</span><br><span class="line">$ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible</span><br></pre></td></tr></table></figure></p>
+<p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ cat /usr/<span class="hljs-built_in">local</span>/cuda/version.txt</span><br><span class="line">CUDA Version 10.0.130</span><br><span class="line"></span><br><span class="line">$ sudo nvidia-smi</span><br><span class="line"></span><br><span class="line">Fri Dec  9 10:25:24 2018       </span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 410.48                 Driver Version: 410.48                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 106...  Off  | 00000000:03:00.0 Off |                  N/A |</span><br><span class="line">| 38%   28C    P8     5W / 120W |      0MiB /  6077MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line">                                                                               </span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|  No running processes found                                                 |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<h2 id="透過-Ansible-部署-Kubernetes"><a href="#透過-Ansible-部署-Kubernetes" class="headerlink" title="透過 Ansible 部署 Kubernetes"></a>透過 Ansible 部署 Kubernetes</h2><p>這邊執行由<code>kairen</code>介紹的<code>kube-ansible</code>專案，並透過Ansible來部署 Kubernetes HA 叢集，透過Git取得專案:</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="hljs-built_in">clone</span> https://github.com/kairen/kube-ansible.git</span><br><span class="line">$ <span class="hljs-built_in">cd</span> kube-ansible</span><br></pre></td></tr></table></figure>
+<h3 id="Kubernetes-叢集-GPU"><a href="#Kubernetes-叢集-GPU" class="headerlink" title="Kubernetes 叢集 + GPU"></a>Kubernetes 叢集 + GPU</h3><p>修改<code>inventory/hosts.ini</code>來描述被部署的節點與群組關係：</p>
+<blockquote>
+<p>這邊為設定節點<code>/etc/host</code>解析到所有主機，直接在主機IP後面直接ssh登入資訊</p>
+</blockquote>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ vim inventory/hosts.ini</span><br><span class="line"></span><br><span class="line">[etcds]</span><br><span class="line">192.168.0.[81:83] ansible_user=ubuntu ansible_password=password</span><br><span class="line"></span><br><span class="line">[masters]</span><br><span class="line">192.168.0.[81:83] ansible_user=ubuntu ansible_password=password</span><br><span class="line"></span><br><span class="line">[nodes]</span><br><span class="line">192.168.0.84 ansible_user=ubuntu ansible_password=password</span><br><span class="line">192.168.0.85 ansible_user=ubuntu ansible_password=password</span><br><span class="line">192.168.0.86 ansible_user=ubuntu ansible_password=password</span><br><span class="line">192.168.0.87 ansible_user=ubuntu ansible_password=passowrd</span><br><span class="line"></span><br><span class="line">[kube-cluster:children]</span><br><span class="line">masters</span><br><span class="line">nodes</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>ansible_user 為節點系統 SSH 的使用者名稱。<br>ansible_password 為節點系統 SSH 的使用者密碼。</p>
+</blockquote>
+<p>接著編輯<code>group_vars/all.yml</code>來根據需求設定功能，如以下範例：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">$ vim group_vars/all.yml</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">kube_version: 1.11.2</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Container runtime,</span></span><br><span class="line"><span class="hljs-comment"># Supported: docker, nvidia-docker, containerd.</span></span><br><span class="line">container_runtime: nvidia-docker</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Container network,</span></span><br><span class="line"><span class="hljs-comment"># Supported: calico, flannel.</span></span><br><span class="line">cni_enable: <span class="hljs-literal">true</span></span><br><span class="line">container_network: calico</span><br><span class="line">cni_iface: <span class="hljs-string">"enp0s25"</span>  <span class="hljs-comment"># CNI 網路綁定的網卡</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Kubernetes HA extra variables.</span></span><br><span class="line">vip_interface: <span class="hljs-string">"enp0s25"</span>  <span class="hljs-comment"># VIP 綁定的網卡</span></span><br><span class="line">vip_address: 192.168.0.98  <span class="hljs-comment"># VIP 位址</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># etcd extra variables.</span></span><br><span class="line">etcd_iface: <span class="hljs-string">"enp0s25"</span>   <span class="hljs-comment"># etcd 綁定的網卡</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Kubernetes extra addons</span></span><br><span class="line">enable_ingress: <span class="hljs-literal">true</span></span><br><span class="line">enable_dashboard: <span class="hljs-literal">true</span></span><br><span class="line">enable_logging: <span class="hljs-literal">false</span></span><br><span class="line">enable_monitoring: <span class="hljs-literal">true</span></span><br><span class="line">enable_metric_server: <span class="hljs-literal">true</span></span><br><span class="line"></span><br><span class="line">grafana_user: <span class="hljs-string">"admin"</span></span><br><span class="line">grafana_password: <span class="hljs-string">"p@ssw0rd"</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上面綁定網卡若沒有輸入，通常會使用節點預設網卡(一般來說是第一張網卡)。</p>
+<blockquote>
+<h2 id="這邊測試發現，需要事先確認確認，所有節點中每個節點上的網卡名稱是否一致，實驗環境Ubuntu16-04網卡名稱都為enp0s25。"><a href="#這邊測試發現，需要事先確認確認，所有節點中每個節點上的網卡名稱是否一致，實驗環境Ubuntu16-04網卡名稱都為enp0s25。" class="headerlink" title="這邊測試發現，需要事先確認確認，所有節點中每個節點上的網卡名稱是否一致，實驗環境Ubuntu16.04網卡名稱都為enp0s25。"></a>這邊測試發現，需要事先確認確認，所有節點中每個節點上的網卡名稱是否一致，實驗環境Ubuntu16.04網卡名稱都為<code>enp0s25</code>。</h2><p>完成設定<code>group_vars/all.yml</code>檔案後，就可以先透過 Ansible 來檢查叢集狀態：</p>
+</blockquote>
+</blockquote>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">$ ansible -i inventory/hosts.ini all -m ping</span><br><span class="line"></span><br><span class="line">192.168.0.81 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">192.168.0.82 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">192.168.0.83 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">192.168.0.84 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">192.168.0.85 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">192.168.0.86 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">192.168.0.87 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="hljs-string">"changed"</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">    <span class="hljs-string">"ping"</span>: <span class="hljs-string">"pong"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接續檢查GPU Driver是否成功運行狀態：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">$ ansible -i inventory/hosts.ini all -a <span class="hljs-string">"nvidia-smi"</span> -b</span><br><span class="line"></span><br><span class="line">192.168.0.81 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">Thu Dec  9 12:00:54 2018</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 410.48                 Driver Version: 410.48                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 106...  Off  | 00000000:03:00.0 Off |                  N/A |</span><br><span class="line">| 38%   29C    P8     4W / 120W |      0MiB /  6077MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|  No running processes found                                                 |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">192.168.0.94 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">Thu Dec  9 12:00:57 2018</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 410.48                 Driver Version: 410.48                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 106...  Off  | 00000000:03:00.0  On |                  N/A |</span><br><span class="line">| 40%   33C    P8     7W / 120W |    323MiB /  6077MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0      1202      G   /usr/lib/xorg/Xorg                           171MiB |</span><br><span class="line">|    0      3191      G   compiz                                       149MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<p>當叢集確認沒有問題後，即可執行cluster.yml來部署 Kubernetes 叢集：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible-playbook -i inventory/hosts.ini cluster.yml</span><br></pre></td></tr></table></figure>
+<h2 id="查看元件狀態"><a href="#查看元件狀態" class="headerlink" title="查看元件狀態"></a>查看元件狀態</h2><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get cs</span><br><span class="line">NAME                 STATUS    MESSAGE              ERROR</span><br><span class="line">controller-manager   Healthy   ok</span><br><span class="line">scheduler            Healthy   ok</span><br><span class="line">etcd-1               Healthy   &#123;<span class="hljs-string">"health"</span>: <span class="hljs-string">"true"</span>&#125;</span><br><span class="line">etcd-2               Healthy   &#123;<span class="hljs-string">"health"</span>: <span class="hljs-string">"true"</span>&#125;</span><br><span class="line">etcd-0               Healthy   &#123;<span class="hljs-string">"health"</span>: <span class="hljs-string">"true"</span>&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get no</span><br><span class="line">NAME STATUS ROLES AGE VERSION</span><br><span class="line">k8s-m1 Ready master 2m v1.11.2</span><br><span class="line">k8s-m2 Ready master 2m v1.11.2</span><br><span class="line">k8s-m3 Ready master 2m v1.11.2</span><br><span class="line">k8s-n1 Ready &lt;none&gt; 2m v1.11.2</span><br><span class="line">k8s-n2 Ready &lt;none&gt; 2m v1.11.2</span><br><span class="line">k8s-n3 Ready &lt;none&gt; 2m v1.11.2</span><br><span class="line">k8s-n4 Ready &lt;none&gt; 2m v1.11.2</span><br></pre></td></tr></table></figure>
+<h2 id="測試GPU節點是否可以正常運作"><a href="#測試GPU節點是否可以正常運作" class="headerlink" title="測試GPU節點是否可以正常運作"></a>測試GPU節點是否可以正常運作</h2><p>這邊簡易部署<code>gpu-pod</code>測試節點divice pligin 可以正常使用</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: gpu-pod</span><br><span class="line">spec:</span><br><span class="line">  restartPolicy: Never</span><br><span class="line">  containers:</span><br><span class="line">  - image: nvidia/cuda</span><br><span class="line">    name: cuda</span><br><span class="line">    <span class="hljs-built_in">command</span>: [<span class="hljs-string">"nvidia-smi"</span>]</span><br><span class="line">    resources:</span><br><span class="line">      limits:</span><br><span class="line">        nvidia.com/gpu: 1</span><br><span class="line">EOF</span><br><span class="line">pod <span class="hljs-string">"gpu-pod"</span> created</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ kubectl get po -a -o wide</span><br><span class="line">Flag --show-all has been deprecated, will be removed <span class="hljs-keyword">in</span> an upcoming release</span><br><span class="line">NAME      READY     STATUS      RESTARTS   AGE       IP           NODE      NOMINATED NODE</span><br><span class="line">gpu-pod   0/1       Completed   0          1h        10.244.1.5   k8s-n1    &lt;none&gt;</span><br><span class="line"></span><br><span class="line">$ kubectl logs gpu-pod</span><br><span class="line">Sun Dec  9 10:26:43 2018</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 410.79       Driver Version: 410.79       CUDA Version: 10.0     |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 105...  Off  | 00000000:02:00.0  On |                  N/A |</span><br><span class="line">| 40%   24C    P8    N/A /  75W |     62MiB /  4032MiB |      1%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<h2 id="Addons-部署"><a href="#Addons-部署" class="headerlink" title="Addons 部署"></a>Addons 部署</h2><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible-playbook -i inventory/hosts.ini addons.yml</span><br></pre></td></tr></table></figure>
+<p>完成後即可透過 kubectl 來檢查服務，如 kubernetes-dashboard：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get po,svc -n kube-system -l k8s-app=kubernetes-dashboard</span><br><span class="line">NAME READY STATUS RESTARTS AGE</span><br><span class="line">pod/kubernetes-dashboard-6948bdb78-7424h 1/1 Running 0 2m</span><br><span class="line"></span><br><span class="line">NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE</span><br><span class="line">service/kubernetes-dashboard ClusterIP 10.108.226.213 &lt;none&gt; 443/TCP 1h</span><br></pre></td></tr></table></figure></p>
+<p>完成後，即可透過 API Server 的 Proxy 來存取 <a href="https://192.168.0.98:8443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login" target="_blank" rel="noopener">https://192.168.0.98:8443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login</a></p>
+<p>登入查詢<code>kubernetes-dashboard Token</code>:</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kube-system get secret</span><br><span class="line">NAME                                             TYPE                                  DATA      AGE</span><br><span class="line">deployment-controller-token-kmcmz           kubernetes.io/service-account-token   3         1h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ kubectl -n kube-system describe secret deployment-controller-token-kmcmz</span><br><span class="line">Name:         deployment-controller-token-kmcmz</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io/service-account.name=deployment-controller</span><br><span class="line">              kubernetes.io/service-account.uid=e4e91ed4-fb9b-11e8-baef-d05099d079fb</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io/service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">ca.crt:     1428 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZXBsb3ltZW50LWNvbnRyb2xsZXItdG9rZW4ta21jbXoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVwbG95bWVudC1jb250cm9sbGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiZTRlOTFlZDQtZmI5Yi0xMWU4LWJhZWYtZDA1MDk5ZDA3OWZiIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRlcGxveW1lbnQtY29udHJvbGxlciJ9.IRQUhsVU4AJ36-qNClW7htzFJis1Mf_YSySIBKYuZ7uuaCzGcXRZtJ-nPo0SFBq7XufBMydjKwKP6tmsG1NsjttC3ETX-OnCV7u9BW0DK4HX6YloS-6Ik2rN9nHOa5iRpSNwCB2l6axGofoLkIosRCYMhdUyI5E9ZIrNKV-AvKehZkFtxXQCE3DbWGiklj1QPVq2oypfkwBEZG4GSlFkxPoIkzQQTbmZDfH036hi9DpBcUJIU41IJb9npdx65NA39Oskjdwiym1z_JlAhlhnE-uCPc-IjHirw_bEcn7mhDBf-1O2kr0IVmAbczFi82aoCagTDtUjBLP7BJ3k0v0gxQ</span><br></pre></td></tr></table></figure>
+<p>顯示畫面：<br><img src="https://i.imgur.com/sxMHIiQ.png" alt=""></p>
+<h2 id="重置叢集狀態"><a href="#重置叢集狀態" class="headerlink" title="重置叢集狀態"></a>重置叢集狀態</h2><p>最後若想要重新部署叢集的話，可以透過reset-cluster.yml來清除叢集：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible-playbook -i inventory/hosts.ini reset-cluster.yml</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="部署補充info"><a href="#部署補充info" class="headerlink" title="部署補充info"></a>部署補充info</h2><ul>
+<li>網卡名稱修正參考<a href="http://learninginfree.blogspot.com/2016/06/ubuntu-1604-eth0.html" target="_blank" rel="noopener">[Ubuntu 16.04 把網卡名稱改為舊的命名方式(eth0)]</a></li>
+</ul>
+<h2 id="補充：若無需要HA部署-單m單n測試"><a href="#補充：若無需要HA部署-單m單n測試" class="headerlink" title="補充：若無需要HA部署(單m單n測試)"></a>補充：若無需要HA部署(單m單n測試)</h2><table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Hostname</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>192.168.0.13</td>
+<td>VIP</td>
+<td></td>
+</tr>
+<tr>
+<td>192.168.0.10</td>
+<td>k8s-m1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>192.168.0.11</td>
+<td>k8s-n1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<p>配置<code>inventory/hosts.ini</code>範例：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ vim inventory/hosts.ini</span><br><span class="line">[etcds]</span><br><span class="line">192.168.0.10 ansible_user=ubuntu ansible_password=password</span><br><span class="line"></span><br><span class="line">[masters]</span><br><span class="line">192.168.0.10 ansible_user=ubuntu ansible_password=password</span><br><span class="line"></span><br><span class="line">[nodes]</span><br><span class="line">192.168.0.11 ansible_user=ubuntu ansible_password=password</span><br><span class="line"></span><br><span class="line">[kube-cluster:children]</span><br><span class="line">masters</span><br><span class="line">nodes</span><br></pre></td></tr></table></figure>
+<p>修正inventory/group_vars/all.yml範例：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">$ vim inventory/group_vars/all.yml</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">kube_version: 1.11.2</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Container runtime,</span></span><br><span class="line"><span class="hljs-comment"># Supported: docker, nvidia-docker, containerd.</span></span><br><span class="line">container_runtime: nvidia-docker</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Container network,</span></span><br><span class="line"><span class="hljs-comment"># Supported: calico, flannel.</span></span><br><span class="line">cni_enable: <span class="hljs-literal">true</span></span><br><span class="line">container_network: calico</span><br><span class="line">cni_iface: <span class="hljs-string">"eth0"</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Kubernetes HA extra variables.</span></span><br><span class="line">vip_interface: <span class="hljs-string">"eth0"</span></span><br><span class="line">vip_address: 192.168.0.13</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># etcd extra variables.</span></span><br><span class="line">etcd_iface: <span class="hljs-string">"eth0"</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Kubernetes extra addons</span></span><br><span class="line">enable_ingress: <span class="hljs-literal">true</span></span><br><span class="line">enable_dashboard: <span class="hljs-literal">true</span></span><br><span class="line">enable_logging: <span class="hljs-literal">false</span></span><br><span class="line">enable_monitoring: <span class="hljs-literal">true</span></span><br><span class="line">enable_metric_server: <span class="hljs-literal">true</span></span><br><span class="line"></span><br><span class="line">grafana_user: <span class="hljs-string">"admin"</span></span><br><span class="line">grafana_password: <span class="hljs-string">"p@ssw0rd"</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>以上[補充範例]為一台Master＆一台Node節點透過部署，並修正確認網卡名稱為一致，而vip配置部分統一設值為<code>master</code>資訊，並且重新運行ansible HA腳本即可執行成功。</p>
+</blockquote>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/GPU/">GPU</a>, <a class="has-link-grey -link" href="/tags/NVIDIA-Driver/">NVIDIA Driver</a>, <a class="has-link-grey -link" href="/tags/ansible/">ansible</a>, <a class="has-link-grey -link" href="/tags/kubernetes/">kubernetes</a>, <a class="has-link-grey -link" href="/tags/ubuntu/">ubuntu</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2018/12/14/kubecon-china-first/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">人生首次 KubeCon 領航船長旅程</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/12/01/install-nvidia-driver-problem/">
+                <span class="level-item">安裝NVIDIA顯卡驅動時可能遇到的問題</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" src="/images/yiyang.png" alt="Yi Yang">
+                    
+                    <p class="is-size-4 is-block">
+                        Yi Yang
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        掙扎中的研究生
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Taichung, Taiwan</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        9
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分類
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        3
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        標籤
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        12
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/yylin1/">
+                關注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Github" href="https://github.com/yylin1/">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Facebook" href="https://www.facebook.com/frank.yiyanglin">
+                
+                <i class="fab fa-facebook"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Twitter" href="https://twitter.com/yylin12">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="Dribbble" href="http://dribbble.com">
+                
+                <i class="fab fa-dribbble"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank"
+                title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            連結
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Hexo</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://hexo.io</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">PPOffice</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">https://github.com/ppoffice</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分類
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Linkpack/">
+            <span class="level-start">
+                <span class="level-item">Linkpack</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/ansible/">
+            <span class="level-start">
+                <span class="level-item">ansible</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/kubeflow/">
+            <span class="level-start">
+                <span class="level-item">kubeflow</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            標籤雲
+        </h3>
+        <a href="/tags/API/" style="font-size: 13.33px;">API</a> <a href="/tags/GPU/" style="font-size: 16.67px;">GPU</a> <a href="/tags/NVIDIA-Driver/" style="font-size: 13.33px;">NVIDIA Driver</a> <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/benchmark/" style="font-size: 10px;">benchmark</a> <a href="/tags/deploy/" style="font-size: 16.67px;">deploy</a> <a href="/tags/kubeflow/" style="font-size: 16.67px;">kubeflow</a> <a href="/tags/kubernetes/" style="font-size: 20px;">kubernetes</a> <a href="/tags/linpack/" style="font-size: 10px;">linpack</a> <a href="/tags/microk8s/" style="font-size: 13.33px;">microk8s</a> <a href="/tags/ubuntu/" style="font-size: 13.33px;">ubuntu</a> <a href="/tags/zabbix/" style="font-size: 13.33px;">zabbix</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="has-link-black-ter is-size-6">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/14/kubecon-china-first/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="人生首次 KubeCon 領航船長旅程">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time></div>
+                    <a href="/2018/12/14/kubecon-china-first/" class="has-link-black-ter is-size-6">人生首次 KubeCon 領航船長旅程</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-09T15:20:49.000Z">2018-12-09</time></div>
+                    <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="has-link-black-ter is-size-6">如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/ansible/">ansible</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/12/01/install-nvidia-driver-problem/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/nvidia-driver-problem.png" alt="安裝NVIDIA顯卡驅動時可能遇到的問題">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-01T15:21:20.000Z">2018-12-01</time></div>
+                    <a href="/2018/12/01/install-nvidia-driver-problem/" class="has-link-black-ter is-size-6">安裝NVIDIA顯卡驅動時可能遇到的問題</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/11/29/zabbix-api-trigger/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time></div>
+                    <a href="/2018/11/29/zabbix-api-trigger/" class="has-link-black-ter is-size-6">透過 Zabbix API 監測Trigger狀態</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            歸檔
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                標籤
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/API/">
+                        <span class="level-start">
+                            <span class="level-item">API</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GPU/">
+                        <span class="level-start">
+                            <span class="level-item">GPU</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
+                        <span class="level-start">
+                            <span class="level-item">NVIDIA Driver</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ansible/">
+                        <span class="level-start">
+                            <span class="level-item">ansible</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/benchmark/">
+                        <span class="level-start">
+                            <span class="level-item">benchmark</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/deploy/">
+                        <span class="level-start">
+                            <span class="level-item">deploy</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubeflow/">
+                        <span class="level-start">
+                            <span class="level-item">kubeflow</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">4</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/linpack/">
+                        <span class="level-start">
+                            <span class="level-item">linpack</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/microk8s/">
+                        <span class="level-start">
+                            <span class="level-item">microk8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/zabbix/">
+                        <span class="level-start">
+                            <span class="level-item">zabbix</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/artificial-intelligence.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2018 Yi Yang&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-TW");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="Back to Top" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: 'Pages',
+                CATEGORIES: '分類',
+                TAGS: '標籤',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>
