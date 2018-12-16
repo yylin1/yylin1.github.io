@@ -7,21 +7,20 @@
 
 
 
-    <meta name="description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成">
+    <meta name="description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成N">
 <meta name="keywords" content="ubuntu,GPU,NVIDIA Driver,kubernetes,ansible">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
 <meta property="og:url" content="http://yylin1.github.io/2018/12/09/ansible-deploy-kuberentes-with-gpu/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成">
+<meta property="og:description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成N">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="http://yylin1.github.io/images/ansible-deploy-kubernetes-with-gpu.png">
 <meta property="og:image" content="https://i.imgur.com/sxMHIiQ.png">
-<meta property="og:updated_time" content="2018-12-15T07:18:35.702Z">
+<meta property="og:updated_time" content="2018-12-16T04:45:52.937Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
-<meta name="twitter:description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成">
-<meta name="twitter:image" content="http://yylin1.github.io/images/ansible-deploy-kubernetes-with-gpu.png">
+<meta name="twitter:description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸[kube-ansible](https://github.com/kairen/kube-ansible)感謝KaiRen改版後增加Nvidia Docker為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成N">
+<meta name="twitter:image" content="https://i.imgur.com/sxMHIiQ.png">
 
 
 
@@ -141,7 +140,7 @@
     
     <div class="card-image">
         <span  class="image is-7by1">
-            <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+            <img class="thumbnail" src="/images/ansible_deploy_kubernetes_GPU.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
         </span>
     </div>
     
@@ -159,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    14 分鐘 read (About 2069 words)
+                    14 分鐘 read (About 2062 words)
                 </span>
                 
             </div>
@@ -171,8 +170,7 @@
             
         </h1>
         <div class="content">
-            <p><img src="/images/ansible-deploy-kubernetes-with-gpu.png" alt=""></p>
-<p>本篇記錄部署過程，主要參考「<a href="https://kairen.github.io/2018/08/12/kubernetes/deploy/k8s-ansible-ha/" target="_blank" rel="noopener">開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集</a>」延伸<code>[kube-ansible](https://github.com/kairen/kube-ansible)</code>感謝<code>KaiRen</code>改版後增加<code>Nvidia Docker</code>為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成Node節點環境的GPU資源使用（內文部署GPU過程記錄延伸）。</p>
+            <p>本篇記錄部署過程，主要參考「<a href="https://kairen.github.io/2018/08/12/kubernetes/deploy/k8s-ansible-ha/" target="_blank" rel="noopener">開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集</a>」延伸<code>[kube-ansible](https://github.com/kairen/kube-ansible)</code>感謝<code>KaiRen</code>改版後增加<code>Nvidia Docker</code>為 ansible 部署過程中，協助增加NVIDAI Docker與k8s-device-plugin，完成Node節點環境的GPU資源使用（內文部署GPU過程記錄延伸）。</p>
 <a id="more"></a>
 <h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用Ubuntu 16.04 Desktop，測試環境為實體主機：</p>
 <p>本次 Kubernetes 安裝版本：</p>
@@ -634,7 +632,7 @@
             
             <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                    <img class="thumbnail" src="/images/ansible_deploy_kubernetes_GPU.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
                 </p>
             </a>
             
@@ -953,7 +951,7 @@
             
             <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                    <img class="thumbnail" src="/images/ansible_deploy_kubernetes_GPU.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
                 </p>
             </a>
             

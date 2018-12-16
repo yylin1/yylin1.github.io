@@ -7,15 +7,14 @@
 
 
 
-    <meta name="description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
+    <meta name="description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
 <meta name="keywords" content="kubernetes,kubeflow,deploy">
 <meta property="og:type" content="article">
 <meta property="og:title" content="快速部署 Kubeflow v0.3 容器機器學習平台">
 <meta property="og:url" content="http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
+<meta property="og:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="http://yylin1.github.io/images/kubeflow_deploy.jpeg">
 <meta property="og:image" content="https://i.imgur.com/fPEG7eK.png">
 <meta property="og:image" content="https://i.imgur.com/dH1fh00.png">
 <meta property="og:image" content="https://i.imgur.com/pBzrG66.png">
@@ -23,11 +22,11 @@
 <meta property="og:image" content="https://i.imgur.com/9pyuZqp.png">
 <meta property="og:image" content="https://i.imgur.com/BmpbGhB.png">
 <meta property="og:image" content="https://i.imgur.com/Udsm6ng.png">
-<meta property="og:updated_time" content="2018-12-15T07:49:39.971Z">
+<meta property="og:updated_time" content="2018-12-16T04:38:41.729Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="快速部署 Kubeflow v0.3 容器機器學習平台">
-<meta name="twitter:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署">
-<meta name="twitter:image" content="http://yylin1.github.io/images/kubeflow_deploy.jpeg">
+<meta name="twitter:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
+<meta name="twitter:image" content="https://i.imgur.com/fPEG7eK.png">
 
 
 
@@ -165,7 +164,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    16 分鐘 read (About 2452 words)
+                    16 分鐘 read (About 2448 words)
                 </span>
                 
             </div>
@@ -177,8 +176,7 @@
             
         </h1>
         <div class="content">
-            <p><img src="/images/kubeflow_deploy.jpeg" alt=""></p>
-<p><a href="https://v0-3.kubeflow.org/" target="_blank" rel="noopener">Kubeflow</a> 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並執行。</p>
+            <p><a href="https://v0-3.kubeflow.org/" target="_blank" rel="noopener">Kubeflow</a> 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並執行。</p>
 <a id="more"></a>
 <ul>
 <li><p>Kubeflow目標不是在於重建其他服務，而是提供一個最佳開發系統，來部署到任何集群中，有效確保ML在集群之間移動性，並輕鬆將任務擴展任何集群。</p>
@@ -654,7 +652,7 @@
             
             <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                    <img class="thumbnail" src="/images/ansible_deploy_kubernetes_GPU.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
                 </p>
             </a>
             
@@ -973,7 +971,7 @@
             
             <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                    <img class="thumbnail" src="/images/ansible_deploy_kubernetes_GPU.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
                 </p>
             </a>
             

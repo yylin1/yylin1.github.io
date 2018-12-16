@@ -15,17 +15,15 @@
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="http://yylin1.github.io/images/microk8s.png">
-<meta property="og:image" content="https://i.imgur.com/5TFCZ7s.png">
 <meta property="og:image" content="https://i.imgur.com/aecctnI.png">
 <meta property="og:image" content="https://i.imgur.com/nEaOr0L.png">
 <meta property="og:image" content="https://i.imgur.com/Acr64W9.png">
 <meta property="og:image" content="https://i.imgur.com/sCqtj53.png">
-<meta property="og:updated_time" content="2018-12-15T07:49:33.200Z">
+<meta property="og:updated_time" content="2018-12-16T04:34:21.301Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Microk8s 快速部署 Kubeflow">
 <meta name="twitter:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
-<meta name="twitter:image" content="http://yylin1.github.io/images/microk8s.png">
+<meta name="twitter:image" content="https://i.imgur.com/aecctnI.png">
 
 
 
@@ -159,7 +157,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    12 分鐘 read (About 1809 words)
+                    12 分鐘 read (About 1798 words)
                 </span>
                 
             </div>
@@ -171,11 +169,9 @@
             
         </h1>
         <div class="content">
-            <p><img src="/images/microk8s.png" alt=""></p>
-<p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p>
+            <p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p>
 <a id="more"></a>
-<h2 id="什麼是microk8s"><a href="#什麼是microk8s" class="headerlink" title="什麼是microk8s"></a>什麼是microk8s</h2><p><img src="https://i.imgur.com/5TFCZ7s.png" alt=""></p>
-<p>簡單來說，<a href="https://microk8s.io/" target="_blank" rel="noopener">microk8s</a>設計為快速輕巧Kubernetes最新版本安裝與主機隔離但不通過虛擬機。通過在單個快照包<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>中打包 Kubernetes、Docker.io、iptables和CNI的所有上游二進製文件來實現此隔離。<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>是一個應用程序容器，您可以將其想像為Docker容器的輕量級版本。它使用了許多相同的底層技術進行隔離，而不會有網絡隔離的所帶來的開銷。而<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>需使用虛擬化工具來環境隔離創建K8S集群，想必會快照更加耗時。</p>
+<h2 id="什麼是microk8s"><a href="#什麼是microk8s" class="headerlink" title="什麼是microk8s"></a>什麼是microk8s</h2><p>簡單來說，<a href="https://microk8s.io/" target="_blank" rel="noopener">microk8s</a>設計為快速輕巧Kubernetes最新版本安裝與主機隔離但不通過虛擬機。通過在單個快照包<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>中打包 Kubernetes、Docker.io、iptables和CNI的所有上游二進製文件來實現此隔離。<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>是一個應用程序容器，您可以將其想像為Docker容器的輕量級版本。它使用了許多相同的底層技術進行隔離，而不會有網絡隔離的所帶來的開銷。而<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>需使用虛擬化工具來環境隔離創建K8S集群，想必會快照更加耗時。</p>
 <h2 id="安裝Multipass"><a href="#安裝Multipass" class="headerlink" title="安裝Multipass"></a>安裝Multipass</h2><p>Mac OS X. (本篇文章以Mac環境進行))</p>
 <ul>
 <li>本機Mac OS 安裝程序安裝<a href="https://github.com/CanonicalLtd/multipass/releases/download/2018.6.1/multipass-2018.6.1-full-Darwin-signed.zip" target="_blank" rel="noopener">Multipass</a></li>
@@ -528,7 +524,7 @@
             
             <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                    <img class="thumbnail" src="/images/ansible_deploy_kubernetes_GPU.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
                 </p>
             </a>
             
@@ -847,7 +843,7 @@
             
             <a href="/2018/12/09/ansible-deploy-kuberentes-with-gpu/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/ansible-deploy-kubernetes-with-gpu.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
+                    <img class="thumbnail" src="/images/ansible_deploy_kubernetes_GPU.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU叢集">
                 </p>
             </a>
             
