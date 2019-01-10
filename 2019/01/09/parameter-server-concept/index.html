@@ -7,18 +7,18 @@
 
 
 
-    <meta name="description" content="本篇文章主要介紹分散式概念，對於架構釐清與現今機器學習(Deep Leraning)常見 框架(framework)實際應用探討。">
+    <meta name="description" content="本篇文章主要介紹分散式概念，對於參數服務器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
 <meta name="keywords" content="distributed-systems">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Parameter Server 學習筆記">
 <meta property="og:url" content="http://yylin1.github.io/2019/01/09/parameter-server-concept/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="本篇文章主要介紹分散式概念，對於架構釐清與現今機器學習(Deep Leraning)常見 框架(framework)實際應用探討。">
+<meta property="og:description" content="本篇文章主要介紹分散式概念，對於參數服務器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-01-09T15:30:04.241Z">
+<meta property="og:updated_time" content="2019-01-10T15:52:38.413Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Parameter Server 學習筆記">
-<meta name="twitter:description" content="本篇文章主要介紹分散式概念，對於架構釐清與現今機器學習(Deep Leraning)常見 框架(framework)實際應用探討。">
+<meta name="twitter:description" content="本篇文章主要介紹分散式概念，對於參數服務器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
 
 
 
@@ -152,7 +152,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    幾秒 read (About 41 words)
+                    2 分鐘 read (About 276 words)
                 </span>
                 
             </div>
@@ -164,7 +164,18 @@
             
         </h1>
         <div class="content">
-            <p>本篇文章主要介紹分散式概念，對於架構釐清與現今機器學習(Deep Leraning)常見 框架(framework)實際應用探討。</p>
+            <p>本篇文章主要介紹分散式概念，對於<code>參數服務器(Parameter Server)</code>架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。</p>
+<a id="more"></a>
+<h2 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h2><p>在過去十年中深度學習技術已成功應用於許多領域，例如語音辨識、影像分析、物件偵測等。</p>
+<p>大規模數據上跑機器學習任務是過去至今，資料中心系統架構面臨的主要挑戰之一，要如何有效解決運算需求成長，能否承載大型神經網絡與巨量數據資料資源請求挑戰：</p>
+<blockquote>
+<ol>
+<li>要訪問這些巨量的參數超過單個機器容納的頻寬能力(Bandwidth)支持</li>
+<li>很多ML算法是序列性的，同步過程會影響性能損失</li>
+<li>在大規模分散式情況中，如何設計容錯機制至關重要</li>
+</ol>
+</blockquote>
+<p>為了解決這些問題，大神們提出了一種新的架構- Parameter Server (簡稱PS)。</p>
 
         </div>
         
