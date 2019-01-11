@@ -20,7 +20,11 @@
 <meta property="og:image" content="https://i.imgur.com/EvxBA4m.png">
 <meta property="og:image" content="https://i.imgur.com/uBiLLcf.png">
 <meta property="og:image" content="https://i.imgur.com/3bZhCC9.png">
-<meta property="og:updated_time" content="2019-01-11T09:01:31.333Z">
+<meta property="og:image" content="https://i.imgur.com/4Y4rov1.png">
+<meta property="og:image" content="https://i.imgur.com/Kpyx4DF.png">
+<meta property="og:image" content="https://i.imgur.com/a8R7kHL.png">
+<meta property="og:image" content="https://i.imgur.com/vTUS2wt.png">
+<meta property="og:updated_time" content="2019-01-11T16:29:43.650Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Parameter Server 學習筆記">
 <meta name="twitter:description" content="本篇文章主要介紹分散式概念，對於參數伺服器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
@@ -158,7 +162,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    13 分鐘 read (About 1908 words)
+                    26 分鐘 read (About 3882 words)
                 </span>
                 
             </div>
@@ -223,7 +227,7 @@
 <li>使用了一個分佈式 hash 表使得新的server 節點可以隨時動態的插入到集合中；因此，新增一個節點不需要重新運行系統。</li>
 </ul>
 <h4 id="4-錯誤容忍-Fault-Tolerance-and-Durability"><a href="#4-錯誤容忍-Fault-Tolerance-and-Durability" class="headerlink" title="4. 錯誤容忍 (Fault Tolerance and Durability)"></a>4. 錯誤容忍 (Fault Tolerance and Durability)</h4><ul>
-<li>我們都知道，節點故障是不可避免的，特別是在大規模商用服務器集群中。從非災難性機器故障中恢復，只需要1秒，而且不需要中斷計算。Vector clocks保證了經歷故障之後還是能運行良好。</li>
+<li>我們都知道，節點故障是不可避免的，特別是在大規模商用伺服器集群中。從非災難性機器故障中恢復，只需要1秒，而且不需要中斷計算。Vector clocks保證了經歷故障之後還是能運行良好。</li>
 </ul>
 <h4 id="5-易用性-Ease-of-Use"><a href="#5-易用性-Ease-of-Use" class="headerlink" title="5. 易用性 (Ease of Use)"></a>5. 易用性 (Ease of Use)</h4><ul>
 <li>全局共享的參數可以被表示成各種形式：vector、matrices或者相應的 sparse 類型，這方便機器學習算法的開發。並且提供的線性代數數據類型都具有高性能的多線程庫。</li>
@@ -233,27 +237,32 @@
 <ul>
 <li><p>Parameter Server中，參數都是可以被表示成<code>(key, value)</code>的集合，比如一個最小化損失函數的問題，key 就是feature ID，而value 就是它的權值。對於稀疏參數，不存在的key，就可以認為是0。</p>
 </li>
-<li><p>把參數表示成kv (key, value)， 形式更自然，易於理解，更易於編程解；</p>
+<li><p>把參數表示成kv (key, value)， 行式更自然、易於理解、更易於編程解；</p>
 </li>
-<li><p>Workers 跟 Servers 之間通過 push 跟 pull來溝通 : </p>
+<li><p>Workers 跟 Servers 之間通過 push 跟 pull 來溝通 : </p>
 <ul>
-<li>Worker 通過 push 將計算好的梯度發送到 Server，然後通過 pull 從server 更新參數。</li>
-<li>為了提高計算性能和頻寬效率，Parameter Server 允許用戶使用 Range Push 跟 Range Pull 操作（使用區間更新的方式）。</li>
+<li>Worker 通過 <strong>push</strong> 將計算好的梯度發送到 Server，然後通過 <strong>pull</strong> 從Server 更新參數。</li>
+<li>為了提高計算性能和頻寬效率，Parameter Server 允許用戶使用 <strong>Range Push</strong> 跟 <strong>Range Pull</strong> 操作（使用區間更新的方式，那麼可以進行如下操作：</li>
 </ul>
 </li>
 </ul>
+<blockquote>
+<p>w.push(R, dest)<br>w.pull(R, dest)</p>
+</blockquote>
+<p>發送和接送特定 Range中的 w 。</p>
 <h3 id="2-Key-value-vectors"><a href="#2-Key-value-vectors" class="headerlink" title="2. Key-value vectors"></a>2. Key-value vectors</h3><ul>
 <li>賦予每個 key 所對應的 value 一個向量概念或矩陣概念。</li>
 </ul>
 <h3 id="3-User-Defined-Functions-on-the-Server"><a href="#3-User-Defined-Functions-on-the-Server" class="headerlink" title="3. User-Defined Functions on the Server"></a>3. User-Defined Functions on the Server</h3><ul>
 <li>伺服器端更新參數的時候還有計算正則項，這樣的操作可以由使用者自定義。</li>
 </ul>
-<h3 id="4-Asychronous-Tasks-and-Dependency"><a href="#4-Asychronous-Tasks-and-Dependency" class="headerlink" title="4. Asychronous Tasks and Dependency"></a>4. Asychronous Tasks and Dependency</h3><p><img src="https://i.imgur.com/uBiLLcf.png" alt=""></p>
+<h3 id="4-Asychronous-Tasks-and-Dependency"><a href="#4-Asychronous-Tasks-and-Dependency" class="headerlink" title="4. Asychronous Tasks and Dependency"></a>4. Asychronous Tasks and Dependency</h3><p>同步(Synchronous)與非同步(Asynchronous)差異：</p>
+<p><img src="https://i.imgur.com/uBiLLcf.png" alt=""></p>
 <p>如上圖，如果 iter1 需要在 iter0 computation，進行 push 跟 pull 都完成後才能開始;<code>Synchronous</code> 將所有計算完的梯度放在一起處理，當每次更新梯度時，需要等所以分發的資料計算完成，並回傳結果來把梯度累加計算平均，在進行更新變數。</p>
 <blockquote>
 <p>好處在於使用 loss 的下降時比較穩定，壞處就是要等最慢的Work計算完成時間。</p>
 </blockquote>
-<h4 id="Asychronous-架構："><a href="#Asychronous-架構：" class="headerlink" title="Asychronous 架構："></a>Asychronous 架構：</h4><p><img src="https://i.imgur.com/3bZhCC9.png" alt=""></p>
+<h4 id="補充Asychronous-架構說明："><a href="#補充Asychronous-架構說明：" class="headerlink" title="補充Asychronous 架構說明："></a>補充Asychronous 架構說明：</h4><p><img src="https://i.imgur.com/3bZhCC9.png" alt=""></p>
 <blockquote>
 <p>Ref: [Paper][Online job scheduling in Distributed Machine Learning Clusters]</p>
 <blockquote>
@@ -261,24 +270,121 @@
 </blockquote>
 </blockquote>
 <ul>
-<li><p>系統中非同步訓練工作流程，作業中不同 Worker 的訓練進度不同步，並且每次參數伺服器在接收到來自 Worker 的梯度時，每次更新其參數。</p>
+<li><p>系統中非訓練工作流程，作業中不同 Worker 的訓練進度不同步，並且每次參數伺服器在接收到來自 Worker 的梯度時，每次更新其參數。</p>
 </li>
-<li><p>在上面的示例中，參數伺服器使用「new weight = old weight − stepsize × gradient」然後將更新的權重發送回 Worker，處理完整個數據塊後，Worker 將繼續訓練分配給它的下一個數據塊。</p>
+<li><p>在上面Fig.2 圖中，參數伺服器使用「new weight = old weight − stepsize × gradient」然後將更新的權重發送回 Worker，處理完整個數據塊後，Worker 將繼續訓練分配給它的下一個數據塊。</p>
 </li>
 </ul>
 <blockquote>
 <p>Asychronous 的優點是能夠提高系統的使用效率（節省任務等待的過程），但是它的缺點就是容易降低算法的收斂速率。</p>
 </blockquote>
-<p>所以，系統性能跟算法收斂速率之間是存在一個trade-off 的，你需要同時考慮:</p>
+<hr>
+<p>考慮到使用者使用的時候會有不同的情况，Parameter Server 為使用者提供了多種任務依賴的方式：<img src="https://i.imgur.com/4Y4rov1.png" alt=""></p>
+<blockquote>
+<p><strong>Sequential</strong>： 这里其实是 synchronous task，任务之间是有顺序的，只有上一个任务完成，才能开始下一个任务；<br><strong>Eventual</strong>： 跟 sequential 相反，所有任务之间没有顺序，各自独立完成自己的任务，<br><strong>Bounded Delay</strong>： 这是sequential 跟 eventual 之间的trade-off，可以设置一个 τ 作为最大的延时时间。也就是说，只有 &gt;τ 之前的任务都被完成了，才能开始一个新的任务；极端的情况：</p>
+<ol>
+<li>τ=0，情况就是 Sequential；</li>
+<li>τ=∞，情况就是 Eventual；</li>
+</ol>
+</blockquote>
+<hr>
+<h3 id="5-User-Defined-Filters（使用者自定義過濾）"><a href="#5-User-Defined-Filters（使用者自定義過濾）" class="headerlink" title="5. User-Defined Filters（使用者自定義過濾）"></a>5. User-Defined Filters（使用者自定義過濾）</h3><p>在Worker節點這一端對梯度進行過濾，如果梯度並不是影響那麼大，就不佔用網絡去更新，等累積一段時間之後再去做更新。</p>
+<p>對於機器學習優化問題比如梯度下降來說，並不是每次計算的梯度對於最終優化都是有價值的，使用者可以通過自定義的規則過濾一些不必要的傳遞，而再進一步壓縮頻寬花費：</p>
 <ul>
-<li><p>算法對於參數非一致性的敏感度；</p>
+<li><p>發送很小的梯度值是低效率的：</p>
+<ul>
+<li>因此可以自定義設置，只<code>在梯度值較大的時候發送</code></li>
+</ul>
 </li>
-<li><p>訓練數據特徵之間的關聯度；</p>
-</li>
-<li><p>硬碟存儲容量</p>
+<li><p>更新接近最優情況的值是低效的：</p>
+<ul>
+<li>所以只在<code>非最優的情況下發送</code>，可通過KKT來判斷</li>
+</ul>
 </li>
 </ul>
 <hr>
+<h2 id="4-Paramter-Server架構實現"><a href="#4-Paramter-Server架構實現" class="headerlink" title="4. Paramter Server架構實現"></a>4. Paramter Server架構實現</h2><h3 id="Vector-Clock"><a href="#Vector-Clock" class="headerlink" title="Vector Clock"></a>Vector Clock</h3><ul>
+<li><p>為參數伺服器中的每個參數添加一個時間戳記，來跟蹤參數的更新和防止重複發送數據。基於此，溝通中的梯度更新數據中也應該有時間戳，防止重複更新。</p>
+</li>
+<li><p>如果每個參數都有一個時間戳，那麼參數眾多，時間戳也眾多。幸好 Parameter server在 push 跟 pull 的時候，都是 rang-based，這就帶來了一個好處：這個range裡面的參數共享的是同一個時間戳，這顯然可以大大降低了空間複雜度。</p>
+</li>
+</ul>
+<h3 id="Messages"><a href="#Messages" class="headerlink" title="Messages"></a>Messages</h3><ul>
+<li><p>Message是節點間交互的主要格式。一條 message 包括：時間戳，len(range)對kv. $[vc(R),(k1,v1),…,(kp,vp)]kj∈Randj∈{1,…p}$</p>
+</li>
+<li><p>這是parameter server 中最基本的溝通格式，不僅僅是共享參數才有，task 的 message也是這樣的格式，只要把這裡的(key, value) 改成(task ID, 參數/返回值)。</p>
+</li>
+</ul>
+<blockquote>
+<p>由於機器學習問題通常都需要很高的網絡頻寬，因此信息的壓縮是必須的。</p>
+</blockquote>
+<ul>
+<li><p>key的壓縮：因為訓練數據通常在分配之後都不會發生改變，因此worker沒有必要每次都發送相同的key，只需要接收方在第一次接收的時候緩存起來就行了。第二次，worker不再需要同時發送key和value，只需要發送value和key list的hash就行。這樣瞬間減少了一般的通信量。</p>
+</li>
+<li><p>value的壓縮：假設參數時稀疏的，那麼就會有大量的0存在。因此，為了進一步壓縮，我們只需要發送非0值。parameter server使用Snappy快速壓縮庫來壓縮數據、高效去除0值。</p>
+</li>
+<li><p>key的壓縮和value的壓縮可以同時進行。</p>
+</li>
+</ul>
+<h3 id="Replication-and-Consistency"><a href="#Replication-and-Consistency" class="headerlink" title="Replication and Consistency"></a>Replication and Consistency</h3><p>參數伺服器集群中每個節點都負責不同區域的參數，那麼，類似於hash table，使用hash ring進行實現，key和server id都插入到hash ring上。</p>
+<p><img src="https://i.imgur.com/Kpyx4DF.png" alt=""></p>
+<h3 id="備份和一致性"><a href="#備份和一致性" class="headerlink" title="備份和一致性"></a>備份和一致性</h3><p>使用類似hadoop 的chain 備份方式，對於一個master 節點，如果有更新，先更新它，然後再去更新備份的伺服器。<br><img src="https://i.imgur.com/a8R7kHL.png" alt=""><br>在更新的時候，由於機器學習算法的特點，可以將多次梯度聚合之後再去更新備份伺服器，從而減少帶寬。</p>
+<h2 id="Server-Management"><a href="#Server-Management" class="headerlink" title="Server Management"></a>Server Management</h2><p>由於key 的range 特性，當參數伺服器集群中增加一個節點時，步驟如下：</p>
+<ul>
+<li>Server Manager 節點給新節點分配一個key range，這可能會導致其他節點上的key range 切分。</li>
+<li>新節點從其他節點上將屬於它的key range 數據取過來，然後也將slave 信息取過來。</li>
+<li>Server Manager廣播節點變動，其他節點得知消息後將不屬於自己key range 的數據刪掉</li>
+<li><p>在第二步，從其他節點上取數據的時候，其他節點上的操作也分為兩步，第一複製數據，這可能也會導致key range 的切分。第二是不再接受和這些數據有關的消息，而是進行轉發，轉發到新節點。</p>
+</li>
+<li><p>在第三步，收到廣播信息後，節點會刪除對應區間的數據，然後，掃描所有的和R有關發送出去的還沒收到回复的消息，當這些消息回复時，轉發到新節點。</p>
+</li>
+</ul>
+<blockquote>
+<p>節點的離開與節點的加入是類似</p>
+</blockquote>
+<h3 id="Worker-Management"><a href="#Worker-Management" class="headerlink" title="Worker Management"></a>Worker Management</h3><p>添加工作節點比添加參數伺服器節點要簡單一些，步驟如下：</p>
+<ul>
+<li>task scheduler給新節點分配一些數據</li>
+<li>節點從網絡文件系統中載入數據，然後從伺服器端拉取參數</li>
+<li>task scheduler廣播變化，其他節點 free掉一些訓練數據</li>
+</ul>
+<p>當一個節點離開的時候，task scheduler可能會尋找一個替代，但恢復節點是十分耗時的工作，同時，損失一些數據對最後的結果可能影響並不是很大。所以，系統會讓用戶進行選擇，是恢復節點還是不做處理。這種機制甚至可以允許用戶刪掉跑的最慢的節點來提升速度。</p>
+<h2 id="5-何時使用分散式深度學習"><a href="#5-何時使用分散式深度學習" class="headerlink" title="5. 何時使用分散式深度學習?"></a>5. 何時使用分散式深度學習?</h2><h2 id=""><a href="#" class="headerlink" title=""></a><img src="https://i.imgur.com/vTUS2wt.png" alt=""></h2><blockquote>
+<p>分散式的深度學習並不總是最佳的選擇，需要視情況而定：</p>
+</blockquote>
+<p>進行分散式訓練，由於同步、資料和參數與網路傳輸等，分散式系統相比單機訓練要多不少額外的必要開銷。</p>
+<p>可能導致網路模型的訓練時間過長：</p>
+<ul>
+<li>神經網路太大</li>
+<li>資料量太大</li>
+</ul>
+<blockquote>
+<p>上圖其參考選擇任務合適對應訓練環境場景，其中都要考慮到 「網路傳輸」與「總計算量」</p>
+</blockquote>
+<hr>
+<h1 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h1><ul>
+<li>一般在資料量小，且各節點計算能力平均下，適合使用同步模式; 反之在資料量大與各節點效能差異不同時，適合用非同步。</li>
+<li><p>系統性能跟算法收斂速率之間是存在一個平衡（trade-off） 的情況，你需要同時考慮</p>
+<ul>
+<li>算法對於參數非一致性的敏感度</li>
+<li>訓練數據特徵之間的關聯度</li>
+<li>節點硬碟存儲容量</li>
+</ul>
+</li>
+<li><p>什麼時候DL訓練任務，真的需要使用分散式深度學習</p>
+</li>
+</ul>
+<hr>
+<h2 id="Further-Readings"><a href="#Further-Readings" class="headerlink" title="Further Readings"></a>Further Readings</h2><ul>
+<li><a href="https://xiandong79.github.io/Intro-Distributed-Deep-Learning" target="_blank" rel="noopener">[Distributed System] Intro-Distributed-Deep-Learning
+</a><h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2></li>
+<li><a href="http://pengshuang.space/2017/07/23/Parameter-Server-%E5%AD%A6%E4%B9%A0/" target="_blank" rel="noopener">[Distributed System] 小沙文的博客 - Parameter Server 学习</a></li>
+<li>[<a href="http://www.o-k.la/parameter-server.html" target="_blank" rel="noopener">[Distributed System] #周末识堂# 参数服务器 parameter server]</a></li>
+<li><a href="https://blog.csdn.net/cyh_24/article/details/50545780" target="_blank" rel="noopener">[Distributed System]Parameter Server 详解</a></li>
+<li>[<a href="https://www.jianshu.com/p/d3e503ddd68e" target="_blank" rel="noopener">[Distributed System] raincoffee - Parameter Server]</a></li>
+<li><a href="https://www.cs.cmu.edu/~muli/file/parameter_server_osdi14.pdf" target="_blank" rel="noopener">[Paper] Scaling Distributed Machine Learning with the Parameter Server</a></li>
+<li><a href="http://www.cs.toronto.edu/~ranzato/publications/DistBeliefNIPS2012_withAppendix.pdf" target="_blank" rel="noopener">[Paper] Large Scale Distributed Deep Networks</a></li>
+</ul>
 
         </div>
         
