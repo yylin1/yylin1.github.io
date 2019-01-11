@@ -7,18 +7,24 @@
 
 
 
-    <meta name="description" content="本篇文章主要介紹分散式概念，對於參數服務器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
+    <meta name="description" content="本篇文章主要介紹分散式概念，對於參數伺服器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
 <meta name="keywords" content="distributed-systems">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Parameter Server 學習筆記">
 <meta property="og:url" content="http://yylin1.github.io/2019/01/09/parameter-server-concept/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="本篇文章主要介紹分散式概念，對於參數服務器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
+<meta property="og:description" content="本篇文章主要介紹分散式概念，對於參數伺服器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-01-10T15:52:38.413Z">
+<meta property="og:image" content="https://i.imgur.com/93RXOgT.png">
+<meta property="og:image" content="https://i.imgur.com/HwYPB7c.gif">
+<meta property="og:image" content="https://i.imgur.com/EvxBA4m.png">
+<meta property="og:image" content="https://i.imgur.com/uBiLLcf.png">
+<meta property="og:image" content="https://i.imgur.com/3bZhCC9.png">
+<meta property="og:updated_time" content="2019-01-11T09:01:31.333Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Parameter Server 學習筆記">
-<meta name="twitter:description" content="本篇文章主要介紹分散式概念，對於參數服務器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
+<meta name="twitter:description" content="本篇文章主要介紹分散式概念，對於參數伺服器(Parameter Server)架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。">
+<meta name="twitter:image" content="https://i.imgur.com/93RXOgT.png">
 
 
 
@@ -152,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    2 分鐘 read (About 276 words)
+                    13 分鐘 read (About 1908 words)
                 </span>
                 
             </div>
@@ -164,7 +170,7 @@
             
         </h1>
         <div class="content">
-            <p>本篇文章主要介紹分散式概念，對於<code>參數服務器(Parameter Server)</code>架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。</p>
+            <p>本篇文章主要介紹分散式概念，對於<code>參數伺服器(Parameter Server)</code>架構釐清，並與主流常見 機器學習(Machine Learning) 框架使用分散式運算實際應用場景探討。</p>
 <a id="more"></a>
 <h2 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h2><p>在過去十年中深度學習技術已成功應用於許多領域，例如語音辨識、影像分析、物件偵測等。</p>
 <p>大規模數據上跑機器學習任務是過去至今，資料中心系統架構面臨的主要挑戰之一，要如何有效解決運算需求成長，能否承載大型神經網絡與巨量數據資料資源請求挑戰：</p>
@@ -172,10 +178,107 @@
 <ol>
 <li>要訪問這些巨量的參數超過單個機器容納的頻寬能力(Bandwidth)支持</li>
 <li>很多ML算法是序列性的，同步過程會影響性能損失</li>
-<li>在大規模分散式情況中，如何設計容錯機制至關重要</li>
+<li>在分佈式中，容錯能力是非常重要的。很多情況下，算法都是部署到雲環境中的（這種環境下，機器是不可靠的，並且job也是有可能被搶占的）；</li>
 </ol>
 </blockquote>
-<p>為了解決這些問題，大神們提出了一種新的架構- Parameter Server (簡稱PS)。</p>
+<p>為了解決這些問題，大神們提出了一種新的架構- Parameter Server(簡稱PS)。</p>
+<hr>
+<h2 id="Paramter-Server架構設計"><a href="#Paramter-Server架構設計" class="headerlink" title="Paramter Server架構設計:"></a>Paramter Server架構設計:</h2><h2 id="1-Paramter-Server-整體架構"><a href="#1-Paramter-Server-整體架構" class="headerlink" title="1. Paramter Server 整體架構"></a>1. Paramter Server 整體架構</h2><p>PS架構主要包括兩大部分，一個<code>參數伺服器群（Parameter Server group）</code>和<code>多個工作(Worker)群</code>:</p>
+<ul>
+<li>在PS中，每個<code>Parameter</code>實際上都只負責分到的<strong>部分參數</strong>（Servers共同維持一個全局的共享參數），而每個Worker 也只分到部分數據和處理任務</li>
+<li>每個子節點都只維護自己分配到的參數，自己部分更新之後，將計算結果（例如：梯度）傳回到主節點，進行全局的更新（比如All reduce平均操作之類的），主節點再向子節點傳送新的參數；</li>
+</ul>
+<blockquote>
+<p>Parameter Server 架構圖:</p>
+</blockquote>
+<p><img src="https://i.imgur.com/93RXOgT.png" alt=""></p>
+<h3 id="架構概念解釋："><a href="#架構概念解釋：" class="headerlink" title="架構概念解釋："></a>架構概念解釋：</h3><ul>
+<li><p>Server節點可以跟其他Server節點溝通，每個Server負責自己分到的參數，<code>Server group共同維持所有參數的更新</code>。</p>
+</li>
+<li><p>Server manager node 負責維護一些<code>元數據(metadata)</code>的一致性，比如各個節點的狀態，參數的分配情況等。</p>
+</li>
+<li><p>Worker節點之間無交流，只能跟自己對應的Server進行溝通。</p>
+</li>
+<li><p>每個Worker group有一個 task scheduler，負責向 Worker 分配任務，並且監控 Worker的運行情況。當有新的Worker加入或者退出，<code>task scheduler負責重新分配任務</code>。</p>
+</li>
+<li><p>training data 會被 split 多個部分，一個 Worker 在本地將一部分訓練數據存儲在本地統計數據中。</p>
+</li>
+</ul>
+<blockquote>
+<p>範例: Parameter Server 示意圖  </p>
+</blockquote>
+<p><img src="https://i.imgur.com/HwYPB7c.gif" alt=""></p>
+<p>上圖中，每個子節點都只維護自己分配到的參數（圖中的黑色），自己部分更新之後，將計算結果（例如：梯度）傳回到主節點，進行全局的更新（比如平均操作之類的），主節點再向子節點傳送新的參數。</p>
+<blockquote>
+<p>Ref: <a href="https://blog.csdn.net/cyh_24/article/details/50545780" target="_blank" rel="noopener">[Parameter Server 详解-仙道菜]</a></p>
+</blockquote>
+<hr>
+<h2 id="2-Parameter-Server-架構優勢"><a href="#2-Parameter-Server-架構優勢" class="headerlink" title="2. Parameter Server 架構優勢"></a>2. Parameter Server 架構優勢</h2><h4 id="1-高效溝通-Efficient-communication"><a href="#1-高效溝通-Efficient-communication" class="headerlink" title="1. 高效溝通(Efficient communication)"></a>1. 高效溝通(Efficient communication)</h4><ul>
+<li>非同步(Asynchronous)訓鍊，使得計算不會被拖累，不需要停下來等一些機器(Worker)執行完一個iteration，這大幅減少延遲時間。</li>
+</ul>
+<h4 id="2-彈性一致性模型-Flexible-consistency-models"><a href="#2-彈性一致性模型-Flexible-consistency-models" class="headerlink" title="2. 彈性一致性模型(Flexible consistency models)"></a>2. 彈性一致性模型(Flexible consistency models)</h4><ul>
+<li>允許用戶自定義一致性: 比如Sequential（序列式的，即完全同步）、Eventual（完全不同步的）和Bounded Delay（有條件的限制，可以允許用戶在限制的次數內異步，比如限制為3 次，如果某個節點已經超前了其他節點四次迭代了，那麼要停下等待同步。在整個訓練的過程中，Delay 可能是動態的，即 delay 的參數在訓練過程中可以變大或變小）。</li>
+</ul>
+<h4 id="3-擴展性強-Elastic-Scalability"><a href="#3-擴展性強-Elastic-Scalability" class="headerlink" title="3. 擴展性強 (Elastic Scalability)"></a>3. 擴展性強 (Elastic Scalability)</h4><ul>
+<li>使用了一個分佈式 hash 表使得新的server 節點可以隨時動態的插入到集合中；因此，新增一個節點不需要重新運行系統。</li>
+</ul>
+<h4 id="4-錯誤容忍-Fault-Tolerance-and-Durability"><a href="#4-錯誤容忍-Fault-Tolerance-and-Durability" class="headerlink" title="4. 錯誤容忍 (Fault Tolerance and Durability)"></a>4. 錯誤容忍 (Fault Tolerance and Durability)</h4><ul>
+<li>我們都知道，節點故障是不可避免的，特別是在大規模商用服務器集群中。從非災難性機器故障中恢復，只需要1秒，而且不需要中斷計算。Vector clocks保證了經歷故障之後還是能運行良好。</li>
+</ul>
+<h4 id="5-易用性-Ease-of-Use"><a href="#5-易用性-Ease-of-Use" class="headerlink" title="5. 易用性 (Ease of Use)"></a>5. 易用性 (Ease of Use)</h4><ul>
+<li>全局共享的參數可以被表示成各種形式：vector、matrices或者相應的 sparse 類型，這方便機器學習算法的開發。並且提供的線性代數數據類型都具有高性能的多線程庫。</li>
+</ul>
+<hr>
+<h2 id="3-Parameter-Server-關鍵概念"><a href="#3-Parameter-Server-關鍵概念" class="headerlink" title="3. Parameter Server 關鍵概念"></a>3. Parameter Server 關鍵概念</h2><h3 id="1-key-value-，Range-Push-and-Pull"><a href="#1-key-value-，Range-Push-and-Pull" class="headerlink" title="1. (key, value)，Range Push and Pull"></a>1. (key, value)，Range Push and Pull</h3><p><img src="https://i.imgur.com/EvxBA4m.png" alt=""></p>
+<ul>
+<li><p>Parameter Server中，參數都是可以被表示成<code>(key, value)</code>的集合，比如一個最小化損失函數的問題，key 就是feature ID，而value 就是它的權值。對於稀疏參數，不存在的key，就可以認為是0。</p>
+</li>
+<li><p>把參數表示成kv (key, value)， 形式更自然，易於理解，更易於編程解；</p>
+</li>
+<li><p>Workers 跟 Servers 之間通過 push 跟 pull來溝通 : </p>
+<ul>
+<li>Worker 通過 push 將計算好的梯度發送到 Server，然後通過 pull 從server 更新參數。</li>
+<li>為了提高計算性能和頻寬效率，Parameter Server 允許用戶使用 Range Push 跟 Range Pull 操作（使用區間更新的方式）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-Key-value-vectors"><a href="#2-Key-value-vectors" class="headerlink" title="2. Key-value vectors"></a>2. Key-value vectors</h3><ul>
+<li>賦予每個 key 所對應的 value 一個向量概念或矩陣概念。</li>
+</ul>
+<h3 id="3-User-Defined-Functions-on-the-Server"><a href="#3-User-Defined-Functions-on-the-Server" class="headerlink" title="3. User-Defined Functions on the Server"></a>3. User-Defined Functions on the Server</h3><ul>
+<li>伺服器端更新參數的時候還有計算正則項，這樣的操作可以由使用者自定義。</li>
+</ul>
+<h3 id="4-Asychronous-Tasks-and-Dependency"><a href="#4-Asychronous-Tasks-and-Dependency" class="headerlink" title="4. Asychronous Tasks and Dependency"></a>4. Asychronous Tasks and Dependency</h3><p><img src="https://i.imgur.com/uBiLLcf.png" alt=""></p>
+<p>如上圖，如果 iter1 需要在 iter0 computation，進行 push 跟 pull 都完成後才能開始;<code>Synchronous</code> 將所有計算完的梯度放在一起處理，當每次更新梯度時，需要等所以分發的資料計算完成，並回傳結果來把梯度累加計算平均，在進行更新變數。</p>
+<blockquote>
+<p>好處在於使用 loss 的下降時比較穩定，壞處就是要等最慢的Work計算完成時間。</p>
+</blockquote>
+<h4 id="Asychronous-架構："><a href="#Asychronous-架構：" class="headerlink" title="Asychronous 架構："></a>Asychronous 架構：</h4><p><img src="https://i.imgur.com/3bZhCC9.png" alt=""></p>
+<blockquote>
+<p>Ref: [Paper][Online job scheduling in Distributed Machine Learning Clusters]</p>
+<blockquote>
+<p>Fig.2: Asynchronous Training Workflow</p>
+</blockquote>
+</blockquote>
+<ul>
+<li><p>系統中非同步訓練工作流程，作業中不同 Worker 的訓練進度不同步，並且每次參數伺服器在接收到來自 Worker 的梯度時，每次更新其參數。</p>
+</li>
+<li><p>在上面的示例中，參數伺服器使用「new weight = old weight − stepsize × gradient」然後將更新的權重發送回 Worker，處理完整個數據塊後，Worker 將繼續訓練分配給它的下一個數據塊。</p>
+</li>
+</ul>
+<blockquote>
+<p>Asychronous 的優點是能夠提高系統的使用效率（節省任務等待的過程），但是它的缺點就是容易降低算法的收斂速率。</p>
+</blockquote>
+<p>所以，系統性能跟算法收斂速率之間是存在一個trade-off 的，你需要同時考慮:</p>
+<ul>
+<li><p>算法對於參數非一致性的敏感度；</p>
+</li>
+<li><p>訓練數據特徵之間的關聯度；</p>
+</li>
+<li><p>硬碟存儲容量</p>
+</li>
+</ul>
+<hr>
 
         </div>
         
