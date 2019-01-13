@@ -2,21 +2,22 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>標籤: kubeflow - Yi Yang&#39;s Blog</title>
+<title>透過 Ansible 快速部署安 Openshift 4.0 叢集 - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
 
     <meta name="description" content="Blog">
-<meta name="keywords" content="kubernetes, Deep Learning">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Yi Yang&#39;s Blog">
-<meta property="og:url" content="http://yylin1.github.io/tags/kubeflow/index.html">
+<meta name="keywords" content="openshift,ansible">
+<meta property="og:type" content="article">
+<meta property="og:title" content="透過 Ansible 快速部署安 Openshift 4.0 叢集">
+<meta property="og:url" content="http://yylin1.github.io/2019/01/13/openshift-ansible-deploy/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="Blog">
 <meta property="og:locale" content="zh-TW">
+<meta property="og:updated_time" content="2019-01-13T14:45:58.735Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Yi Yang&#39;s Blog">
+<meta name="twitter:title" content="透過 Ansible 快速部署安 Openshift 4.0 叢集">
 <meta name="twitter:description" content="Blog">
 
 
@@ -83,7 +84,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/artificial-intelligence.png" alt="Yi Yang&#39;s Blog" height="28">
+                <img src="/images/artificial-intelligence.png" alt="透過 Ansible 快速部署安 Openshift 4.0 叢集" height="28">
             
             </a>
         </div>
@@ -134,234 +135,96 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/openshift-install.png" alt="透過 Ansible 快速部署安 Openshift 4.0 叢集">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-01-13T14:44:13.000Z">2019-01-13</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/deploy/">deploy</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    幾秒 read (About 0 words)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                透過 Ansible 快速部署安 Openshift 4.0 叢集
+            
+        </h1>
+        <div class="content">
+            
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/ansible/">ansible</a>, <a class="has-link-grey -link" href="/tags/openshift/">openshift</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/01/09/parameter-server-concept/">
+                <span class="level-item">Parameter Server 學習筆記</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
     <div class="card-content">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="/tags">標籤</a></li>
-            <li class="is-active"><a href="#" aria-current="page">kubeflow</a></li>
-        </ul>
-        </nav>
+        <h3 class="title is-5 has-text-weight-normal">評論</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://yylin1.github.io/2019/01/13/openshift-ansible-deploy/';
+        this.page.identifier = '2019/01/13/openshift-ansible-deploy/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'yylin' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
     </div>
 </div>
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/12/14/snap-microk8s-deploy-kubernetes/" class="image is-7by1">
-            <img class="thumbnail" src="/images/microk8s-deploy-kubernetes.png" alt="透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-12-14T15:10:49.000Z">2018-12-14</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Deploy/">Deploy</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    15 分鐘 read (About 2243 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/12/14/snap-microk8s-deploy-kubernetes/">透過microk8s更輕巧建立單節點kubernetes叢集（含GPU測試）</a>
-            
-        </h1>
-        <div class="content">
-            <p>先前文章參考：<a href="https://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/">透過 Microk8s 快速部署 Kubeflow
-</a></p>
-<p>此篇想重新介紹透過 microk8s，近期剛好看到<a href="https://blog.ubuntu.com/2018/12/10/using-gpgpus-with-kubernetes?fbclid=IwAR05YY0s2aOifQQj6prD7phDyvdgXDJM_UIriMcwzsoLorni97ovVFnJ8yI" target="_blank" rel="noopener">Using GPGPUs with Kubernetes</a>這邊文章介紹，想起之前在實驗kubeflow時候有於Mac上執行過Microk8s，這次重新測試於單機 Linux 環境並測試相關 Addons 與GPU環境中實驗。</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/12/14/snap-microk8s-deploy-kubernetes/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/12/14/kubecon-china-first/" class="image is-7by1">
-            <img class="thumbnail" src="/images/kubecon-china-share.png" alt="人生首場 KubeCon&amp;CloudNativeCon China 2018">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/kubernetes/">kubernetes</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    2 分鐘 read (About 358 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/12/14/kubecon-china-first/">人生首場 KubeCon&amp;CloudNativeCon China 2018</a>
-            
-        </h1>
-        <div class="content">
-            <p>此篇主要分享參與KubeCon China2018會後心得，剛好透過社群分享再次的回顧自己聆聽議程與參與國際會議論壇的體悟。</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/12/14/kubecon-china-first/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/10/23/kubeflow-deploy-v0.3.0/" class="image is-7by1">
-            <img class="thumbnail" src="/images/kubeflow_deploy.jpeg" alt="快速部署 Kubeflow v0.3 容器機器學習平台">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-10-23T12:53:45.000Z">2018-10-23</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    17 分鐘 read (About 2569 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/10/23/kubeflow-deploy-v0.3.0/">快速部署 Kubeflow v0.3 容器機器學習平台</a>
-            
-        </h1>
-        <div class="content">
-            <p><a href="https://v0-3.kubeflow.org/" target="_blank" rel="noopener">Kubeflow</a> 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並執行。</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/10/23/kubeflow-deploy-v0.3.0/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/09/17/microk8s-deploy-kubeflow/" class="image is-7by1">
-            <img class="thumbnail" src="/images/microk8s.png" alt="透過 Microk8s 快速部署 Kubeflow">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-09-17T04:12:02.000Z">2018-09-17</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    12 分鐘 read (About 1798 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/09/17/microk8s-deploy-kubeflow/">透過 Microk8s 快速部署 Kubeflow</a>
-            
-        </h1>
-        <div class="content">
-            <p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/09/17/microk8s-deploy-kubeflow/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
 </div>
                 
 
@@ -1388,7 +1251,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/artificial-intelligence.png" alt="Yi Yang&#39;s Blog" height="28">
+                    <img src="/images/artificial-intelligence.png" alt="透過 Ansible 快速部署安 Openshift 4.0 叢集" height="28">
                 
                 </a>
                 <p class="is-size-7">
