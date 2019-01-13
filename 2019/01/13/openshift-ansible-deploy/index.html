@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="本篇將介紹透過 OpenShift Ansible 來快速部署實體主機Openshift 4.0叢集版本，這邊主要透過安裝最新版本(v4.0)依賴套件來部署裸機(Bare machines)過程。 共同編輯: chlin62">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-01-13T16:07:05.574Z">
+<meta property="og:updated_time" content="2019-01-13T16:14:58.253Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Ansible 快速部署安 Openshift 4.0 叢集">
 <meta name="twitter:description" content="本篇將介紹透過 OpenShift Ansible 來快速部署實體主機Openshift 4.0叢集版本，這邊主要透過安裝最新版本(v4.0)依賴套件來部署裸機(Bare machines)過程。 共同編輯: chlin62">
@@ -156,7 +156,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    14 分鐘 read (About 2081 words)
+                    15 分鐘 read (About 2226 words)
                 </span>
                 
             </div>
@@ -178,6 +178,11 @@
 </ul>
 </li>
 </ul>
+<h2 id="OpenShift-部署可以分為以下幾個階段："><a href="#OpenShift-部署可以分為以下幾個階段：" class="headerlink" title="OpenShift 部署可以分為以下幾個階段："></a>OpenShift 部署可以分為以下幾個階段：</h2><p>1、<strong>環境事前準備</strong>：準備OpenShift叢集需要的主機，並進行事前環境相關連結配置。</p>
+<p>2、<strong>安裝依賴套件</strong>：提前安裝使用Ansible安裝OpenShift叢集所依賴的最新軟版本<code>.rpm</code>套件。</p>
+<p>3、<strong>Ansible執行安裝</strong>：安裝使用Ansible Playbook進行自動化安裝。</p>
+<p>4、<strong>OpenShift系統配置</strong>：在使用Ansible執行安裝完成之後的系統配置。</p>
+<p>5、<strong>測試與額外套件</strong> : 測試部署後的環境與額外add-on套件於叢集環境。</p>
 <h2 id="實驗節點資訊"><a href="#實驗節點資訊" class="headerlink" title="實驗節點資訊"></a>實驗節點資訊</h2><p>本次安裝作業系統採用CentOS 7.5，測試環境為實體主機：</p>
 <table>
 <thead>
@@ -214,7 +219,6 @@
 <li>所有節點的網路之間可以互相溝通。</li>
 <li>部署節點對其他節點不需要 SSH 密碼即可登入。</li>
 <li>所有節點都擁有 Sudoer 權限，並且不需要輸入密碼。</li>
-<li>所有節點需要安裝 Python。</li>
 <li>所有節點需要設定/etc/host解析到所有主機。</li>
 <li>部署節點需要安裝 Ansible。</li>
 </ul>
