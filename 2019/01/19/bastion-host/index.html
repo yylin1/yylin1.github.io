@@ -7,18 +7,20 @@
 
 
 
-    <meta name="description" content="由於最近接觸 Openshift 部署實體積，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行跳板機部署情境與針對安全原則筆記。">
+    <meta name="description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
 <meta name="keywords" content="bastion">
 <meta property="og:type" content="article">
 <meta property="og:title" content="認識 Bastion Host 部署管理機">
 <meta property="og:url" content="http://yylin1.github.io/2019/01/19/bastion-host/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="由於最近接觸 Openshift 部署實體積，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行跳板機部署情境與針對安全原則筆記。">
+<meta property="og:description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-01-19T15:56:17.312Z">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*HLs0qwn9LdoedmIlQ8VlVw.png">
+<meta property="og:updated_time" content="2019-01-19T16:53:28.186Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="認識 Bastion Host 部署管理機">
-<meta name="twitter:description" content="由於最近接觸 Openshift 部署實體積，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行跳板機部署情境與針對安全原則筆記。">
+<meta name="twitter:description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
+<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/1600/1*HLs0qwn9LdoedmIlQ8VlVw.png">
 
 
 
@@ -138,7 +140,7 @@
     
     <div class="card-image">
         <span  class="image is-7by1">
-            <img class="thumbnail" src="/images/" alt="認識 Bastion Host 部署管理機">
+            <img class="thumbnail" src="/images/bastion-host.png" alt="認識 Bastion Host 部署管理機">
         </span>
     </div>
     
@@ -156,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    2 分鐘 read (About 349 words)
+                    8 分鐘 read (About 1148 words)
                 </span>
                 
             </div>
@@ -168,14 +170,49 @@
             
         </h1>
         <div class="content">
-            <p>由於最近接觸 <code>Openshift</code> 部署實體積，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行跳板機部署情境與針對安全原則筆記。</p>
+            <p>由於最近接觸 <code>Openshift</code> 部署實體機，剛好部署過程學習到透過 <code>Bastion 管理機</code>，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中<code>安全性</code>問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。</p>
 <a id="more"></a>
-<h2 id="Bastion-Host-跳板機"><a href="#Bastion-Host-跳板機" class="headerlink" title="Bastion Host 跳板機"></a>Bastion Host 跳板機</h2><blockquote>
+<h2 id="Bastion-Host-中繼管理機"><a href="#Bastion-Host-中繼管理機" class="headerlink" title="Bastion Host 中繼管理機"></a>Bastion Host 中繼管理機</h2><blockquote>
 <p>簡單來說就是為連線伺服器叢集限定一個入口，方便管理部署維運並權限控制以及監控</p>
 </blockquote>
-<p>想像一下，如果你要維護一百多台伺服器，要記住每台伺服器IP/帳號/密碼，肯定是不可能的吧？這種情況下，可以在跳板機上配置 <code>SSH Key</code>複製到遠端 Server 再進行跳板動作，配置完畢後，通過跳板機登錄並操作部署維護多台節點主機。</p>
-<p>但思考過後這做法其實沒有很安全，又需要多下一個指令進行跳板，更何況之前沒有<code>Bastion Host</code>概念通常都直接拿<code>Master Node</code>當跳板機，而更重要的是當<code>Bastion Host</code>跳板機，只要主機被 Hack 都可以隨時入侵其他主機，而開始找如何針對跳板機增加安全性的問題。</p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2>
+<p>想像一下，如果你要維護一百多台伺服器，要記住每台伺服器IP/帳號/密碼，肯定是不可能的吧？這種情況下，可以在跳板機上配置通常做法將<code>SSH Key</code>複製到遠端 Server 再進行跳板動作，配置完畢後，通過跳板機登錄並操作維護多台節點主機。</p>
+<p>但因為目前我的環境都為測試實驗環境，這做法其實沒有很安全，又需要多下一個指令進透過中繼管理機操作，而先前更何況沒有<code>Bastion Host</code>概念通常都直接拿<code>Master Node</code>當跳板機部署。而更重要的是當<code>Bastion Host</code>跳板機被 Hack 都可以隨時入侵其他主機操作，而找如何針對增加安全性的問題下手。</p>
+<h2 id="解決安全性辦法"><a href="#解決安全性辦法" class="headerlink" title="解決安全性辦法"></a>解決安全性辦法</h2><blockquote>
+<p>這邊參考安全性做法 </p>
+<ul>
+<li><a href="https://medium.com/@puresmash/%E5%AE%89%E5%85%A8%E5%9C%B0%E5%88%A9%E7%94%A8-bastion-host-%E8%B7%B3%E8%BD%89-5f0529301362" target="_blank" rel="noopener">[Ref:安全地利用 Bastion Host 跳轉]</a></li>
+<li><a href="https://blog.wu-boy.com/2016/10/ssh-agent-forwarding-proxycommand-tutorial/" target="_blank" rel="noopener">[Ref:SSH agent forwarding 教學]</a></li>
+</ul>
+</blockquote>
+<ul>
+<li>針對「 Bastion Host 中繼主機當跳板」連線白名單限制，或是直接隔絕外網連線操作，只在限定實驗環境內網進行中繼主機操作與部署（離線部署叢集）</li>
+</ul>
+<p>轉交密鑰方式：</p>
+<ul>
+<li><a href="https://developer.github.com/guides/using-ssh-agent-forwarding/" target="_blank" rel="noopener">SSH agent forwarding</a> 讓開發者將 Local 端的 SSH Key Pair 帶到另外一台機器進行傳送，也就是說你不用將 SSH Key 複製到遠端 Server 再進行跳板動作</li>
+</ul>
+<p>舉例來說，首先 SSH 登入進 Server1，接著在 Server1 上登入 Server2 時，就會自動使用你本地的 SSH Key：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Local ---(SSH)---&gt; Server1 ---(SSH)---&gt; Server2</span><br></pre></td></tr></table></figure>
+<p>首先需要將要 <code>forwarding</code> 的 <code>private key</code> 加到清單裡面:<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-add</span><br></pre></td></tr></table></figure></p>
+<p>加上 <code>-L</code> 可以檢查這個清單<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-add -L</span><br></pre></td></tr></table></figure></p>
+<p>這邊注意可以將所有機器的 key pair 都放到 ~/.ssh/keys 目錄，並且設定 400 權限</p>
+<p>方法一：每次要 Local 連上 Server 時，加上 -A 參數：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -A user@&#123;you server1 ip&#125;</span><br></pre></td></tr></table></figure></p>
+<p>方法二：修改 <code>~/.ssh/config</code> 設定，加上 <code>ForwardAgent yes</code>，這樣就不需要每次連都加上 -A 參數。例如</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Host server1</span><br><span class="line">  HostName 106.187.36.122</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
+<ul>
+<li>這樣中繼主機，不需要存放任何憑證資料</li>
+</ul>
+<blockquote>
+<p>安全隱憂的，起因於 agent service 於連線時會在 /tmp/ 目錄建立一個檔案 /tmp/ssh-xxxxxx/agent.xxxx，在正常的情況下，它會用原使用者透過 ssh-add 所設定的密鑰對，替我們回答目的伺服器所發起的密鑰驗證要求。</p>
+</blockquote>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*HLs0qwn9LdoedmIlQ8VlVw.png" alt=""></p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Host hosta</span><br><span class="line">  User userfoo</span><br><span class="line">  Hostname 123.123.123.123</span><br><span class="line"> </span><br><span class="line">Host hostb</span><br><span class="line">  User userbar</span><br><span class="line">  Hostname 192.168.1.1</span><br><span class="line">  Port 22</span><br><span class="line">  ProxyCommand ssh -q -W %h:%p hosta</span><br><span class="line">  IdentityFile ~/.ssh/keys/xxxx.pem</span><br></pre></td></tr></table></figure>
+<p>此配置告訴本地SSH客戶端通過直接連接連接到主機A. 現在，如果你鍵入ssh hostb它將要做的是首先連接到主機A然後通過參數ProxyCommand指定的主機和Port轉發你的SSH客戶端-W，在這種情況下<code>192.168.1.1</code>強調這是一個內部主機。然後，您的本地SSH客戶端將對主機B進行身份驗證，就像您直接連接到它一樣。</p>
+<p>這裡的另一個觀察是你不需要記住關於主機的任何信息，當你可以簡單地用Host線對它進行別名時，它不需要IP或模糊的主機名，端口或用戶名。</p>
+<p>ProxyCommand 不用將 pem 透過 ssh-add 匯入，省下一步指令，接著執行底下指令就可以 ssh 到指定機器，跟方法一比起來更安全又快速</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh hostb</span><br></pre></td></tr></table></figure>
+<p>這個方法可以讓我們直接登入遠端主機，省略第二次的 ssh 指令。</p>
+
         </div>
         
         <div class="level is-size-7 is-uppercase">
@@ -498,7 +535,7 @@
             
             <a href="/2019/01/19/bastion-host/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/" alt="認識 Bastion Host 部署管理機">
+                    <img class="thumbnail" src="/images/bastion-host.png" alt="認識 Bastion Host 部署管理機">
                 </p>
             </a>
             
@@ -894,7 +931,7 @@
             
             <a href="/2019/01/19/bastion-host/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/" alt="認識 Bastion Host 部署管理機">
+                    <img class="thumbnail" src="/images/bastion-host.png" alt="認識 Bastion Host 部署管理機">
                 </p>
             </a>
             
