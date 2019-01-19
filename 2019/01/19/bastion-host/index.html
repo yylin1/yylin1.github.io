@@ -2,22 +2,23 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>分類: deploy - Yi Yang&#39;s Blog</title>
+<title>認識 Bastion Host 部署管理機 - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
 
-    <meta name="description" content="Blog">
-<meta name="keywords" content="kubernetes, Deep Learning">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Yi Yang&#39;s Blog">
-<meta property="og:url" content="http://yylin1.github.io/categories/deploy/index.html">
+    <meta name="description" content="由於最近接觸 Openshift 部署實體積，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行跳板機部署情境與針對安全原則筆記。">
+<meta name="keywords" content="bastion">
+<meta property="og:type" content="article">
+<meta property="og:title" content="認識 Bastion Host 部署管理機">
+<meta property="og:url" content="http://yylin1.github.io/2019/01/19/bastion-host/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="Blog">
+<meta property="og:description" content="由於最近接觸 Openshift 部署實體積，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行跳板機部署情境與針對安全原則筆記。">
 <meta property="og:locale" content="zh-TW">
+<meta property="og:updated_time" content="2019-01-19T15:56:17.312Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Yi Yang&#39;s Blog">
-<meta name="twitter:description" content="Blog">
+<meta name="twitter:title" content="認識 Bastion Host 部署管理機">
+<meta name="twitter:description" content="由於最近接觸 Openshift 部署實體積，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行跳板機部署情境與針對安全原則筆記。">
 
 
 
@@ -83,7 +84,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/artificial-intelligence.png" alt="Yi Yang&#39;s Blog" height="28">
+                <img src="/images/artificial-intelligence.png" alt="認識 Bastion Host 部署管理機" height="28">
             
             </a>
         </div>
@@ -134,23 +135,11 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
-    <div class="card-content">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="/categories">分類</a></li>
-            
-            <li class="is-active"><a href="#" aria-current="page">deploy</a></li>
-        </ul>
-        </nav>
-    </div>
-</div>
-
-    <div class="card">
     
     <div class="card-image">
-        <a href="/2019/01/19/bastion-host/" class="image is-7by1">
+        <span  class="image is-7by1">
             <img class="thumbnail" src="/images/" alt="認識 Bastion Host 部署管理機">
-        </a>
+        </span>
     </div>
     
     <div class="card-content article ">
@@ -175,85 +164,74 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2019/01/19/bastion-host/">認識 Bastion Host 部署管理機</a>
+                認識 Bastion Host 部署管理機
             
         </h1>
         <div class="content">
             <p>由於最近接觸 <code>Openshift</code> 部署實體積，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行跳板機部署情境與針對安全原則筆記。</p>
+<a id="more"></a>
+<h2 id="Bastion-Host-跳板機"><a href="#Bastion-Host-跳板機" class="headerlink" title="Bastion Host 跳板機"></a>Bastion Host 跳板機</h2><blockquote>
+<p>簡單來說就是為連線伺服器叢集限定一個入口，方便管理部署維運並權限控制以及監控</p>
+</blockquote>
+<p>想像一下，如果你要維護一百多台伺服器，要記住每台伺服器IP/帳號/密碼，肯定是不可能的吧？這種情況下，可以在跳板機上配置 <code>SSH Key</code>複製到遠端 Server 再進行跳板動作，配置完畢後，通過跳板機登錄並操作部署維護多台節點主機。</p>
+<p>但思考過後這做法其實沒有很安全，又需要多下一個指令進行跳板，更何況之前沒有<code>Bastion Host</code>概念通常都直接拿<code>Master Node</code>當跳板機，而更重要的是當<code>Bastion Host</code>跳板機，只要主機被 Hack 都可以隨時入侵其他主機，而開始找如何針對跳板機增加安全性的問題。</p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2>
         </div>
         
-        
-        <div class="level is-mobile">
+        <div class="level is-size-7 is-uppercase">
             <div class="level-start">
                 <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2019/01/19/bastion-host/#more">繼續閱讀</a>
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/bastion/">bastion</a>
                 </div>
             </div>
         </div>
+        
         
         
     </div>
 </div>
 
 
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/01/13/openshift-ansible-deploy/" class="image is-7by1">
-            <img class="thumbnail" src="/images/openshift-install.png" alt="透過 Ansible 快速部署安 Openshift 4.0 叢集">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
         
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-01-13T14:44:13.000Z">2019-01-13</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/deploy/">deploy</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    20 分鐘 read (About 3059 words)
-                </span>
-                
-            </div>
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/01/13/openshift-ansible-deploy/">
+                <span class="level-item">透過 Ansible 快速部署安 Openshift 4.0 叢集</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
         </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/01/13/openshift-ansible-deploy/">透過 Ansible 快速部署安 Openshift 4.0 叢集</a>
-            
-        </h1>
-        <div class="content">
-            <p>本篇將介紹透過 <a href="https://github.com/openshift/openshift-ansible" target="_blank" rel="noopener">OpenShift Ansible</a> 來快速部署實體主機Openshift 4.0叢集版本，這邊主要透過安裝最新版本(v4.0)依賴套件來部署裸機(Bare machines)過程。</p>
-<p>共同編輯: <a href="https://github.com/chlin62" target="_blank" rel="noopener">chlin62</a><br></p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2019/01/13/openshift-ansible-deploy/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
         
     </div>
 </div>
 
 
 
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">評論</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://yylin1.github.io/2019/01/19/bastion-host/';
+        this.page.identifier = '2019/01/19/bastion-host/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'yylin' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
 
-
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
 </div>
                 
 
@@ -1302,7 +1280,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/artificial-intelligence.png" alt="Yi Yang&#39;s Blog" height="28">
+                    <img src="/images/artificial-intelligence.png" alt="認識 Bastion Host 部署管理機" height="28">
                 
                 </a>
                 <p class="is-size-7">
