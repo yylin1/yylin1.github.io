@@ -2,28 +2,23 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>透過 Microk8s 快速部署 Kubeflow - Yi Yang&#39;s Blog</title>
+<title>如何更換 Kubeflow 預設 Scheduling - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
 
-    <meta name="description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
-<meta name="keywords" content="kubernetes,kubeflow,microk8s,deploy">
+    <meta name="description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。">
+<meta name="keywords" content="kubernetes,kubeflow,scheduler">
 <meta property="og:type" content="article">
-<meta property="og:title" content="透過 Microk8s 快速部署 Kubeflow">
-<meta property="og:url" content="http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/index.html">
+<meta property="og:title" content="如何更換 Kubeflow 預設 Scheduling">
+<meta property="og:url" content="http://yylin1.github.io/2019/01/22/kubeflow-job-scheduling/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
+<meta property="og:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="https://i.imgur.com/aecctnI.png">
-<meta property="og:image" content="https://i.imgur.com/nEaOr0L.png">
-<meta property="og:image" content="https://i.imgur.com/Acr64W9.png">
-<meta property="og:image" content="https://i.imgur.com/sCqtj53.png">
-<meta property="og:updated_time" content="2018-12-16T04:56:17.434Z">
+<meta property="og:updated_time" content="2019-01-22T15:54:46.884Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="透過 Microk8s 快速部署 Kubeflow">
-<meta name="twitter:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
-<meta name="twitter:image" content="https://i.imgur.com/aecctnI.png">
+<meta name="twitter:title" content="如何更換 Kubeflow 預設 Scheduling">
+<meta name="twitter:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。">
 
 
 
@@ -89,7 +84,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/artificial-intelligence.png" alt="透過 Microk8s 快速部署 Kubeflow" height="28">
+                <img src="/images/artificial-intelligence.png" alt="如何更換 Kubeflow 預設 Scheduling" height="28">
             
             </a>
         </div>
@@ -143,7 +138,7 @@
     
     <div class="card-image">
         <span  class="image is-7by1">
-            <img class="thumbnail" src="/images/microk8s.png" alt="透過 Microk8s 快速部署 Kubeflow">
+            <img class="thumbnail" src="/images/" alt="如何更換 Kubeflow 預設 Scheduling">
         </span>
     </div>
     
@@ -151,7 +146,7 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-09-17T04:12:02.000Z">2018-09-17</time>
+                <time class="level-item has-text-grey" datetime="2019-01-22T15:34:29.000Z">2019-01-22</time>
                 
                 <div class="level-item">
                 <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
@@ -161,7 +156,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    12 分鐘 read (About 1798 words)
+                    13 分鐘 read (About 2022 words)
                 </span>
                 
             </div>
@@ -169,76 +164,185 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                透過 Microk8s 快速部署 Kubeflow
+                如何更換 Kubeflow 預設 Scheduling
             
         </h1>
         <div class="content">
-            <p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p>
+            <p>本篇文章將說明實作官網 <a href="https://www.kubeflow.org/docs/other-guides/job-scheduling/" target="_blank" rel="noopener">[kubeflow/Job Scheduling]</a> ，所介紹的如何使用 <code>gang-scheduling</code> 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用<a href="https://github.com/kubernetes-sigs/kube-batch" target="_blank" rel="noopener">kube-batch</a>以支持 kubeflow 透過<code>gang-scheduling</code>排程方式，來同時允許多個Pod執行解決<code>deadlock</code>問題。</p>
 <a id="more"></a>
-<h2 id="什麼是microk8s"><a href="#什麼是microk8s" class="headerlink" title="什麼是microk8s"></a>什麼是microk8s</h2><p>簡單來說，<a href="https://microk8s.io/" target="_blank" rel="noopener">microk8s</a>設計為快速輕巧Kubernetes最新版本安裝與主機隔離但不通過虛擬機。通過在單個快照包<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>中打包 Kubernetes、Docker.io、iptables和CNI的所有上游二進製文件來實現此隔離。<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>是一個應用程序容器，您可以將其想像為Docker容器的輕量級版本。它使用了許多相同的底層技術進行隔離，而不會有網絡隔離的所帶來的開銷。而<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>需使用虛擬化工具來環境隔離創建K8S集群，想必會快照更加耗時。</p>
-<h2 id="安裝Multipass"><a href="#安裝Multipass" class="headerlink" title="安裝Multipass"></a>安裝Multipass</h2><p>Mac OS X. (本篇文章以Mac環境進行))</p>
+<h2 id="實驗環境"><a href="#實驗環境" class="headerlink" title="實驗環境"></a>實驗環境</h2><p>本實驗環境為 kubernetes HA Cluster + 4*GPU Node :</p>
 <ul>
-<li>本機Mac OS 安裝程序安裝<a href="https://github.com/CanonicalLtd/multipass/releases/download/2018.6.1/multipass-2018.6.1-full-Darwin-signed.zip" target="_blank" rel="noopener">Multipass</a></li>
+<li>Kubernetes v1.11.2</li>
+<li>Etcd v3.2.9</li>
+<li>containerd v1.1.2</li>
 </ul>
-<p>Linux OS</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Hostname</th>
+<th>CPU</th>
+<th>Memory</th>
+<th>Extra Device</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>192.168.0.98</td>
+<td>VIP</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>192.168.0.81</td>
+<td>k8s-m1</td>
+<td>4</td>
+<td>16G</td>
+<td>無</td>
+</tr>
+<tr>
+<td>192.168.0.82</td>
+<td>k8s-m2</td>
+<td>4</td>
+<td>16G</td>
+<td>無</td>
+</tr>
+<tr>
+<td>192.168.0.83</td>
+<td>k8s-m3</td>
+<td>4</td>
+<td>16G</td>
+<td>無</td>
+</tr>
+<tr>
+<td>192.168.0.84</td>
+<td>k8s-g1</td>
+<td>4</td>
+<td>16G</td>
+<td>GTX 1060 6G</td>
+</tr>
+<tr>
+<td>192.168.0.85</td>
+<td>k8s-g2</td>
+<td>4</td>
+<td>16G</td>
+<td>GTX 1060 6G</td>
+</tr>
+<tr>
+<td>192.168.0.86</td>
+<td>k8s-g3</td>
+<td>4</td>
+<td>16G</td>
+<td>GTX 1060 6G</td>
+</tr>
+<tr>
+<td>192.168.0.87</td>
+<td>k8s-g4</td>
+<td>4</td>
+<td>16G</td>
+<td>GTX 1060 6G</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="配置更換預設-scheduling"><a href="#配置更換預設-scheduling" class="headerlink" title="配置更換預設 scheduling"></a>配置更換預設 scheduling</h2><p>要讓環境使用<code>gang-scheduling</code>排程，必須先在叢集中安裝 <a href="https://github.com/kubernetes-sigs/kube-batch" target="_blank" rel="noopener">kube-batch</a> 作為Kubernetes額外可選擇的排程機制，並配置 operator 以啟用<code>gang-scheduling</code>。</p>
+<blockquote>
 <ul>
-<li>透過<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>使用指令安裝</li>
+<li>Kube-batch’s introduction is here, and also check how to install it here</li>
+<li>Take tf-operator for example, enable gang-scheduling in tf-operator by setting true to <code>--enable-gang-scheduling</code> flag.<br>[name= job scheduling ] [color=#907bf7]</li>
 </ul>
-<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo snap install multipass --beta --classic</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="1-kube-batch-install"><a href="#1-kube-batch-install" class="headerlink" title="1. kube-batch install"></a>1. kube-batch install</h3><p>參考<code>kube-batch</code> 詳細介紹與安裝方式<a href="https://github.com/kubernetes-sigs/kube-batch/blob/master/doc/usage/tutorial.md" target="_blank" rel="noopener">教學</a>，以下為實驗記錄。</p>
+<p>在<code>叢集中</code> 安裝 Helm tool：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ wget -qO- https://storage.googleapis.com/kubernetes-helm/helm-v2.12.2-linux-amd64.tar.gz | tar -zx</span><br><span class="line">$ sudo mv linux-amd64/helm /usr/<span class="hljs-built_in">local</span>/bin/</span><br></pre></td></tr></table></figure></p>
+<p>初始化 Helm (並安裝 Tiller Server):<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kube-system create sa tiller</span><br><span class="line">$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller</span><br><span class="line">$ helm init --service-account tiller</span><br><span class="line"></span><br><span class="line">Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.</span><br><span class="line">Happy Helming!</span><br></pre></td></tr></table></figure></p>
+<h3 id="Config-kube-batch-for-Kubernetes"><a href="#Config-kube-batch-for-Kubernetes" class="headerlink" title="# Config kube-batch for Kubernetes"></a># Config kube-batch for Kubernetes</h3><p>在<code>k8s-m1</code>節點上執行：</p>
+<ul>
+<li><p>Download kube-batch image</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker pull kubesigs/kube-batch:v0.3</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Download kube-batch</p>
+</li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p <span class="hljs-variable">$GOPATH</span>/src/github.com/kubernetes-sigs/</span><br><span class="line">$ <span class="hljs-built_in">cd</span> <span class="hljs-variable">$GOPATH</span>/src/github.com/kubernetes-sigs/</span><br><span class="line">$ git <span class="hljs-built_in">clone</span> http://github.com/kubernetes-sigs/kube-batch</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Deploy kube-batch by Helm</li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ helm install <span class="hljs-variable">$GOPATH</span>/src/github.com/kubernetes-sigs/kube-batch/deployment/kube-batch --namespace kube-system</span><br><span class="line">NAME:   mortal-buffalo</span><br><span class="line">LAST DEPLOYED: Sun Jan 20 19:12:50 2019</span><br><span class="line">NAMESPACE: kube-system</span><br><span class="line">STATUS: DEPLOYED</span><br><span class="line"></span><br><span class="line">RESOURCES:</span><br><span class="line">==&gt; v1beta1/CustomResourceDefinition</span><br><span class="line">NAME                                   AGE</span><br><span class="line">podgroups.scheduling.incubator.k8s.io  0s</span><br><span class="line">queues.scheduling.incubator.k8s.io     0s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Deployment</span><br><span class="line">kube-batch  0s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Pod(related)</span><br><span class="line"></span><br><span class="line">NAME                         READY  STATUS   RESTARTS  AGE</span><br><span class="line">kube-batch-5d7d955f84-jw8gx  0/1    Pending  0         0s</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NOTES:</span><br><span class="line">The batch scheduler of Kubernetes.</span><br></pre></td></tr></table></figure>
+<p>驗證 kube-batch 已部署於kubernetes：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ helm list</span><br><span class="line">NAME          	REVISION	UPDATED                 	STATUS  	CHART           	NAMESPACE</span><br><span class="line">mortal-buffalo	1       	Sun Jan 20 19:12:50 2019	DEPLOYED	kube-batch-0.3.0	kube-system</span><br></pre></td></tr></table></figure></p>
 <hr>
-<h2 id="啟動Ubuntu虛擬機"><a href="#啟動Ubuntu虛擬機" class="headerlink" title="啟動Ubuntu虛擬機"></a>啟動Ubuntu虛擬機</h2><p>部署前要先下載cloud-init文件<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://bit.ly/2tOfMUA -O kubeflow.init</span><br></pre></td></tr></table></figure></p>
-<p>這邊查看一下文件內容，主要是配置kubeflow環境並去執行kubeflow 已經寫好script能更快速部署，有需要修正自己的環境可以修改後執行<br><figure class="highlight yaml hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># cloud-init for kubeflow</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-attr">package_update:</span> <span class="hljs-literal">true</span></span><br><span class="line"><span class="hljs-attr">package_upgrade:</span> <span class="hljs-literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-attr">runcmd:</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">mkdir</span> <span class="hljs-string">/kubeflow</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">wget</span> <span class="hljs-attr">https://bit.ly/2tp2aOo</span> <span class="hljs-bullet">-O</span> <span class="hljs-string">/kubeflow/install-kubeflow-pre-micro.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">chmod</span> <span class="hljs-string">a+x</span> <span class="hljs-string">/kubeflow/install-kubeflow-pre-micro.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">wget</span> <span class="hljs-attr">https://bit.ly/2tndL0g</span> <span class="hljs-bullet">-O</span> <span class="hljs-string">/kubeflow/install-kubeflow.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">chmod</span> <span class="hljs-string">a+x</span> <span class="hljs-string">/kubeflow/install-kubeflow.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">printf</span> <span class="hljs-string">"\n\nexport KUBECONFIG=/snap/microk8s/current/client.config\n\n"</span> <span class="hljs-string">&gt;&gt;</span> <span class="hljs-string">/home/multipass/.bashrc</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="啟動Multipass-VM"><a href="#啟動Multipass-VM" class="headerlink" title="啟動Multipass VM"></a>啟動Multipass VM</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> multipass launch bionic -n kubeflow -m 8G -d 40G -c 4 --cloud-init kubeflow.init</span></span><br><span class="line"></span><br><span class="line">Retrieving image: 66%</span><br><span class="line">Retrieving image: 87%</span><br><span class="line">Verifying image:  -</span><br><span class="line">Launched: kubeflow</span><br></pre></td></tr></table></figure>
+<h3 id="2-新增-RBAC-給-kube-batch"><a href="#2-新增-RBAC-給-kube-batch" class="headerlink" title="2. 新增 RBAC 給 kube-batch"></a>2. 新增 RBAC 給 kube-batch</h3><p>Github 安裝 <code>kube-batch</code> 補充說明提到，需要自己額配置RBAC給<code>kube-bath</code></p>
 <blockquote>
-<p>預設備至Multipass為Kubeflow部署創建的VM上的<code>最低建議設置</code>，這邊是可以自由地調整根據主機的能力和工作負載需求。</p>
+<p>NOTE: kube-batch need to collect cluster information(such as Pod, Node, CRD, etc) for scheduling, so the service account used by the deployment must have permission to access those cluster resources, otherwise, kube-batch will fail to startup. For users who are not familiar with Kubernetes RBAC, please copy the <code>example/role.yaml</code> into <code>$GOPATH/src/github.com/kubernetes-sigs/kube-batch/deployment/kube-batch/templates/</code> and reinstall batch.[color=#907bf7]</p>
 </blockquote>
-<p>依據環境狀況應該很快速就建立好單節點集群，這邊可以查看一下<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ multipass list                                    </span><br><span class="line">Name                    State       IPv4             Release</span><br><span class="line">kubeflow                RUNNING     192.168.64.2     Ubuntu 18.04 LTS</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>如果部署有問題隨時都可以透過<code>multipass -h</code>查看 </p>
-</blockquote>
-<p>接下來就mount本地文件與multipass配置<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ multipass mount . kubeflow:/multipass</span><br></pre></td></tr></table></figure></p>
-<h3 id="安裝kubernetes"><a href="#安裝kubernetes" class="headerlink" title="安裝kubernetes"></a>安裝kubernetes</h3><p>接下來我們就可以進入vm，安裝由microk8s驅動的kubernetes，以及部署Kubeflow所需的其他工具。</p>
-<p>透過multipass進入vm<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ multipass shell kubeflow</span><br><span class="line"></span><br><span class="line">Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-34-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line">  System information as of Mon Sep 17 09:03:39 CST 2018</span><br><span class="line"></span><br><span class="line">  System load:  0.63              Processes:             153</span><br><span class="line">  Usage of /:   2.9% of 38.60GB   Users logged <span class="hljs-keyword">in</span>:       0</span><br><span class="line">  Memory usage: 2%                IP address <span class="hljs-keyword">for</span> enp0s2: 192.168.64.2</span><br><span class="line">  Swap usage:   0%</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  Get cloud support with Ubuntu Advantage Cloud Guest:</span><br><span class="line">    http://www.ubuntu.com/business/services/cloud</span><br><span class="line"></span><br><span class="line">0 packages can be updated.</span><br><span class="line">0 updates are security updates.</span><br><span class="line">multipass@kubeflow:~$</span><br></pre></td></tr></table></figure></p>
-<h3 id="安裝microk8s、etc"><a href="#安裝microk8s、etc" class="headerlink" title="安裝microk8s、etc"></a>安裝microk8s、etc</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ sudo /kubeflow/install-kubeflow-pre-micro.sh</span><br><span class="line"></span><br><span class="line">Saving to: ‘ksonnet.tar.gz’</span><br><span class="line">ksonnet.tar.gz                               100%[============================================================================================&gt;]  14.77M   934KB/s    <span class="hljs-keyword">in</span> 44s</span><br><span class="line"></span><br><span class="line">2018-09-17 09:22:01 (342 KB/s) - ‘ksonnet.tar.gz’ saved [15491217/15491217]</span><br><span class="line"></span><br><span class="line">ks_0.11.0_linux_amd64/CHANGELOG.md</span><br><span class="line">ks_0.11.0_linux_amd64/CODE-OF-CONDUCT.md</span><br><span class="line">ks_0.11.0_linux_amd64/CONTRIBUTING.md</span><br><span class="line">ks_0.11.0_linux_amd64/LICENSE</span><br><span class="line">ks_0.11.0_linux_amd64/README.md</span><br><span class="line">ks_0.11.0_linux_amd64/ks</span><br><span class="line">Checking kube-system status until all pods are running (2 not running)</span><br><span class="line">Checking kube-system status until all pods are running (3 not running)</span><br><span class="line"></span><br><span class="line">Before running install-kubeflow.sh, please <span class="hljs-string">'export GITHUB_TOKEN=&lt;your token&gt;'</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>這邊提供GitHub Token是為了避免<a href="https://github.com/ksonnet/ksonnet/blob/master/docs/troubleshooting.md" target="_blank" rel="noopener">ksonnet</a>部署反覆部署可能會造成GitHub限速問題，可以<a href="https://ephrain.net/mac-homebrew-%E5%87%BA%E7%8F%BE-github-api-rate-limit-exceed-%E7%9A%84%E8%A8%8A%E6%81%AF/" target="_blank" rel="noopener">參考</a>建立Token。</p>
-</blockquote>
-<h3 id="更換自己的Token"><a href="#更換自己的Token" class="headerlink" title="更換自己的Token"></a>更換自己的Token</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="hljs-built_in">export</span> GITHUB_TOKEN=972702e4fb348d3dba52f5dd3b99d7ae83e857ab</span><br></pre></td></tr></table></figure>
-<h3 id="kubeflow-部署"><a href="#kubeflow-部署" class="headerlink" title="kubeflow 部署"></a>kubeflow 部署</h3><p>在vm環境中執行kubeflow script，就可以快速完成kubeflow部署，而這邊會有<code>Checking kubeflow status until all pods are running (7 not running). Sleeping for 10 seconds.</code>狀況就依照環境是否把所有應該生成的Pod建立完成，就執行結束。</p>
-<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ multipass@kubeflow:~$ /kubeflow/install-kubeflow.sh</span><br><span class="line">namespace/kubeflow created</span><br><span class="line">INFO Using context <span class="hljs-string">"microk8s"</span> from kubeconfig file <span class="hljs-string">"/snap/microk8s/current/client.config"</span></span><br><span class="line">INFO Creating environment <span class="hljs-string">"default"</span> with namespace <span class="hljs-string">"default"</span>, pointing to cluster at address <span class="hljs-string">"http://127.0.0.1:8080"</span></span><br><span class="line">INFO Generating ksonnet-lib data at path <span class="hljs-string">'/home/multipass/my-kubeflow/lib/v1.11.1'</span></span><br><span class="line">INFO Retrieved 22 files</span><br><span class="line">INFO Retrieved 5 files</span><br><span class="line">INFO Retrieved 5 files</span><br><span class="line">·</span><br><span class="line">·</span><br><span class="line">·</span><br><span class="line">Checking kubeflow status until all pods are running (7 not running). Sleeping <span class="hljs-keyword">for</span> 10 seconds.</span><br><span class="line"></span><br><span class="line">JupyterHub Port: 31808</span><br></pre></td></tr></table></figure>
-<p>以上就完成<code>microk8s+kubeflow</code>部署</p>
+<p>創建 RBAC 「ServiceAccount」、「ClusterRoleBinding」，名稱並為<code>name: kube-batch</code>: </p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: kube-batch</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: my-scheduler-as-kube-scheduler</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: kube-batch</span><br><span class="line">  namespace: kube-system</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: system:kube-scheduler</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 <hr>
-<h2 id="部署完成後環境"><a href="#部署完成後環境" class="headerlink" title="部署完成後環境"></a>部署完成後環境</h2><p>完成後檢查 Kubeflow 元件部署結果：</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">multipass@kubeflow:~$ kubectl -n kubeflow get po -o wide</span><br><span class="line">NAME                                  READY     STATUS    RESTARTS   AGE       IP          NODE</span><br><span class="line">ambassador-68954d75f4-2n6lv           2/2       Running   4          4h        10.1.1.55   kubeflow</span><br><span class="line">ambassador-68954d75f4-7dgvl           2/2       Running   4          4h        10.1.1.56   kubeflow</span><br><span class="line">ambassador-68954d75f4-bgs8h           2/2       Running   5          4h        10.1.1.44   kubeflow</span><br><span class="line">mxnet-operator-f46557c4f-wmntn        1/1       Running   2          3h        10.1.1.52   kubeflow</span><br><span class="line">spartakus-volunteer-d54b65666-klrfk   1/1       Running   2          4h        10.1.1.45   kubeflow</span><br><span class="line">tf-hub-0                              1/1       Running   2          4h        10.1.1.47   kubeflow</span><br><span class="line">tf-job-dashboard-784cdcbb4f-j2cjx     1/1       Running   2          4h        10.1.1.51   kubeflow</span><br><span class="line">tf-job-operator-85b46d47b7-xfwmp      1/1       Running   2          4h        10.1.1.48   kubeflow</span><br></pre></td></tr></table></figure>
-<h3 id="運行JupyterHub測試"><a href="#運行JupyterHub測試" class="headerlink" title="運行JupyterHub測試"></a>運行JupyterHub測試</h3><p>透過查看vm狀態中，<code>完成後連接 http://IP:Port</code>，並輸入<code>任意帳號密碼</code>進行登入。</p>
-<p><img src="https://i.imgur.com/aecctnI.png" alt=""></p>
-<p><strong>Spawner options</strong>可以自行配置Jupyter Notebook 資源狀態</p>
-<blockquote>
-<p>Image: 預設會有多種映像檔可以使用<br>其他參數可調整 CPU、Memory、GPU資源限制</p>
+<h3 id="3-Deployment-啟用-gang-scheduling"><a href="#3-Deployment-啟用-gang-scheduling" class="headerlink" title="3. Deployment 啟用 gang-scheduling"></a>3. Deployment 啟用 gang-scheduling</h3><blockquote>
+<p>Take tf-operator for example, enable gang-scheduling in tf-operator by setting true to <code>--enable-gang-scheduling</code> flag. [name= job scheduling ] [color=#907bf7]</p>
 </blockquote>
-<p><img src="https://i.imgur.com/nEaOr0L.png" alt=""></p>
-<p>按下Spawn kubeflow就會啟動一個pod配置資源給Jupyter notebook，部署過程時Image下載需要花一點時間。</p>
-<p><img src="https://i.imgur.com/Acr64W9.png" alt=""></p>
-<blockquote>
-<p>配置過程中有時會後有狀況，可能需要多嘗試</p>
+<p>確認<code>叢集中</code> kubeflow目前運行的 deployment，並找到<code>tf-job-operator</code>:<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kubeflow get deployment</span><br><span class="line">NAME                                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">ambassador                               3         3         3            3           3h</span><br><span class="line">argo-ui                                  1         1         1            1           3h</span><br><span class="line">centraldashboard                         1         1         1            1           3h</span><br><span class="line">katib-ui                                 1         1         1            1           3h</span><br><span class="line">minio                                    1         1         1            0           3h</span><br><span class="line">ml-pipeline                              1         1         1            1           3h</span><br><span class="line">ml-pipeline-persistenceagent             1         1         1            0           3h</span><br><span class="line">ml-pipeline-scheduledworkflow            1         1         1            1           3h</span><br><span class="line">ml-pipeline-ui                           1         1         1            1           3h</span><br><span class="line">mysql                                    1         1         1            0           3h</span><br><span class="line">spartakus-volunteer                      1         1         1            1           3h</span><br><span class="line">studyjob-controller                      1         1         1            1           3h</span><br><span class="line">tf-job-dashboard                         1         1         1            1           3h</span><br><span class="line">tf-job-operator-v1alpha2                 1         1         1            1           3h</span><br><span class="line">vizier-core                              1         1         1            0           3h</span><br><span class="line">vizier-core-rest                         1         1         1            1           3h</span><br><span class="line">vizier-db                                1         1         1            0           3h</span><br><span class="line">vizier-suggestion-bayesianoptimization   1         1         1            1           3h</span><br><span class="line">vizier-suggestion-grid                   1         1         1            1           3h</span><br><span class="line">vizier-suggestion-hyperband              1         1         1            1           3h</span><br><span class="line">vizier-suggestion-random                 1         1         1            1           3h</span><br><span class="line">workflow-controller                      1         1         1            1           3h</span><br></pre></td></tr></table></figure></p>
+<p>增加<code>tf-operator deployment</code>中設定<code>--enable-gang-scheduling</code>開啟服務。</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kubeflow edit deployment tf-job-operator-v1alpha2</span><br><span class="line">...</span><br><span class="line">spec:</span><br><span class="line">      containers:</span><br><span class="line">      - <span class="hljs-built_in">command</span>:</span><br><span class="line">        - /opt/kubeflow/tf-operator.v2</span><br><span class="line">        - --alsologtostderr</span><br><span class="line">        - -v=1</span><br><span class="line">        - --<span class="hljs-built_in">enable</span>-gang-scheduling</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="4-修正kube-batch在叢集中-ClusterRole-權限"><a href="#4-修正kube-batch在叢集中-ClusterRole-權限" class="headerlink" title="4. 修正kube-batch在叢集中 ClusterRole 權限"></a>4. 修正<code>kube-batch</code>在叢集中 ClusterRole 權限</h3><blockquote>
+<ul>
+<li>Troubleshooting: If you keep getting problems related to RBAC in your kube-batch.; </li>
+<li>You can try to add the following rules into your clusterrole of scheduler used by kube-batch.</li>
+</ul>
 </blockquote>
-<p>完成後即可在透過Jupyter Notebook 編寫Model進行DL訓練<br><img src="https://i.imgur.com/sCqtj53.png" alt=""></p>
-<h2 id="Kubernetes-Addons"><a href="#Kubernetes-Addons" class="headerlink" title="Kubernetes Addons"></a>Kubernetes Addons</h2><p>microk8s在Kubernetes安裝了一個<code>準系統</code>。這代表只要安裝和運行api-server、controller-manager、scheduler、kubelet，cni、kube-proxy。可以使用該<code>microk8s.enable</code>命令運行kube-dns和Dashboard等附加服務。</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">microk8s.enable dns dashboard</span><br></pre></td></tr></table></figure>
-<p>使用該<code>disable</code>命令隨時禁用這些插件<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">microk8s.disable dashboard dns</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.kubectl cluster-info</span><br><span class="line">Kubernetes master is running at http://127.0.0.1:8080</span><br><span class="line">Heapster is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/heapster/proxy</span><br><span class="line">KubeDNS is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</span><br><span class="line">Grafana is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy</span><br><span class="line">InfluxDB is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/monitoring-influxdb:http/proxy</span><br><span class="line"></span><br><span class="line">To further debug and diagnose cluster problems, use <span class="hljs-string">'kubectl cluster-info dump'</span>.</span><br></pre></td></tr></table></figure>
-<h2 id="停止並重新啟動microk8-測試環境為Mac"><a href="#停止並重新啟動microk8-測試環境為Mac" class="headerlink" title="停止並重新啟動microk8 (測試環境為Mac)"></a>停止並重新啟動microk8 (測試環境為Mac)</h2><blockquote>
-<p>在 Linx 環境指令都是偷過<code>snap</code> enable/disable 來管理microk8s</p>
-</blockquote>
-<p>Mac環境可以透過<code>multipass -h</code>查詢可執行指令</p>
-<h3 id="暫時關閉vm運行"><a href="#暫時關閉vm運行" class="headerlink" title="暫時關閉vm運行"></a>暫時關閉vm運行</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">multipass  stop kubeflow</span><br></pre></td></tr></table></figure>
-<h3 id="啟動vm運行"><a href="#啟動vm運行" class="headerlink" title="啟動vm運行"></a>啟動vm運行</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">multipass  stop kubeflow</span><br></pre></td></tr></table></figure>
-<h3 id="查看multipass目前vm狀態"><a href="#查看multipass目前vm狀態" class="headerlink" title="查看multipass目前vm狀態"></a>查看multipass目前vm狀態</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Name                    State       IPv4             Release</span><br><span class="line">kubeflow                STOPPED     --               Ubuntu 18.04 LTS</span><br></pre></td></tr></table></figure>
-<h3 id="刪除microk8s"><a href="#刪除microk8s" class="headerlink" title="刪除microk8s"></a>刪除microk8s</h3><p>透過<code>multipass list</code> 檢查instances狀態</p>
-<p>如果只下delete只有instances狀態刪除，是可以透過recover恢復已刪除的instances<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">multipass delete kubeflow</span><br><span class="line">Name                    State       IPv4             Release</span><br><span class="line">kubeflow                DELETED     --               Not Available</span><br></pre></td></tr></table></figure></p>
-<p>所以我們要透過<code>purge</code>來清除永久清除所有已刪除的instances<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">multipass purge</span><br></pre></td></tr></table></figure></p>
-<p>相關文章:<br><a href="https://itnext.io/a-local-kubernetes-with-microk8s-33ee31d1eed9" target="_blank" rel="noopener">[Kubernetes] A local Kubernetes with microk8s</a><br><a href="https://www.kubeflow.org/docs/started/getting-started-multipass/" target="_blank" rel="noopener">[kubeflow] Microk8s for Kubeflow</a></p>
-<p><strong> 本篇文章主介紹microk8s部署kubeflow，更多相關<a href="https://www.kubeflow.org/" target="_blank" rel="noopener">kubeflow</a> 實作會在後續文章陸續介紹</strong></p>
+<p>執行<code>kube-batch</code>過程中可能會不斷遇到與RBAC相關問題，所以至編要修正ClusterRole 權限。</p>
+<h4 id="補充-ClusterRole"><a href="#補充-ClusterRole" class="headerlink" title="# 補充 ClusterRole"></a># 補充 ClusterRole</h4><p>ClusterRole 具有與 Role 相同的權限角色控制能力，不同的是 <code>ClusterRole</code> 是叢集級別的，ClusterRole 可以用於:</p>
+<ul>
+<li>叢集級別的資源控制（例如: node 訪問權限）</li>
+<li>非資源型 endpoints(例如 /healthz訪問)</li>
+<li>所有namespace資源控制（例如: pods）</li>
+</ul>
+<p>查詢 <code>kube-system</code>中 ClusterRole</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kube-system get ClusterRole</span><br><span class="line">NAME                                                                   AGE        </span><br><span class="line">...</span><br><span class="line">system:kube-scheduler                                                  96d</span><br><span class="line">...</span><br><span class="line">tf-job-operator                                                        96d</span><br></pre></td></tr></table></figure>
+<p>修正<code>system:kube-scheduler</code>RBAC權限:<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kube-system edit clusterRole system:kube-scheduler</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 直接新增於底部</span></span><br><span class="line">...</span><br><span class="line">- apiGroups:</span><br><span class="line">  - <span class="hljs-string">'*'</span></span><br><span class="line">  resources:</span><br><span class="line">  - <span class="hljs-string">'*'</span></span><br><span class="line">  verbs:</span><br><span class="line">  - <span class="hljs-string">'*'</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="5-修正-tf-job-operator-RBAC權限"><a href="#5-修正-tf-job-operator-RBAC權限" class="headerlink" title="5. 修正 tf-job-operator RBAC權限"></a>5. 修正 tf-job-operator RBAC權限</h3><p>修改文章提到<code>Troubleshooting</code> 執行 job-scheduling tf-benchmark<code>範例後，發現 Pod 並沒有沒有運行起來，這邊就透過查看</code>kubeflow get pod tf-job-operator`確認發生問題。</p>
+<p>查看<code>kubeflow get pod tf-job-operator</code> logs狀態<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$  kubectl -n kubeflow logs  tf-job-operator-v1alpha2-6c786b48cc-fzdd7 --tail 10</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/controller.go:303"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"warning"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"Sync pdb tfjob-gang-scheduling: poddisruptionbudgets.policy \"tfjob-gang-scheduling\" is forbidden: User \"system:serviceaccount:kubeflow:tf-job-operator\" cannot get poddisruptionbudgets.policy in the namespace \"kubeflow\""</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:02:50Z"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/controller.go:334"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"Reconcile TFJobs tfjob-gang-scheduling"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:02:50Z"</span>,<span class="hljs-string">"uid"</span>:<span class="hljs-string">"39418c9b-1cb3-11e9-90c3-509a4c3d1db8"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/status.go:48"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"TFJob=tfjob-gang-scheduling, ReplicaType=PS expected=1, running=0, failed=0"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:02:50Z"</span>,<span class="hljs-string">"uid"</span>:<span class="hljs-string">"39418c9b-1cb3-11e9-90c3-509a4c3d1db8"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/status.go:48"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"TFJob=tfjob-gang-scheduling, ReplicaType=Worker expected=1, running=0, failed=0"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:02:50Z"</span>,<span class="hljs-string">"uid"</span>:<span class="hljs-string">"39418c9b-1cb3-11e9-90c3-509a4c3d1db8"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/controller.go:275"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"Finished syncing tfjob \"kubeflow/tfjob-gang-scheduling\" (199.704481ms)"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:02:50Z"</span>&#125;</span><br></pre></td></tr></table></figure></p>
+<p>原來tf-operatort 運行scheduler選擇<code>tfjob-gang-scheduling</code>這邊有RBAC權限問題：</p>
+<ul>
+<li>warning: Sync pdb tfjob-gang-scheduling: poddisruptionbudgets.policy ;  </li>
+<li>cannot get poddisruptionbudgets.policy in the namespace</li>
+</ul>
+<p>再次修正RBAC：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kube-system  edit  clusterrole  tf-job-operator</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 補在最後面</span></span><br><span class="line">...</span><br><span class="line">- apiGroups:</span><br><span class="line">  - policy</span><br><span class="line">  resources:</span><br><span class="line">  - poddisruptionbudgets</span><br><span class="line">  verbs:</span><br><span class="line">  - <span class="hljs-string">'*'</span></span><br></pre></td></tr></table></figure>
+<p>修正過後，再次<code>logs</code>資訊：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kubeflow logs  tf-job-operator-v1alpha2-6c786b48cc-fzdd7 --tail 10</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/status.go:48"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"TFJob=tfjob-gang-scheduling, ReplicaType=PS expected=1, running=1, failed=0"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:08:12Z"</span>,<span class="hljs-string">"uid"</span>:<span class="hljs-string">"39418c9b-1cb3-11e9-90c3-509a4c3d1db8"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/status.go:48"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"TFJob=tfjob-gang-scheduling, ReplicaType=Worker expected=1, running=0, failed=0"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:08:12Z"</span>,<span class="hljs-string">"uid"</span>:<span class="hljs-string">"39418c9b-1cb3-11e9-90c3-509a4c3d1db8"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/job.go:106"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"Updating tfjob: tfjob-gang-scheduling"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:08:12Z"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/controller.go:275"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"Finished syncing tfjob \"kubeflow/tfjob-gang-scheduling\" (199.597681ms)"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:08:12Z"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/controller.go:303"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"warning"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"Sync pdb tfjob-gang-scheduling: AlreadyExists"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:08:12Z"</span>&#125;</span><br><span class="line">&#123;<span class="hljs-string">"filename"</span>:<span class="hljs-string">"tensorflow/controller.go:334"</span>,<span class="hljs-string">"job"</span>:<span class="hljs-string">"kubeflow.tfjob-gang-scheduling"</span>,<span class="hljs-string">"level"</span>:<span class="hljs-string">"info"</span>,<span class="hljs-string">"msg"</span>:<span class="hljs-string">"Reconcile TFJobs tfjob-gang-scheduling"</span>,<span class="hljs-string">"time"</span>:<span class="hljs-string">"2019-01-20T13:08:12Z"</span>,<span class="hljs-string">"uid"</span>:<span class="hljs-string">"39418c9b-1cb3-11e9-90c3-509a4c3d1db8"</span>&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="運行範例測試gang-scheduling與default排程差異"><a href="#運行範例測試gang-scheduling與default排程差異" class="headerlink" title="運行範例測試gang-scheduling與default排程差異"></a>運行範例測試<code>gang-scheduling</code>與<code>default</code>排程差異</h2><p>執行 <a href="https://www.kubeflow.org/docs/other-guides/job-scheduling/" target="_blank" rel="noopener">job-scheduling</a> 介紹的範例：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: <span class="hljs-string">"kubeflow.org/v1alpha2"</span></span><br><span class="line">kind: <span class="hljs-string">"TFJob"</span></span><br><span class="line">metadata:</span><br><span class="line">  name: <span class="hljs-string">"tfjob-gang-scheduling"</span></span><br><span class="line">spec:</span><br><span class="line">  tfReplicaSpecs:</span><br><span class="line">    Worker:</span><br><span class="line">      replicas: 1</span><br><span class="line">      template:</span><br><span class="line">        spec:</span><br><span class="line">          schedulerName: kube-batch</span><br><span class="line">          containers:</span><br><span class="line">          - args:</span><br><span class="line">            - python</span><br><span class="line">            - tf_cnn_benchmarks.py</span><br><span class="line">            - --batch_size=32</span><br><span class="line">            - --model=resnet50</span><br><span class="line">            - --variable_update=parameter_server</span><br><span class="line">            - --flush_stdout=<span class="hljs-literal">true</span></span><br><span class="line">            - --num_gpus=1</span><br><span class="line">            - --local_parameter_device=cpu</span><br><span class="line">            - --device=gpu</span><br><span class="line">            - --data_format=NHWC</span><br><span class="line">            image: gcr.io/kubeflow/tf-benchmarks-gpu:v20171202-bdab599-dirty-284af3</span><br><span class="line">            name: tensorflow</span><br><span class="line">            resources:</span><br><span class="line">              limits:</span><br><span class="line">                nvidia.com/gpu: 1</span><br><span class="line">            workingDir: /opt/tf-benchmarks/scripts/tf_cnn_benchmarks</span><br><span class="line">          restartPolicy: OnFailure</span><br><span class="line">    PS:</span><br><span class="line">      replicas: 1</span><br><span class="line">      template:</span><br><span class="line">        spec:</span><br><span class="line">          schedulerName: kube-batch</span><br><span class="line">          containers:</span><br><span class="line">          - args:</span><br><span class="line">            - python</span><br><span class="line">            - tf_cnn_benchmarks.py</span><br><span class="line">            - --batch_size=32</span><br><span class="line">            - --model=resnet50</span><br><span class="line">            - --variable_update=parameter_server</span><br><span class="line">            - --flush_stdout=<span class="hljs-literal">true</span></span><br><span class="line">            - --num_gpus=1</span><br><span class="line">            - --local_parameter_device=cpu</span><br><span class="line">            - --device=cpu</span><br><span class="line">            - --data_format=NHWC</span><br><span class="line">            image: gcr.io/kubeflow/tf-benchmarks-cpu:v20171202-bdab599-dirty-284af3</span><br><span class="line">            name: tensorflow</span><br><span class="line">            resources:</span><br><span class="line">              limits:</span><br><span class="line">                cpu: <span class="hljs-string">'1'</span></span><br><span class="line">            workingDir: /opt/tf-benchmarks/scripts/tf_cnn_benchmarks</span><br><span class="line">          restartPolicy: OnFailure</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>tfjob-gang-scheduling</code> yaml範例中，要使用kube-batch為選用的排程機制，這邊要在Spec指定 <code>schedulerName:kube-batch</code>。</li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spec:</span><br><span class="line">         schedulerName: kube-batch</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="實驗測試"><a href="#實驗測試" class="headerlink" title="實驗測試"></a>實驗測試</h2><p>環境目前有<code>4個GPU Node節點</code>，運行流程先執行<code>yylin-job1</code>之後再執行<code>yylin-job2</code> 測試環境，以觀察:</p>
+<ul>
+<li>通過使用<code>kube-batch</code>來啟用<code>gang-scheduling</code>，而只有當有叢集環境中有足夠的資源執行給所有pod時，才能運行任務。否則所有pod將處於<code>Pending</code>狀態，等待足夠的資源。</li>
+<li>若使用預設<code>kubeflow scheuler</code>會導致同一個Job資源不夠，但Worker照常運行，導致執行Job任務是無意義的。</li>
+</ul>
+<p>Job 配置：</p>
+<ul>
+<li>yylin-job1 <ul>
+<li>Worker:3、PS:1</li>
+</ul>
+</li>
+<li>yylin-job2<ul>
+<li>Worker:2、PS:1</li>
+</ul>
+</li>
+</ul>
+<p>啟用<code>schedulerName: kube-batch</code>:</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get pod -n kubeflow</span><br><span class="line">tfjob-gang-scheduling-ps-0                                1/1       Running             0          43s</span><br><span class="line">tfjob-gang-scheduling-worker-0                            1/1       Running             0          43s</span><br><span class="line">tfjob-gang-scheduling-worker-1                            1/1       Running             0          43s</span><br><span class="line">tfjob-gang-scheduling-worker-2                            1/1       Running             0          43s</span><br><span class="line">tfjob-gang-scheduling2-ps-0                               1/1       Running             0          38s</span><br><span class="line">tfjob-gang-scheduling2-worker-0                           0/1       Pending             0          38s</span><br><span class="line">tfjob-gang-scheduling2-worker-1                           0/1       Pending             0          38s</span><br></pre></td></tr></table></figure>
+<p>預設<code>kubeflow scheuler</code>:</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get pod -n kubeflow</span><br><span class="line">tfjob-gang-scheduling-ps-0                                1/1       Running             0          1m</span><br><span class="line">tfjob-gang-scheduling-worker-0                            1/1       Running             0          1m</span><br><span class="line">tfjob-gang-scheduling-worker-1                            1/1       Running             0          1m</span><br><span class="line">tfjob-gang-scheduling-worker-2                            1/1       Running             0          1m</span><br><span class="line">tfjob-gang-scheduling2-ps-0                               1/1       Running             0          34s</span><br><span class="line">tfjob-gang-scheduling2-worker-0                           1/1       Running             0          34s</span><br><span class="line">tfjob-gang-scheduling2-worker-1                           0/1       Pending             0          34s</span><br></pre></td></tr></table></figure>
+<p>Reference: </p>
+<ul>
+<li><a href="https://www.kubeflow.org/docs/other-guides/job-scheduling//" target="_blank" rel="noopener">[kubeflow] [Job Scheduling- schedule a job with gang-scheduling]</a></li>
+</ul>
 
         </div>
         
@@ -246,7 +350,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/deploy/">deploy</a>, <a class="has-link-grey -link" href="/tags/kubeflow/">kubeflow</a>, <a class="has-link-grey -link" href="/tags/kubernetes/">kubernetes</a>, <a class="has-link-grey -link" href="/tags/microk8s/">microk8s</a>
+                    <a class="has-link-grey -link" href="/tags/kubeflow/">kubeflow</a>, <a class="has-link-grey -link" href="/tags/kubernetes/">kubernetes</a>, <a class="has-link-grey -link" href="/tags/scheduler/">scheduler</a>
                 </div>
             </div>
         </div>
@@ -260,13 +364,13 @@
 <div class="card card-transparent">
     <div class="level post-navigation is-flex-wrap is-mobile">
         
-        <div class="level-start">
-            <a class="level level-item has-link-grey  article-nav-prev" href="/2018/10/23/kubeflow-deploy-v0.3.0/">
-                <i class="level-item fas fa-chevron-left"></i>
-                <span class="level-item">快速部署 Kubeflow v0.3 容器機器學習平台</span>
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/01/19/bastion-host/">
+                <span class="level-item">認識 Bastion Host 部署管理機</span>
+                <i class="level-item fas fa-chevron-right"></i>
             </a>
         </div>
-        
         
     </div>
 </div>
@@ -279,8 +383,8 @@
         
 <script>
     var disqus_config = function () {
-        this.page.url = 'http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/';
-        this.page.identifier = '2018/09/17/microk8s-deploy-kubeflow/';
+        this.page.url = 'http://yylin1.github.io/2019/01/22/kubeflow-job-scheduling/';
+        this.page.identifier = '2019/01/22/kubeflow-job-scheduling/';
     };
     (function() {
         var d = document, s = d.createElement('script');  
@@ -1366,7 +1470,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/artificial-intelligence.png" alt="透過 Microk8s 快速部署 Kubeflow" height="28">
+                    <img src="/images/artificial-intelligence.png" alt="如何更換 Kubeflow 預設 Scheduling" height="28">
                 
                 </a>
                 <p class="is-size-7">
