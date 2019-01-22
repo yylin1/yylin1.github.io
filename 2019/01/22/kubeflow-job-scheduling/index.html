@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-01-22T16:19:10.324Z">
+<meta property="og:updated_time" content="2019-01-22T16:38:10.582Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何更換 Kubeflow 預設 Scheduling">
 <meta name="twitter:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。">
@@ -156,7 +156,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    13 分鐘 read (About 2022 words)
+                    14 分鐘 read (About 2044 words)
                 </span>
                 
             </div>
@@ -170,6 +170,9 @@
         <div class="content">
             <p>本篇文章將說明實作官網 <a href="https://www.kubeflow.org/docs/other-guides/job-scheduling/" target="_blank" rel="noopener">[kubeflow/Job Scheduling]</a> ，所介紹的如何使用 <code>gang-scheduling</code> 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用<a href="https://github.com/kubernetes-sigs/kube-batch" target="_blank" rel="noopener">kube-batch</a>以支持 kubeflow 透過<code>gang-scheduling</code>排程方式，來同時允許多個Pod執行解決<code>deadlock</code>問題。</p>
 <a id="more"></a>
+<blockquote>
+<p>#本篇實作主要感謝 @kubeflow member <a href="https://github.com/ChanYiLin" target="_blank" rel="noopener">@Jack Lin</a> 協助實作指導</p>
+</blockquote>
 <h2 id="實驗環境"><a href="#實驗環境" class="headerlink" title="實驗環境"></a>實驗環境</h2><p>本實驗環境為 kubernetes HA Cluster + 4*GPU Node :</p>
 <ul>
 <li>Kubernetes v1.11.2</li>
@@ -254,15 +257,17 @@
 </ul>
 </blockquote>
 <h3 id="1-kube-batch-install"><a href="#1-kube-batch-install" class="headerlink" title="1. kube-batch install"></a>1. kube-batch install</h3><p>參考<code>kube-batch</code> 詳細介紹與安裝方式<a href="https://github.com/kubernetes-sigs/kube-batch/blob/master/doc/usage/tutorial.md" target="_blank" rel="noopener">教學</a>，以下為實驗記錄。</p>
-<p>在<code>叢集中</code> 安裝 Helm tool：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ wget -qO- https://storage.googleapis.com/kubernetes-helm/helm-v2.12.2-linux-amd64.tar.gz | tar -zx</span><br><span class="line">$ sudo mv linux-amd64/helm /usr/<span class="hljs-built_in">local</span>/bin/</span><br></pre></td></tr></table></figure></p>
-<p>初始化 Helm (並安裝 Tiller Server):<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kube-system create sa tiller</span><br><span class="line">$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller</span><br><span class="line">$ helm init --service-account tiller</span><br><span class="line"></span><br><span class="line">Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.</span><br><span class="line">Happy Helming!</span><br></pre></td></tr></table></figure></p>
+<p>在<code>叢集中</code> 安裝 Helm tool：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ wget -qO- https://storage.googleapis.com/kubernetes-helm/helm-v2.12.2-linux-amd64.tar.gz | tar -zx</span><br><span class="line">$ sudo mv linux-amd64/helm /usr/<span class="hljs-built_in">local</span>/bin/</span><br></pre></td></tr></table></figure>
+<p>初始化 Helm (並安裝 Tiller Server):</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kube-system create sa tiller</span><br><span class="line">$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller</span><br><span class="line">$ helm init --service-account tiller</span><br><span class="line"></span><br><span class="line">Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.</span><br><span class="line">Happy Helming!</span><br></pre></td></tr></table></figure>
 <h3 id="Config-kube-batch-for-Kubernetes"><a href="#Config-kube-batch-for-Kubernetes" class="headerlink" title="# Config kube-batch for Kubernetes"></a># Config kube-batch for Kubernetes</h3><p>在<code>k8s-m1</code>節點上執行：</p>
 <ul>
-<li><p>Download kube-batch image</p>
+<li>Download kube-batch image</li>
+</ul>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker pull kubesigs/kube-batch:v0.3</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Download kube-batch</p>
-</li>
+<ul>
+<li>Download kube-batch</li>
 </ul>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p <span class="hljs-variable">$GOPATH</span>/src/github.com/kubernetes-sigs/</span><br><span class="line">$ <span class="hljs-built_in">cd</span> <span class="hljs-variable">$GOPATH</span>/src/github.com/kubernetes-sigs/</span><br><span class="line">$ git <span class="hljs-built_in">clone</span> http://github.com/kubernetes-sigs/kube-batch</span><br></pre></td></tr></table></figure>
 <ul>
