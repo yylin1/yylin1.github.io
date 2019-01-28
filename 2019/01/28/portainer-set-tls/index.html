@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://i.imgur.com/Ip80daq.png">
 <meta property="og:image" content="https://i.imgur.com/4bddhEY.png">
 <meta property="og:image" content="https://i.imgur.com/KGj02Bu.png">
-<meta property="og:updated_time" content="2019-01-28T17:22:31.793Z">
+<meta property="og:updated_time" content="2019-01-28T17:24:21.620Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Portainer透過TLS認證">
 <meta name="twitter:description" content="Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，配置遠端管理會使用到Docker API，而預設都會開啟沒有安全保護的 port 2375 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對新增Endpoints主機配置加入TLS加密。">
@@ -221,9 +221,9 @@
 <h4 id="修改docker啟動文件"><a href="#修改docker啟動文件" class="headerlink" title="修改docker啟動文件"></a>修改docker啟動文件</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim  /lib/systemd/system/docker.service</span><br></pre></td></tr></table></figure>
 <h4 id="修改ExecStart配置參數"><a href="#修改ExecStart配置參數" class="headerlink" title="修改ExecStart配置參數"></a>修改ExecStart配置參數</h4><ul>
 <li>新增<code>-H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock</code></li>
-<li>依照路徑對應<code>ca.pem</code>,<code>cert.pem</code>,<code>key.pem</code>配置<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/usr/bin/dockerd  -H unix://var/run/docker.sock -D -H tcp://0.0.0.0:2375 --tlsverify --tlscacert=/root/ca-dp.pem --tlscert=/root/server-cert-dp.pem --tlskey=/root/server-key-dp.pem</span><br></pre></td></tr></table></figure>
-</li>
+<li>依照路徑對應 <code>ca.pem</code>, <code>cert.pem</code>, <code>key.pem</code> 配置</li>
 </ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/usr/bin/dockerd  -H unix://var/run/docker.sock -D -H tcp://0.0.0.0:2375 --tlsverify --tlscacert=/root/ca-dp.pem --tlscert=/root/server-cert-dp.pem --tlskey=/root/server-key-dp.pem</span><br></pre></td></tr></table></figure>
 <h4 id="portainer-指令說明"><a href="#portainer-指令說明" class="headerlink" title="portainer 指令說明"></a>portainer 指令說明</h4><blockquote>
 <ul>
 <li>–tlsverify: TLS support (default: false)<br>–tlscacert: Path to the CA (default: /certs/ca.pem on Linux）<br>–tlscert: Path to the TLS certificate file (default: /certs/cert.pem）<br>–tlskey: Path to the TLS key (default: /certs/key.pem, </li>
@@ -246,7 +246,7 @@
 <hr>
 <h2 id="Related-Posts"><a href="#Related-Posts" class="headerlink" title="Related Posts"></a>Related Posts</h2><ul>
 <li><a href="http://sakananote2.blogspot.com/2018/06/portainer-with-opensuse-leap-15.html" target="_blank" rel="noopener">[Portainer with openSUSE Leap 15 小記]</a></li>
-<li>[<a href="https://my.oschina.net/ykbj/blog/1920021" target="_blank" rel="noopener">[CoreOS配置Docker API TLS认证]]</a></li>
+<li><a href="https://my.oschina.net/ykbj/blog/1920021" target="_blank" rel="noopener">[CoreOS配置Docker API TLS认证]]</a></li>
 <li><a href="https://hk.saowen.com/a/5e0307008b31189c6923c4ede3a8fca83742cb1dd63a57c0fd4cf72233c791b2" target="_blank" rel="noopener">[【docker】開啟remote api訪問，並使用TLS加密]</a></li>
 </ul>
 
