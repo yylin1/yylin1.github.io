@@ -2,23 +2,29 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>Portainer TLS認證 - Yi Yang&#39;s Blog</title>
+<title>Portainer透過TLS認證 - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
 
-    <meta name="description" content="Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，遠端管理都會使用到Docker API，預設開啟沒有安全保護的 port 2375 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對Portainer配置主機環境加入TLS加密。">
+    <meta name="description" content="Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，配置遠端管理會使用到Docker API，而預設都會開啟沒有安全保護的 port 2375 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對新增Endpoints主機配置加入TLS加密。">
 <meta name="keywords" content="docker,UI">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Portainer TLS認證">
+<meta property="og:title" content="Portainer透過TLS認證">
 <meta property="og:url" content="http://yylin1.github.io/2019/01/28/portainer-set-tls/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，遠端管理都會使用到Docker API，預設開啟沒有安全保護的 port 2375 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對Portainer配置主機環境加入TLS加密。">
+<meta property="og:description" content="Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，配置遠端管理會使用到Docker API，而預設都會開啟沒有安全保護的 port 2375 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對新增Endpoints主機配置加入TLS加密。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-01-28T15:56:40.152Z">
+<meta property="og:image" content="https://i.imgur.com/v1Fx5WR.png">
+<meta property="og:image" content="https://d1jiktx90t87hr.cloudfront.net/354/wp-content/uploads/sites/2/2018/12/endpoints1.png">
+<meta property="og:image" content="https://i.imgur.com/Ip80daq.png">
+<meta property="og:image" content="https://i.imgur.com/4bddhEY.png">
+<meta property="og:image" content="https://i.imgur.com/KGj02Bu.png">
+<meta property="og:updated_time" content="2019-01-28T17:22:31.793Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Portainer TLS認證">
-<meta name="twitter:description" content="Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，遠端管理都會使用到Docker API，預設開啟沒有安全保護的 port 2375 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對Portainer配置主機環境加入TLS加密。">
+<meta name="twitter:title" content="Portainer透過TLS認證">
+<meta name="twitter:description" content="Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，配置遠端管理會使用到Docker API，而預設都會開啟沒有安全保護的 port 2375 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對新增Endpoints主機配置加入TLS加密。">
+<meta name="twitter:image" content="https://i.imgur.com/v1Fx5WR.png">
 
 
 
@@ -84,7 +90,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/artificial-intelligence.png" alt="Portainer TLS認證" height="28">
+                <img src="/images/artificial-intelligence.png" alt="Portainer透過TLS認證" height="28">
             
             </a>
         </div>
@@ -138,7 +144,7 @@
     
     <div class="card-image">
         <span  class="image is-7by1">
-            <img class="thumbnail" src="/images/portainer-tls.png" alt="Portainer TLS認證">
+            <img class="thumbnail" src="/images/portainer-tls.png" alt="Portainer透過TLS認證">
         </span>
     </div>
     
@@ -156,7 +162,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    14 分鐘 read (About 2160 words)
+                    13 分鐘 read (About 1987 words)
                 </span>
                 
             </div>
@@ -164,75 +170,39 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                Portainer TLS認證
+                Portainer透過TLS認證
             
         </h1>
         <div class="content">
-            <p>Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，遠端管理都會使用到Docker API，預設開啟沒有安全保護的 <code>port 2375</code> 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對Portainer配置主機環境加入TLS加密。</p>
+            <p>Portainer 是一個輕量級的 UI 管理界面，可輕鬆管理 Docker 主機或 Swarm 叢集，配置遠端管理會使用到Docker API，而預設都會開啟沒有安全保護的 <code>port 2375</code> 產生連線漏洞，而我們就會需要配置TLS認證憑證，以確保連線安全，此篇會說明如何針對<code>新增Endpoints主機</code>配置加入TLS加密。</p>
 <a id="more"></a>
-<h2 id="1-Portainer概述"><a href="#1-Portainer概述" class="headerlink" title="1. Portainer概述"></a>1. Portainer概述</h2><p>[GitHub] <a href="https://github.com/portainer/portainer" target="_blank" rel="noopener">https://github.com/portainer/portainer</a><br>[文檔] <a href="https://portainer.readthedocs.io/en/stable/" target="_blank" rel="noopener">https://portainer.readthedocs.io/en/stable/</a></p>
+<h2 id="Portainer概述"><a href="#Portainer概述" class="headerlink" title="Portainer概述"></a>Portainer概述</h2><p>Simple management UI for Docker. <a href="https://portainer.readthedocs.io/en/latest/deployment.html" target="_blank" rel="noopener">Deploy Portainer</a> &amp; <a href="https://portainer.readthedocs.io/" target="_blank" rel="noopener">Documentation</a></p>
 <ul>
-<li><p>Portainer（基於Go）是一個輕量級的管理界面，可讓您輕鬆管理Docker 主机或Swarm 集群。</p>
+<li><p>Portainer 使用非常簡單。它可以在任何Docker引擎上運行的單個Container（Docker for Linux和Docker for Windows）</p>
 </li>
-<li><p>Portainer的使用意圖是簡單部署。它包含可以在任何Docker引擎上運行的單個容器（Docker for Linux和Docker for Windows）。</p>
-</li>
-<li><p>Portainer允許您管理Docker容器，圖像，音量，網絡等。它與獨立的Docker引擎和Docker Swarm兼容。</p>
+<li><p>Portainer允許管理Docker containers, images, volumes, networks等。它與獨立的Docker引擎和Docker Swarm兼容。</p>
 </li>
 </ul>
-<hr>
-<h3 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h3><p>Portainer完全支持以下Docker版本：</p>
-<p>Docker 1.10到Docker 17.03（包括集群模式）<br>Docker Swarm&gt; = 1.2.3<br>對以下Docker版本的部分支持（某些功能可能不可用）：</p>
-<p>Docker 1.9</p>
-<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><ul>
-<li>镜像管理</li>
-<li>网络管理</li>
-<li>数据卷管理</li>
-<li>应用模板：支持自定義App模板，例如Nginx，Redis等</li>
-<li>状态面板<ul>
-<li>可查看Docker主機的容器，鏡像，音量，網絡（包括查看容器內部IP）</li>
-<li>容器狀態監控：CPU，內存，網絡利用率，每7秒刷新一次</li>
-<li>容器運行時狀態：啟動命令，環境變量等</li>
-</ul>
-</li>
-<li>控制台：<ul>
-<li>Web UI提供容器的控制台界面</li>
-</ul>
-</li>
-<li>日誌：可實時查看容器運行日誌</li>
-<li>权限分配：針對端點（Docker主機）分配權限</li>
-</ul>
-<h3 id="使用感受（納入生態圈）"><a href="#使用感受（納入生態圈）" class="headerlink" title="使用感受（納入生態圈）"></a>使用感受（納入生態圈）</h3><p>小而美，目前只支持Docker和Swarm集群的管理<br>基於tcp的連接方式，可在一台主機上，對所有Docker宿主機進行管理<br>對於mesos + marathon的PaaS平台來說，做為擴展項目相當不錯<br>目前不支持LDAP，一大遺憾……</p>
-<ol start="2">
-<li>添加端點</li>
-</ol>
-<p>注意：</p>
-<p>使用docker-machine部署Docker engine主機時，會為每一台主機生成服務器證書<br>因此，在使用portainer管理Docker主機，在添加Endpoints時，需要開啟TLS認證，上傳相關docker-mahcine部署主機（192.168.20.4）的證書和key</p>
+<p><img src="https://i.imgur.com/v1Fx5WR.png" alt=""></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="https://d1jiktx90t87hr.cloudfront.net/354/wp-content/uploads/sites/2/2018/12/endpoints1.png" alt=""></h2><h3 id="版本限制"><a href="#版本限制" class="headerlink" title="版本限制"></a>版本限制</h3><p>Portainer 支持以下Docker版本：</p>
 <ul>
-<li>TLS CA certificate：ca.pem</li>
-<li>TLS certificate：cert.pem</li>
-<li>TLS key：key.pem</li>
+<li>Docker 1.10 to the latest version</li>
+<li>Standalone Docker Swarm &gt;= 1.2.3</li>
 </ul>
-<ol start="4">
-<li>啟動portainer容器</li>
-<li>端點儀表板</li>
-<li>隱藏指定的容器</li>
-<li>容器模板（App Templates）</li>
-<li>結束</li>
-</ol>
 <hr>
 <h2 id="部署-Portainer"><a href="#部署-Portainer" class="headerlink" title="部署 Portainer"></a>部署 Portainer</h2><blockquote>
-<p>官網安裝方法可參考 <a href="https://portainer.io/install.html" target="_blank" rel="noopener">https://portainer.io/install.html</a></p>
+<p>官網安裝方法可<a href="https://portainer.io/install.html" target="_blank" rel="noopener">參考</a> </p>
 </blockquote>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker image pull portainer/portainer</span><br><span class="line">$ docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer</span><br></pre></td></tr></table></figure>
+<p>創建後即可查看container狀態<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps</span><br><span class="line">CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                    NAMES</span><br><span class="line">04811d58f2bc        portainer/portainer   <span class="hljs-string">"/portainer"</span>        26 hours ago        Up 26 hours         0.0.0.0:9000-&gt;9000/tcp   portainer</span><br></pre></td></tr></table></figure></p>
 <h2 id="快速生成-TLS-憑證"><a href="#快速生成-TLS-憑證" class="headerlink" title="快速生成 TLS 憑證"></a>快速生成 TLS 憑證</h2><ul>
 <li>官網配置教學參考: <a href="https://docs.docker.com/engine/security/https/" target="_blank" rel="noopener">Protect the Docker daemon socket</a></li>
 </ul>
-<p>由於Docker官網配置細節複雜，找很久相關生成方法，最後找到別人撰寫好的TLS生成<code>shell腳本</code>執行檔，能快速利用 <code>openssl</code> 生成相應的<code>CA key</code>憑證。</p>
+<p>由於Docker官網配置細節複雜，找很久相關生成方法，最後找到別人撰寫好的TLS生成<code>shell執行檔</code>，能快速利用 <code>openssl</code> 生成相應的<code>CA key</code>憑證。</p>
 <blockquote>
 <p><a href="https://my.oschina.net/ykbj/blog/1920021" target="_blank" rel="noopener">Ref: [CoreOS配置Docker API TLS認證]</a></p>
 </blockquote>
-<p>這邊直接創建以下<code>shell</code>腳本<code>vim auto-tls-certs.sh</code>生成對應 TLS 憑證<code>CA key</code>:</p>
-<p>配置對應節點訊息請依照修改後進行在執行<code>shell</code></p>
+<p>這邊直接創建以下<code>shell</code>執行檔生成對應 TLS 憑證<code>CA key</code>，執行配置請依照<code>當前環境</code>修改配置後進行執行<code>shell</code>：</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">$ vim auto-tls-certs.sh</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">#!/bin/bash</span></span><br><span class="line"><span class="hljs-comment"># </span></span><br><span class="line"><span class="hljs-comment"># -------------------------------------------------------------</span></span><br><span class="line"><span class="hljs-comment"># 自動創建 Docker TLS 憑證</span></span><br><span class="line"><span class="hljs-comment"># -------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 以下是配置信息</span></span><br><span class="line"><span class="hljs-comment"># --[BEGIN]------------------------------</span></span><br><span class="line"></span><br><span class="line">CODE=<span class="hljs-string">"辨識生成key名稱"</span>  </span><br><span class="line">IP=<span class="hljs-string">"節點IP"</span></span><br><span class="line">PASSWORD=<span class="hljs-string">"憑證密碼"</span></span><br><span class="line">COUNTRY=<span class="hljs-string">"TW"</span></span><br><span class="line">STATE=<span class="hljs-string">"Taipei"</span></span><br><span class="line">CITY=<span class="hljs-string">"Taipei"</span></span><br><span class="line">ORGANIZATION=<span class="hljs-string">"公司"</span></span><br><span class="line">ORGANIZATIONAL_UNIT=<span class="hljs-string">"Dev"</span></span><br><span class="line">COMMON_NAME=<span class="hljs-string">"<span class="hljs-variable">$IP</span>"</span></span><br><span class="line">EMAIL=<span class="hljs-string">"service@input.email"</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># --[END]--</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Generate CA key</span></span><br><span class="line">openssl genrsa -aes256 -passout <span class="hljs-string">"pass:<span class="hljs-variable">$PASSWORD</span>"</span> -out <span class="hljs-string">"ca-key-<span class="hljs-variable">$CODE</span>.pem"</span> 4096</span><br><span class="line"><span class="hljs-comment"># Generate CA</span></span><br><span class="line">openssl req -new -x509 -days 365 -key <span class="hljs-string">"ca-key-<span class="hljs-variable">$CODE</span>.pem"</span> -sha256 -out <span class="hljs-string">"ca-<span class="hljs-variable">$CODE</span>.pem"</span> -passin <span class="hljs-string">"pass:<span class="hljs-variable">$PASSWORD</span>"</span> -subj <span class="hljs-string">"/C=<span class="hljs-variable">$COUNTRY</span>/ST=<span class="hljs-variable">$STATE</span>/L=<span class="hljs-variable">$CITY</span>/O=<span class="hljs-variable">$ORGANIZATION</span>/OU=<span class="hljs-variable">$ORGANIZATIONAL_UNIT</span>/CN=<span class="hljs-variable">$COMMON_NAME</span>/emailAddress=<span class="hljs-variable">$EMAIL</span>"</span></span><br><span class="line"><span class="hljs-comment"># Generate Server key</span></span><br><span class="line">openssl genrsa -out <span class="hljs-string">"server-key-<span class="hljs-variable">$CODE</span>.pem"</span> 4096</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Generate Server Certs.</span></span><br><span class="line">openssl req -subj <span class="hljs-string">"/CN=<span class="hljs-variable">$COMMON_NAME</span>"</span> -sha256 -new -key <span class="hljs-string">"server-key-<span class="hljs-variable">$CODE</span>.pem"</span> -out server.csr</span><br><span class="line"></span><br><span class="line"><span class="hljs-built_in">echo</span> <span class="hljs-string">"subjectAltName = IP:<span class="hljs-variable">$IP</span>,IP:127.0.0.1"</span> &gt;&gt; extfile.cnf</span><br><span class="line"><span class="hljs-built_in">echo</span> <span class="hljs-string">"extendedKeyUsage = serverAuth"</span> &gt;&gt; extfile.cnf</span><br><span class="line"></span><br><span class="line">openssl x509 -req -days 365 -sha256 -<span class="hljs-keyword">in</span> server.csr -passin <span class="hljs-string">"pass:<span class="hljs-variable">$PASSWORD</span>"</span> -CA <span class="hljs-string">"ca-<span class="hljs-variable">$CODE</span>.pem"</span> -CAkey <span class="hljs-string">"ca-key-<span class="hljs-variable">$CODE</span>.pem"</span> -CAcreateserial -out <span class="hljs-string">"server-cert-<span class="hljs-variable">$CODE</span>.pem"</span> -extfile extfile.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># Generate Client Certs.</span></span><br><span class="line">rm -f extfile.cnf</span><br><span class="line"></span><br><span class="line">openssl genrsa -out <span class="hljs-string">"key-<span class="hljs-variable">$CODE</span>.pem"</span> 4096</span><br><span class="line">openssl req -subj <span class="hljs-string">'/CN=client'</span> -new -key <span class="hljs-string">"key-<span class="hljs-variable">$CODE</span>.pem"</span> -out client.csr</span><br><span class="line"><span class="hljs-built_in">echo</span> extendedKeyUsage = clientAuth &gt;&gt; extfile.cnf</span><br><span class="line">openssl x509 -req -days 365 -sha256 -<span class="hljs-keyword">in</span> client.csr -passin <span class="hljs-string">"pass:<span class="hljs-variable">$PASSWORD</span>"</span> -CA <span class="hljs-string">"ca-<span class="hljs-variable">$CODE</span>.pem"</span> -CAkey <span class="hljs-string">"ca-key-<span class="hljs-variable">$CODE</span>.pem"</span> -CAcreateserial -out <span class="hljs-string">"cert-<span class="hljs-variable">$CODE</span>.pem"</span> -extfile extfile.cnf</span><br><span class="line"></span><br><span class="line">rm -vf client.csr server.csr</span><br><span class="line"></span><br><span class="line">chmod -v 0400 <span class="hljs-string">"ca-key-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"key-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"server-key-<span class="hljs-variable">$CODE</span>.pem"</span></span><br><span class="line">chmod -v 0444 <span class="hljs-string">"ca-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"server-cert-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"cert-<span class="hljs-variable">$CODE</span>.pem"</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 打包 client 憑證</span></span><br><span class="line">mkdir -p <span class="hljs-string">"tls-client-certs-<span class="hljs-variable">$CODE</span>"</span></span><br><span class="line">cp -f <span class="hljs-string">"ca-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"cert-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"key-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"tls-client-certs-<span class="hljs-variable">$CODE</span>/"</span></span><br><span class="line"><span class="hljs-built_in">cd</span> <span class="hljs-string">"tls-client-certs-<span class="hljs-variable">$CODE</span>"</span></span><br><span class="line">tar zcf <span class="hljs-string">"tls-client-certs-<span class="hljs-variable">$CODE</span>.tar.gz"</span> *</span><br><span class="line">mv <span class="hljs-string">"tls-client-certs-<span class="hljs-variable">$CODE</span>.tar.gz"</span> ../</span><br><span class="line"><span class="hljs-built_in">cd</span> ..</span><br><span class="line">rm -rf <span class="hljs-string">"tls-client-certs-<span class="hljs-variable">$CODE</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 拷貝服務憑證</span></span><br><span class="line">mkdir -p /etc/docker/certs.d</span><br><span class="line">cp <span class="hljs-string">"ca-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"server-cert-<span class="hljs-variable">$CODE</span>.pem"</span> <span class="hljs-string">"server-key-<span class="hljs-variable">$CODE</span>.pem"</span> /etc/docker/certs.d/</span><br></pre></td></tr></table></figure>
 <p>腳本執行完成後顯示訊息：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">$ ./create_ca_key.sh </span><br><span class="line"></span><br><span class="line">Generating RSA private key, 4096 bit long modulus</span><br><span class="line">......................................................++</span><br><span class="line">.........................................................................................................................++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Generating RSA private key, 4096 bit long modulus</span><br><span class="line">......................................................++</span><br><span class="line">..............++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Signature ok</span><br><span class="line">subject=/CN=140.128.18.88</span><br><span class="line">Getting CA Private Key</span><br><span class="line">Generating RSA private key, 4096 bit long modulus</span><br><span class="line">....................................................................................................................++</span><br><span class="line">..............................................++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Signature ok</span><br><span class="line">subject=/CN=client</span><br><span class="line">Getting CA Private Key</span><br><span class="line">removed <span class="hljs-string">'client.csr'</span></span><br><span class="line">removed <span class="hljs-string">'server.csr'</span></span><br><span class="line">mode of <span class="hljs-string">'ca-key-s1.pem'</span> changed from 0644 (rw-r--r--) to 0400 (r--------)</span><br><span class="line">mode of <span class="hljs-string">'key-s1.pem'</span> changed from 0644 (rw-r--r--) to 0400 (r--------)</span><br><span class="line">mode of <span class="hljs-string">'server-key-s1.pem'</span> changed from 0644 (rw-r--r--) to 0400 (r--------)</span><br><span class="line">mode of <span class="hljs-string">'ca-s1.pem'</span> changed from 0644 (rw-r--r--) to 0444 (r--r--r--)</span><br><span class="line">mode of <span class="hljs-string">'server-cert-s1.pem'</span> changed from 0644 (rw-r--r--) to 0444 (r--r--r--)</span><br><span class="line">mode of <span class="hljs-string">'cert-s1.pem'</span> changed from 0644 (rw-r--r--) to 0444 (r--r--r--)</span><br></pre></td></tr></table></figure></p>
 <p>對腳本中配置參數進行修改後運行，自動會生成TLS憑證，在/etc/docker/certs.d/目錄下:</p>
@@ -241,27 +211,44 @@
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls</span><br><span class="line">tls-client-certs-s1.tar.gz ca-key-s1.pem  ca-s1.pem  ca-s1.srl  cert-s1.pem  create_ca_key.sh  extfile.cnf  key-s1.pem  server-cert-s1.pem  server-key-s1.pem</span><br></pre></td></tr></table></figure>
 <p>這邊<code>Portainer UI</code> 直接透過<code>tls-client-certs-{CODE}.tar.gz</code>這個壓縮檔裡面<code>CA Key</code>進行 <code>Portainer TLS</code>認證。</p>
 <hr>
-<h2 id="新增-Endpoints-主機"><a href="#新增-Endpoints-主機" class="headerlink" title="新增 Endpoints 主機"></a>新增 Endpoints 主機</h2><p>為了安全性關係，在使用 <code>portainer</code> 管理Docker主機，在新增 Endpoints 時，需要開啟 TLS 認證，上傳 docker-mahcine 部署主機的憑證和key：</p>
+<h2 id="新增-Endpoints-主機並配置TLS"><a href="#新增-Endpoints-主機並配置TLS" class="headerlink" title="新增 Endpoints 主機並配置TLS"></a>新增 Endpoints 主機並配置TLS</h2><p>在使用 <code>portainer</code> 管理Docker主機，為了安全性關係新增 Endpoints 時，需要開啟 TLS 認證，上傳 docker-mahcine 部署主機的憑證和key：</p>
 <ul>
-<li>TLS CA certificate：ca.pem</li>
-<li>TLS certificate：cert.pem</li>
-<li>TLS key：key.pem</li>
+<li><code>TLS CA certificate</code>：ca.pem</li>
+<li><code>TLS certificate</code>：cert.pem</li>
+<li><code>TLS key</code>：key.pem</li>
 </ul>
-<p>修改docker啟動文檔<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim  /lib/systemd/system/docker.service</span><br></pre></td></tr></table></figure></p>
-<p>修改execstart配置<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/usr/bin/dockerd  -H unix://var/run/docker.sock -D -H tcp://0.0.0.0:2375 --tlsverify --tlscacert=/root/ca-dp.pem --tlscert=/root/server-cert-dp.pem --tlskey=/root/server-key-dp.pem</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p><code>--tlscacert</code> 依照路徑指派.pem</p>
+<h3 id="開啟Remote-API訪問"><a href="#開啟Remote-API訪問" class="headerlink" title="開啟Remote API訪問"></a>開啟Remote API訪問</h3><p>首先確認，TLS 生成出來憑證 <code>ca.pem</code>,<code>cert.pem</code>,<code>key.pem</code> 路徑，環境實驗路徑<code>/root/private/</code>。</p>
+<h4 id="修改docker啟動文件"><a href="#修改docker啟動文件" class="headerlink" title="修改docker啟動文件"></a>修改docker啟動文件</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim  /lib/systemd/system/docker.service</span><br></pre></td></tr></table></figure>
+<h4 id="修改ExecStart配置參數"><a href="#修改ExecStart配置參數" class="headerlink" title="修改ExecStart配置參數"></a>修改ExecStart配置參數</h4><ul>
+<li>新增<code>-H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock</code></li>
+<li>依照路徑對應<code>ca.pem</code>,<code>cert.pem</code>,<code>key.pem</code>配置<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/usr/bin/dockerd  -H unix://var/run/docker.sock -D -H tcp://0.0.0.0:2375 --tlsverify --tlscacert=/root/ca-dp.pem --tlscert=/root/server-cert-dp.pem --tlskey=/root/server-key-dp.pem</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="portainer-指令說明"><a href="#portainer-指令說明" class="headerlink" title="portainer 指令說明"></a>portainer 指令說明</h4><blockquote>
+<ul>
+<li>–tlsverify: TLS support (default: false)<br>–tlscacert: Path to the CA (default: /certs/ca.pem on Linux）<br>–tlscert: Path to the TLS certificate file (default: /certs/cert.pem）<br>–tlskey: Path to the TLS key (default: /certs/key.pem, </li>
+</ul>
 </blockquote>
-<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl daemon-reload</span><br><span class="line"></span><br><span class="line">重新啟動 docker</span><br><span class="line">$ systemctl restart  docker</span><br><span class="line"></span><br><span class="line">檢查 參數</span><br><span class="line">$ ps -ef  | grep docker</span><br><span class="line"></span><br><span class="line">$ ps -ef  | grep docker</span><br><span class="line">root     18434     1  2 16:54 ?        00:00:00 /usr/bin/dockerd -H unix://var/run/docker.sock -D -H tcp://0.0.0.0:2375 --tlsverify --tlscacert=/root/private/ca-s1.pem --tlscert=/root/private/server-cert-s1.pem --tlskey=/root/private/server-key-s1.pem</span><br><span class="line">root     18558 15435  0 16:54 pts/0    00:00:00 grep --color=auto docker</span><br></pre></td></tr></table></figure>
-<p>5，測試<br>　　將cert.pem,key.pem這兩個文檔複製到測試機上, curl中-k的意思是Allow connections to SSL sites without certs，不驗證證書</p>
-<p>curl -k <a href="https://docker服務器IP:2375/info" target="_blank" rel="noopener">https://docker服務器IP:2375/info</a> –cert ./cert.pem –key ./key.pem</p>
-<p>6，能返回docker信息即為完成</p>
+<p>配置好後重啟 Docker<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl daemon-reload</span><br><span class="line"></span><br><span class="line">重新啟動 docker</span><br><span class="line">$ systemctl restart  docker</span><br><span class="line"></span><br><span class="line">檢查 參數</span><br><span class="line">$ ps -ef  | grep docker</span><br><span class="line"></span><br><span class="line">$ ps -ef  | grep docker</span><br><span class="line">root     18434     1  2 16:54 ?        00:00:00 /usr/bin/dockerd -H unix://var/run/docker.sock -D -H tcp://0.0.0.0:2375 --tlsverify --tlscacert=/root/private/ca-s1.pem --tlscert=/root/private/server-cert-s1.pem --tlskey=/root/private/server-key-s1.pem</span><br><span class="line">root     18558 15435  0 16:54 pts/0    00:00:00 grep --color=auto docker</span><br></pre></td></tr></table></figure></p>
+<h4 id="補充-測試TLS認證"><a href="#補充-測試TLS認證" class="headerlink" title="#補充: 測試TLS認證"></a>#補充: 測試TLS認證</h4><p>將<code>cert.pem</code>,<code>key.pem</code>這兩個檔案複製到測試機上,透過 curl中<code>-k</code>意思是(Allow connections to SSL sites without certs)驗證憑證</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -k https://&#123;docker節點IP&#125;:2375/info --cert ./cert.pem --key ./key.pem</span><br></pre></td></tr></table></figure>
+<p>返回docker信息即為完成憑證認證</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl -k https://140.128.18.88:2375/info --cert cert-dp.pem --key key-dp.pem </span><br><span class="line">&#123;<span class="hljs-string">"ID"</span>:<span class="hljs-string">"F2HY:7GDT:YA3J:74UZ:2AKP:GW2Z:MIIT:GPG3:NOHZ:EKCW:ZFCA:M575"</span>,<span class="hljs-string">"Containers"</span>:2,<span class="hljs-string">"ContainersRunning"</span>:1,<span class="hljs-string">"ContainersPaused"</span>:0,<span class="hljs-string">"ContainersStopped"</span>:1,<span class="hljs-string">"Images"</span>:22,<span class="hljs-string">"Driver"</span>:<span class="hljs-string">"overlay2"</span>,<span class="hljs-string">"DriverStatus"</span>:[[<span class="hljs-string">"Backing Filesystem"</span>,<span class="hljs-string">"extfs"</span>],[<span class="hljs-string">"Supports d_type"</span>,<span class="hljs-string">"true"</span>],[<span class="hljs-string">"Native Overlay Diff"</span>,<span class="hljs-string">"true"</span>]],<span class="hljs-string">"SystemStatus"</span>:null,<span class="hljs-string">"Plugins"</span>:&#123;<span class="hljs-string">"Volume"</span>:[<span class="hljs-string">"local"</span>],<span class="hljs-string">"Network"</span>:[<span class="hljs-string">"bridge"</span>,<span class="hljs-string">"host"</span>,<span class="hljs-string">"macvlan"</span>,<span class="hljs-string">"null"</span>,<span class="hljs-string">"overlay"</span>],<span class="hljs-string">"Authorization"</span>:null,<span class="hljs-string">"Log"</span>:[<span class="hljs-string">"awslogs"</span>,<span class="hljs-string">"fluentd"</span>,<span class="hljs-string">"gcplogs"</span>,<span class="hljs-string">"gelf"</span>,<span class="hljs-string">"journald"</span>,<span class="hljs-string">"json-file"</span>,<span class="hljs-string">"local"</span>,<span class="hljs-string">"logentries"</span>,<span class="hljs-string">"splunk"</span>,<span class="hljs-string">"syslog"</span>]&#125;,<span class="hljs-string">"MemoryLimit"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"SwapLimit"</span>:<span class="hljs-literal">false</span>,<span class="hljs-string">"KernelMemory"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"CpuCfsPeriod"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"CpuCfsQuota"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"CPUShares"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"CPUSet"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"IPv4Forwarding"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"BridgeNfIptables"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"BridgeNfIp6tables"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"Debug"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"NFd"</span>:31,<span class="hljs-string">"OomKillDisable"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"NGoroutines"</span>:44,<span class="hljs-string">"SystemTime"</span>:<span class="hljs-string">"2019-01-28T15:26:15.584473249+08:00"</span>,<span class="hljs-string">"LoggingDriver"</span>:<span class="hljs-string">"json-file"</span>,<span class="hljs-string">"CgroupDriver"</span>:<span class="hljs-string">"cgroupfs"</span>,<span class="hljs-string">"NEventsListener"</span>:0,<span class="hljs-string">"KernelVersion"</span>:<span class="hljs-string">"4.13.0-36-generic"</span>,<span class="hljs-string">"OperatingSystem"</span>:<span class="hljs-string">"Ubuntu 16.04.4 LTS"</span>,<span class="hljs-string">"OSType"</span>:<span class="hljs-string">"linux"</span>,<span class="hljs-string">"Architecture"</span>:<span class="hljs-string">"x86_64"</span>,<span class="hljs-string">"IndexServerAddress"</span>:<span class="hljs-string">"https://index.docker.io/v1/"</span>,<span class="hljs-string">"RegistryConfig"</span>:&#123;<span class="hljs-string">"AllowNondistributableArtifactsCIDRs"</span>:[],<span class="hljs-string">"AllowNondistributableArtifactsHostnames"</span>:[],<span class="hljs-string">"InsecureRegistryCIDRs"</span>:[<span class="hljs-string">"127.0.0.0/8"</span>],<span class="hljs-string">"IndexConfigs"</span>:&#123;<span class="hljs-string">"docker.io"</span>:&#123;<span class="hljs-string">"Name"</span>:<span class="hljs-string">"docker.io"</span>,<span class="hljs-string">"Mirrors"</span>:[],<span class="hljs-string">"Secure"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"Official"</span>:<span class="hljs-literal">true</span>&#125;&#125;,<span class="hljs-string">"Mirrors"</span>:[]&#125;,<span class="hljs-string">"NCPU"</span>:4,<span class="hljs-string">"MemTotal"</span>:16739332096,<span class="hljs-string">"GenericResources"</span>:null,<span class="hljs-string">"DockerRootDir"</span>:<span class="hljs-string">"/var/lib/docker"</span>,<span class="hljs-string">"HttpProxy"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"HttpsProxy"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"NoProxy"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"Name"</span>:<span class="hljs-string">"lab506-s1"</span>,<span class="hljs-string">"Labels"</span>:[],<span class="hljs-string">"ExperimentalBuild"</span>:<span class="hljs-literal">false</span>,<span class="hljs-string">"ServerVersion"</span>:<span class="hljs-string">"18.09.1"</span>,<span class="hljs-string">"ClusterStore"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"ClusterAdvertise"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"Runtimes"</span>:&#123;<span class="hljs-string">"nvidia"</span>:&#123;<span class="hljs-string">"path"</span>:<span class="hljs-string">"nvidia-container-runtime"</span>&#125;,<span class="hljs-string">"runc"</span>:&#123;<span class="hljs-string">"path"</span>:<span class="hljs-string">"runc"</span>&#125;&#125;,<span class="hljs-string">"DefaultRuntime"</span>:<span class="hljs-string">"runc"</span>,<span class="hljs-string">"Swarm"</span>:&#123;<span class="hljs-string">"NodeID"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"NodeAddr"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"LocalNodeState"</span>:<span class="hljs-string">"inactive"</span>,<span class="hljs-string">"ControlAvailable"</span>:<span class="hljs-literal">false</span>,<span class="hljs-string">"Error"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"RemoteManagers"</span>:null&#125;,<span class="hljs-string">"LiveRestoreEnabled"</span>:<span class="hljs-literal">false</span>,<span class="hljs-string">"Isolation"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"InitBinary"</span>:<span class="hljs-string">"docker-init"</span>,<span class="hljs-string">"ContainerdCommit"</span>:&#123;<span class="hljs-string">"ID"</span>:<span class="hljs-string">"9754871865f7fe2f4e74d43e2fc7ccd237edcbce"</span>,<span class="hljs-string">"Expected"</span>:<span class="hljs-string">"9754871865f7fe2f4e74d43e2fc7ccd237edcbce"</span>&#125;,<span class="hljs-string">"RuncCommit"</span>:&#123;<span class="hljs-string">"ID"</span>:<span class="hljs-string">"96ec2177ae841256168fcf76954f7177af9446eb"</span>,<span class="hljs-string">"Expected"</span>:<span class="hljs-string">"96ec2177ae841256168fcf76954f7177af9446eb"</span>&#125;,<span class="hljs-string">"InitCommit"</span>:&#123;<span class="hljs-string">"ID"</span>:<span class="hljs-string">"fec3683"</span>,<span class="hljs-string">"Expected"</span>:<span class="hljs-string">"fec3683"</span>&#125;,<span class="hljs-string">"SecurityOptions"</span>:[<span class="hljs-string">"name=apparmor"</span>,<span class="hljs-string">"name=seccomp,profile=default"</span>],<span class="hljs-string">"ProductLicense"</span>:<span class="hljs-string">"Community Engine"</span>,<span class="hljs-string">"Warnings"</span>:[<span class="hljs-string">"WARNING: No swap limit support"</span>]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="完成後配置遠端節點-Endpoints"><a href="#完成後配置遠端節點-Endpoints" class="headerlink" title="完成後配置遠端節點 Endpoints"></a>完成後配置遠端節點 Endpoints</h3><p>Portainer透過上傳CA key，這邊直接解壓縮<code>shell</code>生成<code>tls-client-certs-{CODE}.tar.gz</code>的壓縮檔直接加入對應的TLS。</p>
+<p><img src="https://i.imgur.com/Ip80daq.png" alt=""></p>
 <hr>
-<p><a href="https://my.oschina.net/lilinzero/blog/1815265" target="_blank" rel="noopener">https://my.oschina.net/lilinzero/blog/1815265</a></p>
-<p>docker tensorflow的鏡像官網為<a href="https://hub.docker.com/r/tensorflow/tensorflow/，首先按照官方教程安裝nvidia-docker2，之後的tensorflow-gpu鏡像都需要nvidia-docker來啟動，或者docker" target="_blank" rel="noopener">https://hub.docker.com/r/tensorflow/tensorflow/，首先按照官方教程安裝nvidia-docker2，之後的tensorflow-gpu鏡像都需要nvidia-docker來啟動，或者docker</a> run - -runtime=nvidia，當然這樣就足夠用了，如果你想用docker取代nvidia-docker可以修改/etc/docker/daemon.json為如下所示，即在第一行加入”default-runtime”: “nvidia “,這樣就可以直接用docker取代nvidia-docker了</p>
-<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$/etc/docker/daemon.json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="hljs-string">"default-runtime"</span>: <span class="hljs-string">"nvidia"</span>,</span><br><span class="line">    <span class="hljs-string">"runtimes"</span>: &#123;</span><br><span class="line">        <span class="hljs-string">"nvidia"</span>: &#123;</span><br><span class="line">            <span class="hljs-string">"path"</span>: <span class="hljs-string">"/usr/bin/nvidia-container-runtime"</span>,</span><br><span class="line">            <span class="hljs-string">"runtimeArgs"</span>: []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在這裡需要注意reload一下<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure></p>
+<h2 id="設置-docker默認-runtime-為-nvidia"><a href="#設置-docker默認-runtime-為-nvidia" class="headerlink" title="設置 docker默認 runtime 為 nvidia"></a>設置 docker默認 runtime 為 nvidia</h2><p>由於環境Portainer預設執行為<code>docker runtime</code>，導致如果啟動Nvidia-Docker所執行的GPU Container會無法使用，這邊 Docker default runtime 改成 nvidia。</p>
+<p>新增<code>&quot;default-runtime&quot;: &quot;nvidia&quot;</code>指派配置，直接用docker取代nvidia-docker。<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/docker/daemon.json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="hljs-string">"default-runtime"</span>: <span class="hljs-string">"nvidia"</span>,</span><br><span class="line">    <span class="hljs-string">"runtimes"</span>: &#123;</span><br><span class="line">        <span class="hljs-string">"nvidia"</span>: &#123;</span><br><span class="line">            <span class="hljs-string">"path"</span>: <span class="hljs-string">"/usr/bin/nvidia-container-runtime"</span>,</span><br><span class="line">            <span class="hljs-string">"runtimeArgs"</span>: []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>完成後儲存，並重新啟動 Docker：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo systemctl daemon-reload &amp;&amp; sudo systemctl restart docker</span><br></pre></td></tr></table></figure></p>
+<p>Portainer 即可正常創建GPU Container: </p>
+<p><img src="https://i.imgur.com/4bddhEY.png" alt=""></p>
+<p><img src="https://i.imgur.com/KGj02Bu.png" alt=""></p>
+<hr>
+<h2 id="Related-Posts"><a href="#Related-Posts" class="headerlink" title="Related Posts"></a>Related Posts</h2><ul>
+<li><a href="http://sakananote2.blogspot.com/2018/06/portainer-with-opensuse-leap-15.html" target="_blank" rel="noopener">[Portainer with openSUSE Leap 15 小記]</a></li>
+<li>[<a href="https://my.oschina.net/ykbj/blog/1920021" target="_blank" rel="noopener">[CoreOS配置Docker API TLS认证]]</a></li>
+<li><a href="https://hk.saowen.com/a/5e0307008b31189c6923c4ede3a8fca83742cb1dd63a57c0fd4cf72233c791b2" target="_blank" rel="noopener">[【docker】開啟remote api訪問，並使用TLS加密]</a></li>
+</ul>
 
         </div>
         
@@ -593,14 +580,14 @@
             
             <a href="/2019/01/28/portainer-set-tls/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/portainer-tls.png" alt="Portainer TLS認證">
+                    <img class="thumbnail" src="/images/portainer-tls.png" alt="Portainer透過TLS認證">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-28T14:46:42.000Z">2019-01-28</time></div>
-                    <a href="/2019/01/28/portainer-set-tls/" class="has-link-black-ter is-size-6">Portainer TLS認證</a>
+                    <a href="/2019/01/28/portainer-set-tls/" class="has-link-black-ter is-size-6">Portainer透過TLS認證</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/docker/">docker</a>
                     </p>
@@ -1022,14 +1009,14 @@
             
             <a href="/2019/01/28/portainer-set-tls/" class="media-left">
                 <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/portainer-tls.png" alt="Portainer TLS認證">
+                    <img class="thumbnail" src="/images/portainer-tls.png" alt="Portainer透過TLS認證">
                 </p>
             </a>
             
             <div class="media-content">
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-28T14:46:42.000Z">2019-01-28</time></div>
-                    <a href="/2019/01/28/portainer-set-tls/" class="has-link-black-ter is-size-6">Portainer TLS認證</a>
+                    <a href="/2019/01/28/portainer-set-tls/" class="has-link-black-ter is-size-6">Portainer透過TLS認證</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/docker/">docker</a>
                     </p>
@@ -1441,7 +1428,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/artificial-intelligence.png" alt="Portainer TLS認證" height="28">
+                    <img src="/images/artificial-intelligence.png" alt="Portainer透過TLS認證" height="28">
                 
                 </a>
                 <p class="is-size-7">
