@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/</loc>
+    
+    <lastmod>2019-02-06T15:55:03.716Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yylin1.github.io/2019/01/28/portainer-set-tls/</loc>
     
     <lastmod>2019-02-05T15:50:01.358Z</lastmod>
@@ -19,13 +26,6 @@
     <loc>http://yylin1.github.io/2019/02/03/kubeflow-0-4-release/</loc>
     
     <lastmod>2019-02-04T02:43:37.167Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/</loc>
-    
-    <lastmod>2019-02-03T05:25:52.152Z</lastmod>
     
   </url>
   
