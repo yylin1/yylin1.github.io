@@ -7,18 +7,18 @@
 
 
 
-    <meta name="description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。">
+    <meta name="description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。  **目前tf-operator 實現 gang-s">
 <meta name="keywords" content="kubernetes,kubeflow,scheduler">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何更換 Kubeflow 預設 Scheduling">
 <meta property="og:url" content="http://yylin1.github.io/2019/01/22/kubeflow-job-scheduling/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。">
+<meta property="og:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。  **目前tf-operator 實現 gang-s">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-02-28T09:58:57.430Z">
+<meta property="og:updated_time" content="2019-04-04T10:00:34.316Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何更換 Kubeflow 預設 Scheduling">
-<meta name="twitter:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。">
+<meta name="twitter:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling] ，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。  **目前tf-operator 實現 gang-s">
 
 
 
@@ -156,7 +156,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    14 分鐘 read (About 2052 words)
+                    14 分鐘 read (About 2075 words)
                 </span>
                 
             </div>
@@ -169,6 +169,9 @@
         </h1>
         <div class="content">
             <p>本篇文章將說明實作官網 <a href="https://www.kubeflow.org/docs/other-guides/job-scheduling/" target="_blank" rel="noopener">[kubeflow/Job Scheduling]</a> ，所介紹的如何使用 <code>gang-scheduling</code> 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用<a href="https://github.com/kubernetes-sigs/kube-batch" target="_blank" rel="noopener">kube-batch</a>以支持 kubeflow 透過<code>gang-scheduling</code>排程方式，來同時允許多個Pod執行解決<code>deadlock</code>問題。</p>
+<blockquote>
+<p>**目前tf-operator 實現 gang-scheduler 已經從 <code>PDB</code> 修正為 <code>PodGroups</code><br>請參考 <code>Kube-batch</code> 介紹</p>
+</blockquote>
 <a id="more"></a>
 <blockquote>
 <p>#本篇實作主要感謝 @kubeflow member and Kubeflow/tf-operator reviewer <a href="https://github.com/ChanYiLin" target="_blank" rel="noopener">@Jack Lin</a> 協助實作指導</p>

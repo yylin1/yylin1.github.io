@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yylin1.github.io/2019/01/22/kubeflow-job-scheduling/</loc>
+    
+    <lastmod>2019-04-04T10:00:34.316Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yylin1.github.io/2018/12/31/2018-retrospect-prospect/</loc>
     
     <lastmod>2019-03-08T15:30:40.281Z</lastmod>
@@ -26,13 +33,6 @@
     <loc>http://yylin1.github.io/about/index.html</loc>
     
     <lastmod>2019-03-03T15:50:21.692Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yylin1.github.io/2019/01/22/kubeflow-job-scheduling/</loc>
-    
-    <lastmod>2019-02-28T09:58:57.430Z</lastmod>
     
   </url>
   
