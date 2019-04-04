@@ -2,7 +2,7 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>標籤: kubeflow - Yi Yang&#39;s Blog</title>
+<title>分類: Deploy - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
@@ -11,7 +11,7 @@
 <meta name="keywords" content="kubernetes, Deep Learning, kubeflow, scheduler">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Yi Yang&#39;s Blog">
-<meta property="og:url" content="http://yylin1.github.io/tags/kubeflow/index.html">
+<meta property="og:url" content="http://yylin1.github.io/categories/Deploy/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="Blog">
 <meta property="og:locale" content="zh-TW">
@@ -137,8 +137,9 @@
     <div class="card-content">
         <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
-            <li><a href="/tags">標籤</a></li>
-            <li class="is-active"><a href="#" aria-current="page">kubeflow</a></li>
+            <li><a href="/categories">分類</a></li>
+            
+            <li class="is-active"><a href="#" aria-current="page">Deploy</a></li>
         </ul>
         </nav>
     </div>
@@ -147,8 +148,8 @@
     <div class="card">
     
     <div class="card-image">
-        <a href="/2019/02/03/kubeflow-0-4-release/" class="image is-7by1">
-            <img class="thumbnail" src="/images/kubeflow-deploy-0-4.png" alt="Kubeflow v0.4.x 部署與概述">
+        <a href="/2019/01/19/bastion-host/" class="image is-7by1">
+            <img class="thumbnail" src="/images/bastion-host.png" alt="認識 Bastion Host 部署管理機">
         </a>
     </div>
     
@@ -156,17 +157,17 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-02-03T05:28:29.000Z">2019-02-03</time>
+                <time class="level-item has-text-grey" datetime="2019-01-19T15:51:36.000Z">2019-01-19</time>
                 
                 <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
+                <a class="has-link-grey -link" href="/categories/Deploy/">Deploy</a>
                 </div>
                 
                 
                 <span class="level-item has-text-grey">
                     
                     
-                    14 分鐘 read (About 2032 words)
+                    8 分鐘 read (About 1148 words)
                 </span>
                 
             </div>
@@ -174,78 +175,18 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2019/02/03/kubeflow-0-4-release/">Kubeflow v0.4.x 部署與概述</a>
+                <a class="has-link-black-ter" href="/2019/01/19/bastion-host/">認識 Bastion Host 部署管理機</a>
             
         </h1>
         <div class="content">
-            <p><strong>Kubeflow 專案致力於使 ML Workflow 發展更具簡易性、可攜帶性和規模性。</strong> <a href="https://www.itcodemonkey.com/article/12711.html" target="_blank" rel="noopener">Kubeflow於2017年底正式開源，並於2018年5月發布了首個0.1版本</a>，至今 kubeflow 各項目發展迅速，而我參與 <code>2018 KubeCon Shanghai</code> 聆聽好幾場來自 各大企業與 Google等議程，分享 Kubeflow 導入企業實際應用情境，深刻感受到 <strong>kubeflow</strong> 在開源社區與貢獻者中重視度，在快速發展下至於1月宣布 Kubeflow 0.4 穩定版本正式發佈。</p>
-<p>#此篇主要記錄操作 kubflow v0.4.1 部署與更新概述。</p>
-<h3 id="Related-Posts"><a href="#Related-Posts" class="headerlink" title="Related Posts"></a>Related Posts</h3><ul>
-<li><a href="https://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/">[kubeflow] 快速部署 Kubeflow v0.3 容器機器學習平台</a></li></ul>
+            <p>由於最近接觸 <code>Openshift</code> 部署實體機，剛好部署過程學習到透過 <code>Bastion 管理機</code>，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中<code>安全性</code>問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。</p>
         </div>
         
         
         <div class="level is-mobile">
             <div class="level-start">
                 <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2019/02/03/kubeflow-0-4-release/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2019/01/22/kubeflow-job-scheduling/" class="image is-7by1">
-            <img class="thumbnail" src="/images/kubeflow-job-scheduling.png" alt="如何更換 Kubeflow 預設 Scheduling">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-01-22T15:34:29.000Z">2019-01-22</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    14 分鐘 read (About 2099 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/01/22/kubeflow-job-scheduling/">如何更換 Kubeflow 預設 Scheduling</a>
-            
-        </h1>
-        <div class="content">
-            <p>本篇文章將說明實作官網 <a href="https://www.kubeflow.org/docs/other-guides/job-scheduling/" target="_blank" rel="noopener">[kubeflow/Job Scheduling]</a> ，所介紹的如何使用 <code>gang-scheduling</code> 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用<a href="https://github.com/kubernetes-sigs/kube-batch" target="_blank" rel="noopener">kube-batch</a>以支持 kubeflow 透過<code>gang-scheduling</code>排程方式，來同時允許多個Pod執行解決<code>deadlock</code>問題。</p>
-<blockquote>
-<p>文章方法已經無法使用<br><strong>目前 tf-operator 實現 gang-scheduler 已經從 <code>PDB</code> 修正為 <code>PodGroups</code></strong>方法<br>請參考 <a href="https://github.com/kubernetes-sigs/kube-batch/blob/master/doc/usage/tutorial.md" target="_blank" rel="noopener">Kube-batch</a> 介紹</p>
-</blockquote>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2019/01/22/kubeflow-job-scheduling/#more">繼續閱讀</a>
+                <a class="button is-size-7 is-light" href="/2019/01/19/bastion-host/#more">繼續閱讀</a>
                 </div>
             </div>
         </div>
@@ -302,168 +243,6 @@
             <div class="level-start">
                 <div class="level-item">
                 <a class="button is-size-7 is-light" href="/2018/12/14/snap-microk8s-deploy-kubernetes/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/12/14/kubecon-china-first/" class="image is-7by1">
-            <img class="thumbnail" src="/images/kubecon-china-share.png" alt="人生首場 KubeCon&amp;CloudNativeCon China 2018">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-12-13T17:03:44.000Z">2018-12-14</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Kubernetes/">Kubernetes</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    2 分鐘 read (About 358 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/12/14/kubecon-china-first/">人生首場 KubeCon&amp;CloudNativeCon China 2018</a>
-            
-        </h1>
-        <div class="content">
-            <p>此篇主要分享參與KubeCon China2018會後心得，剛好透過社群分享再次的回顧自己聆聽議程與參與國際會議論壇的體悟。</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/12/14/kubecon-china-first/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/10/23/kubeflow-deploy-v0.3.0/" class="image is-7by1">
-            <img class="thumbnail" src="/images/kubeflow_deploy.jpeg" alt="快速部署 Kubeflow v0.3 容器機器學習平台">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-10-23T12:53:45.000Z">2018-10-23</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    17 分鐘 read (About 2567 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/10/23/kubeflow-deploy-v0.3.0/">快速部署 Kubeflow v0.3 容器機器學習平台</a>
-            
-        </h1>
-        <div class="content">
-            <p><a href="https://v0-3.kubeflow.org/" target="_blank" rel="noopener">Kubeflow</a> 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並執行。</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/10/23/kubeflow-deploy-v0.3.0/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/09/17/microk8s-deploy-kubeflow/" class="image is-7by1">
-            <img class="thumbnail" src="/images/microk8s.png" alt="透過 Microk8s 快速部署 Kubeflow">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-09-17T04:12:02.000Z">2018-09-17</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    12 分鐘 read (About 1798 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/09/17/microk8s-deploy-kubeflow/">透過 Microk8s 快速部署 Kubeflow</a>
-            
-        </h1>
-        <div class="content">
-            <p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/09/17/microk8s-deploy-kubeflow/#more">繼續閱讀</a>
                 </div>
             </div>
         </div>
