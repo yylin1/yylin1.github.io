@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/</loc>
+    
+    <lastmod>2019-04-08T14:33:08.534Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yylin1.github.io/2019/01/22/kubeflow-job-scheduling/</loc>
     
-    <lastmod>2019-04-04T13:59:50.283Z</lastmod>
+    <lastmod>2019-04-04T14:02:09.376Z</lastmod>
     
   </url>
   
@@ -103,13 +110,6 @@
     <loc>http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/</loc>
     
     <lastmod>2018-12-16T04:56:17.434Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/</loc>
-    
-    <lastmod>2018-12-16T04:55:09.185Z</lastmod>
     
   </url>
   

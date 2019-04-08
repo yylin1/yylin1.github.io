@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2018-12-16T04:55:09.185Z">
+<meta property="og:updated_time" content="2019-04-08T14:33:08.534Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="安裝NVIDIA顯卡驅動時可能遇到的問題">
 <meta name="twitter:description" content="本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
@@ -156,7 +156,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    5 分鐘 read (About 738 words)
+                    5 分鐘 read (About 759 words)
                 </span>
                 
             </div>
@@ -188,7 +188,9 @@
 <p>重啟後即可透過UI介面登入環境，就可以解決<code>循環登入的問題</code>。</p>
 </blockquote>
 <p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nvidia-smi</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 390.87                 Driver Version: 390.87                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 108...  Off  | 00000000:02:00.0  On |                  N/A |</span><br><span class="line">| 26%   40C    P8    16W / 250W |    328MiB / 11173MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0       837      C   python                                       157MiB |</span><br><span class="line">|    0      1250      G   /usr/lib/xorg/Xorg                           159MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure></p>
-<h3 id="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："><a href="#補充：安裝NVIDIA顯卡驅動是可能遇到的問題：" class="headerlink" title="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："></a>補充：安裝NVIDIA顯卡驅動是可能遇到的問題：</h3><p>出現<code>An error occurred while p    erforming the step : &quot; Building kernel modules &quot;</code>這個問題: </p>
+<h3 id="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："><a href="#補充：安裝NVIDIA顯卡驅動是可能遇到的問題：" class="headerlink" title="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："></a>補充：安裝NVIDIA顯卡驅動是可能遇到的問題：</h3><ul>
+<li>出現 <code>An error occurred while p    erforming the step : &quot;Building kernel modules&quot;</code>這個問題 : </li>
+</ul>
 <h4 id="問題原因"><a href="#問題原因" class="headerlink" title="問題原因"></a>問題原因</h4><ul>
 <li>Linix系統的內核是在不斷更新的，而安裝的NVIDIA驅動是之前下載好的，沒有更新，因此安裝過程中無法創建內核。</li>
 </ul>
@@ -197,7 +199,7 @@
 </ul>
 <hr>
 <blockquote>
-<p>相關狀況參考資料 |<br><a href="https://blog.csdn.net/TaylorMei/article/details/79133369" target="_blank" rel="noopener">ubuntu 16.04 循环登录</a><br><a href="https://medium.com/@afun/ubuntu-16-04-%E5%AE%89%E8%A3%9D-cuda-cudnn-nvidia-driver-%E7%9A%84%E8%B8%A9%E9%9B%B7%E5%BF%83%E5%BE%97-%E9%9D%9E%E5%AE%89%E8%A3%9D%E6%AD%A5%E9%A9%9F%E8%A9%B3%E8%A7%A3-b13121d95025" target="_blank" rel="noopener">Ubuntu 16.04 安裝 CUDA + cuDNN + nvidia driver 的踩雷心得 (非安裝步驟詳解)</a><br><a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/" target="_blank" rel="noopener">安裝 NVIDIA Docker 2 來讓容器使用 GPU</a></p>
+<p>相關狀況參考資料 |<br><a href="https://gist.github.com/ashokpant/5c4e9481615f54af4025ab2085f85869" target="_blank" rel="noopener">[Script] Install CUDA Toolkit v9.0 and cuDNN v7.0 on Ubuntu 16.04</a><br><a href="https://blog.csdn.net/TaylorMei/article/details/79133369" target="_blank" rel="noopener">ubuntu 16.04 循环登录</a><br><a href="https://medium.com/@afun/ubuntu-16-04-%E5%AE%89%E8%A3%9D-cuda-cudnn-nvidia-driver-%E7%9A%84%E8%B8%A9%E9%9B%B7%E5%BF%83%E5%BE%97-%E9%9D%9E%E5%AE%89%E8%A3%9D%E6%AD%A5%E9%A9%9F%E8%A9%B3%E8%A7%A3-b13121d95025" target="_blank" rel="noopener">Ubuntu 16.04 安裝 CUDA + cuDNN + nvidia driver 的踩雷心得 (非安裝步驟詳解)</a><br><a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/" target="_blank" rel="noopener">安裝 NVIDIA Docker 2 來讓容器使用 GPU</a></p>
 </blockquote>
 
         </div>
