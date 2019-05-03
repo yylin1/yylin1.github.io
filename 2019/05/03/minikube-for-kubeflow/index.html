@@ -2,22 +2,26 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>標籤: API - Yi Yang&#39;s Blog</title>
+<title>利用 Minikube 快速測試部署 Kubeflow v0.5 - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
 
-    <meta name="description" content="Blog">
-<meta name="keywords" content="kubernetes, Deep Learning, kubeflow, scheduler">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Yi Yang&#39;s Blog">
-<meta property="og:url" content="http://yylin1.github.io/tags/API/index.html">
+    <meta name="description" content="本文介紹如何在 Minikube 上運行 Kubeflow v0.5 基本安裝步驟 Minikube 會透過虛擬機（VM）運行簡單的單節點 Kubernetes 叢集 文章最後，你將擁有 Minikube 單節點kubernetes 叢集安裝以及Kubeflow的所有默認核心 Components 最後能夠訪問 kubeflow UIs 包含 Jupyter Notebook、katib、pip">
+<meta name="keywords" content="kubeflow,deploy,minikube,quickstart">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用 Minikube 快速測試部署 Kubeflow v0.5">
+<meta property="og:url" content="http://yylin1.github.io/2019/05/03/minikube-for-kubeflow/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="Blog">
+<meta property="og:description" content="本文介紹如何在 Minikube 上運行 Kubeflow v0.5 基本安裝步驟 Minikube 會透過虛擬機（VM）運行簡單的單節點 Kubernetes 叢集 文章最後，你將擁有 Minikube 單節點kubernetes 叢集安裝以及Kubeflow的所有默認核心 Components 最後能夠訪問 kubeflow UIs 包含 Jupyter Notebook、katib、pip">
 <meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="https://i.imgur.com/rb6eCGI.png">
+<meta property="og:image" content="https://i.imgur.com/L1luU39.png">
+<meta property="og:updated_time" content="2019-05-03T15:54:26.644Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Yi Yang&#39;s Blog">
-<meta name="twitter:description" content="Blog">
+<meta name="twitter:title" content="利用 Minikube 快速測試部署 Kubeflow v0.5">
+<meta name="twitter:description" content="本文介紹如何在 Minikube 上運行 Kubeflow v0.5 基本安裝步驟 Minikube 會透過虛擬機（VM）運行簡單的單節點 Kubernetes 叢集 文章最後，你將擁有 Minikube 單節點kubernetes 叢集安裝以及Kubeflow的所有默認核心 Components 最後能夠訪問 kubeflow UIs 包含 Jupyter Notebook、katib、pip">
+<meta name="twitter:image" content="https://i.imgur.com/rb6eCGI.png">
 
 
 
@@ -83,7 +87,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/artificial-intelligence.png" alt="Yi Yang&#39;s Blog" height="28">
+                <img src="/images/artificial-intelligence.png" alt="利用 Minikube 快速測試部署 Kubeflow v0.5" height="28">
             
             </a>
         </div>
@@ -134,125 +138,225 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/images/minikube_for_kubeflow.jpg" alt="利用 Minikube 快速測試部署 Kubeflow v0.5">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-05-03T15:46:54.000Z">2019-05-03</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    12 分鐘 read (About 1840 words)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                利用 Minikube 快速測試部署 Kubeflow v0.5
+            
+        </h1>
+        <div class="content">
+            <ul>
+<li>本文介紹如何在 Minikube 上運行 Kubeflow v0.5 基本安裝步驟</li>
+<li>Minikube 會透過虛擬機（VM）運行簡單的單節點 Kubernetes 叢集</li>
+<li>文章最後，你將擁有 Minikube 單節點kubernetes 叢集安裝以及Kubeflow的所有默認核心 Components</li>
+<li>最後能夠訪問 kubeflow UIs 包含 <code>Jupyter Notebook</code>、<code>katib</code>、<code>pipeline</code></li>
+</ul>
+<a id="more"></a>
+<p>此篇文章介紹「實驗環境」採用 <a href="https://github.com/kairen" target="_blank" rel="noopener">@Kyle Bai</a>  <code>修正過後的 minikube</code> 進行測試，如果環境資源充足想測試多節點 <code>minikube</code>，詳細可以透過參考文章步驟，快速建立多節點的 minikube 叢集：「<a href="https://k2r2bai.com/2019/01/22/kubernetes/deploy/minikube-multi-node/" target="_blank" rel="noopener">利用 Minikube 快速建立測試用 Kubernetes 叢集</a>」</p>
+<ul>
+<li><strong>R-Ladies Taipei x Cloud Native Taiwan User Group Meetup 分享</strong><ul>
+<li>投影片：<a href="https://speakerdeck.com/yylin1/kubeflow-dui-yu-ji-qi-xue-xi-ping-tai-de-yuan-jing" target="_blank" rel="noopener">Kubeflow 對於機器學習平台的願景</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="配置-Minikube-環境"><a href="#配置-Minikube-環境" class="headerlink" title="配置 Minikube 環境"></a>配置 Minikube 環境</h2><p><strong>首先請事先下載 Minikube、Virtualbox 與 kubectl 於當前實驗環境：</strong></p>
+<ul>
+<li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">Virtual Box</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/" target="_blank" rel="noopener">kubectl</a></li>
+</ul>
+<p><strong>Minikube （請依據自己當下實驗環境選擇下載）</strong></p>
+<ul>
+<li><a href="https://github.com/kairen/minikube/releases/download/v0.33.1-multi-node/minikube-linux-amd64" target="_blank" rel="noopener">Linux</a></li>
+<li><a href="https://github.com/kairen/minikube/releases/download/v0.33.1-multi-node/minikube-darwin-amd64" target="_blank" rel="noopener">Mac OS X</a></li>
+<li><a href="https://github.com/kairen/minikube/releases/download/v0.33.1-multi-node/minikube-windows-amd64.exe" target="_blank" rel="noopener">Windows</a></li>
+</ul>
+<blockquote>
+<ul>
+<li><strong>IMPORTANT</strong>: 測試機器記得開啟 VT-x or AMD-v virtualization.</li>
+<li>Windows 使用者建議安裝 <a href="https://gitbook.tw/chapters/environment/install-git-in-windows.html" target="_blank" rel="noopener">Git bash</a> or <a href="https://cmder.net/" target="_blank" rel="noopener">Cmder</a> 來操作。</li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="啟動-Minikube"><a href="#啟動-Minikube" class="headerlink" title="啟動 Minikube"></a>啟動 Minikube</h3><p>如果自己機器已經有 Minikube 的話，就把上面的 binary 檔放任意方便你執行的位置，然後再開始前請先刪除 Home 目錄的<code>.minikube</code>資料夾：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rm -rf <span class="hljs-variable">$HOME</span>/.minikube</span><br></pre></td></tr></table></figure>
+<p>當刪除上面檔案後，即可透過 Minikube 啟動單節點叢集:</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> minikube start --memory=8192 --cpus=4 --disk-size=40g</span></span><br><span class="line"></span><br><span class="line">// 完成啟動部署後顯示</span><br><span class="line">Everything looks great. Please enjoy minikube!</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><code>--vm-driver</code> 可以選擇使用其他 VM driver 來啟動虛擬機，如 xhyve、hyperv、hyperkit 與 kvm2 等等。</li>
+</ul>
+</blockquote>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kubectl -n kube-system get po</span></span><br><span class="line">NAME                               READY     STATUS    RESTARTS   AGE</span><br><span class="line">calico-node-tcdmg                  2/2       Running   0          92s</span><br><span class="line">coredns-86c58d9df4-27ktl           1/1       Running   0          96s</span><br><span class="line">coredns-86c58d9df4-6gj4x           1/1       Running   0          96s</span><br><span class="line">etcd-minikube                      1/1       Running   0          45s</span><br><span class="line">kube-addon-manager-minikube        1/1       Running   0          114s</span><br><span class="line">kube-apiserver-minikube            1/1       Running   0          67s</span><br><span class="line">kube-controller-manager-minikube   1/1       Running   0          74s</span><br><span class="line">kube-proxy-pthlp                   1/1       Running   0          96s</span><br><span class="line">kube-scheduler-minikube            1/1       Running   0          60s</span><br><span class="line">storage-provisioner                1/1       Running   0          83s</span><br></pre></td></tr></table></figure>
+<p>確認節點處於 Ready 狀態：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get no</span><br><span class="line">NAME       STATUS    ROLES     AGE       VERSION</span><br><span class="line">minikube   Ready     master    2m33s     v1.13.2</span><br><span class="line"></span><br><span class="line">$ kubectl get cs</span><br><span class="line">NAME                 STATUS    MESSAGE              ERROR</span><br><span class="line">scheduler            Healthy   ok</span><br><span class="line">controller-manager   Healthy   ok</span><br><span class="line">etcd-0               Healthy   &#123;<span class="hljs-string">"health"</span>: <span class="hljs-string">"true"</span>&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="安裝-Ksonnet"><a href="#安裝-Ksonnet" class="headerlink" title="安裝 Ksonnet"></a>安裝 Ksonnet</h3><p><a href="https://ksonnet.io/" target="_blank" rel="noopener">Ksonnet</a> 是一個命令工具，組件配置參數按照環境 <code>env</code> 來組成，可以更輕鬆地管理由多個複雜部署到相應的 Cluster，簡化編寫和部署 component。</p>
+<ul>
+<li>Linux </li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.0/ks_0.13.0_linux_amd64.tar.gz</span><br><span class="line">$ tar xvf ks_0.13.0_linux_amd64.tar.gz</span><br><span class="line">$ sudo cp ks_0.13.0_linux_amd64 /usr/<span class="hljs-built_in">local</span>/bin/</span><br><span class="line">$ chmod +x ks</span><br><span class="line"></span><br><span class="line">$ ks version</span><br><span class="line">ksonnet version: 0.13.0</span><br><span class="line">jsonnet version: v0.11.2</span><br><span class="line">client-go version: kubernetes-1.10.4</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Mac OS X</li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install ksonnet/tap/ks</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>補充官網: <a href="https://www.kubeflow.org/docs/components/ksonnet/" target="_blank" rel="noopener">kubeflow 安裝 ksonnet 說明</a></p>
+</blockquote>
+<hr>
+<h3 id="透過-kfctl-部署-kubeflow-v0-5"><a href="#透過-kfctl-部署-kubeflow-v0-5" class="headerlink" title="透過 kfctl 部署 kubeflow v0.5"></a>透過 kfctl 部署 kubeflow v0.5</h3><p>在 kubeflow v0.5 版本不在是透過 script <code>kfctl.sh</code> 腳本執行，改成透過 golang 所生成的 binary file <code>kfctl</code> 來進行kubeflow部署。</p>
+<ul>
+<li>下載 kfctl release 版本 <a href="https://github.com/kubeflow/kubeflow/releases/" target="_blank" rel="noopener">Kubeflow releases page</a>.</li>
+</ul>
+<p><img src="https://i.imgur.com/rb6eCGI.png" alt=""></p>
+<blockquote>
+<p>請依照自己當前環境下載 kfctl binary </p>
+</blockquote>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kfctl_&lt;release tag&gt;_&lt;platform&gt;.tar.gz</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Mac OS X </li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ wget kfctl_v0.5.0_darwin.tar.gz</span><br><span class="line">$ tar -xvf kfctl_v0.5.0_darwin.tar.gz</span><br><span class="line">x ./kfctl</span><br></pre></td></tr></table></figure>
+<ul>
+<li>配置 <code>kfctl</code> binary 執行路徑</li>
+<li>定義 {KFAPP} 資料夾目錄名稱</li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="hljs-built_in">export</span> PATH=<span class="hljs-variable">$PATH</span>:&lt;path to kfctl <span class="hljs-keyword">in</span> your kubeflow installation&gt;</span><br><span class="line"><span class="hljs-comment"># Default uses IAP. 可自行定義</span></span><br><span class="line">$ <span class="hljs-built_in">export</span> KFAPP=kubeflow</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">#1 </span></span><br><span class="line">$ kfctl init <span class="hljs-variable">$&#123;KFAPP&#125;</span></span><br><span class="line"><span class="hljs-comment">#2 </span></span><br><span class="line">$ <span class="hljs-built_in">cd</span> <span class="hljs-variable">$&#123;KFAPP&#125;</span></span><br><span class="line">$ kfctl generate all -V</span><br><span class="line"><span class="hljs-comment">#3 </span></span><br><span class="line">$ kfctl apply all -V</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>補充：<a href="https://www.kubeflow.org/docs/started/getting-started-k8s/#deploy-kubeflow" target="_blank" rel="noopener">kubeflow 官網詳細 deploy 資訊</a></p>
+</blockquote>
+<hr>
+<h3 id="1-初始化-kubeflow-components"><a href="#1-初始化-kubeflow-components" class="headerlink" title="#1 初始化 kubeflow components"></a>#1 初始化 kubeflow components</h3><p>執行 <code>kfctl init ${KFAPP}</code> 生成 <strong>app.yaml</strong> 定義中包含 components、package 配置</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">$ kfctl init <span class="hljs-variable">$&#123;KFAPP&#125;</span></span><br><span class="line">$ cat kubeflow/app.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: kfdef.apps.kubeflow.org/v1alpha1</span><br><span class="line">kind: KfDef</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  name: kubeflow</span><br><span class="line">  namespace: kubeflow</span><br><span class="line">spec:</span><br><span class="line">  appdir: /Users/yylin/kubeflow/v0.5.0/minikube/kubeflow</span><br><span class="line">  componentParams:</span><br><span class="line">    ambassador:</span><br><span class="line">    - name: ambassadorServiceType</span><br><span class="line">      value: NodePort</span><br><span class="line">  components:</span><br><span class="line">  - metacontroller</span><br><span class="line">  - ambassador</span><br><span class="line">  - argo</span><br><span class="line">  - centraldashboard</span><br><span class="line">  - jupyter-web-app</span><br><span class="line">  - katib</span><br><span class="line">  - notebook-controller</span><br><span class="line">  - pipeline</span><br><span class="line">  - pytorch-operator</span><br><span class="line">  - tensorboard</span><br><span class="line">  - tf-job-operator</span><br><span class="line">  packages:</span><br><span class="line">  - argo</span><br><span class="line">  - common</span><br><span class="line">  - examples</span><br><span class="line">  - gcp</span><br><span class="line">  - jupyter</span><br><span class="line">  - katib</span><br><span class="line">  - metacontroller</span><br><span class="line">  - modeldb</span><br><span class="line">  - mpi-job</span><br><span class="line">  - pipeline</span><br><span class="line">  - pytorch-job</span><br><span class="line">  - seldon</span><br><span class="line">  - tensorboard</span><br><span class="line">  - tf-serving</span><br><span class="line">  - tf-training</span><br><span class="line">  repo: /Users/yylin/kubeflow/v0.5.0/minikube/kubeflow/.cache/master/kubeflow</span><br><span class="line">  useBasicAuth: <span class="hljs-literal">false</span></span><br><span class="line">  useIstio: <span class="hljs-literal">false</span></span><br><span class="line">  version: master</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="2-生成config"><a href="#2-生成config" class="headerlink" title="#2 生成config"></a>#2 生成config</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="hljs-built_in">cd</span> <span class="hljs-variable">$&#123;KFAPP&#125;</span></span><br><span class="line">$ kfctl generate all -V</span><br></pre></td></tr></table></figure>
+<p>創建 <code>config files</code> 定義各種資源，components 部署相關資訊會透過<code>.jsonnet</code>來執行</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ tree -L 3</span><br><span class="line">.</span><br><span class="line">├── app.yaml</span><br><span class="line">└── ks_app</span><br><span class="line">    ├── app.yaml</span><br><span class="line">    ├── components</span><br><span class="line">    │   ├── ambassador.jsonnet</span><br><span class="line">    │   ├── argo.jsonnet</span><br><span class="line">    │   ├── centraldashboard.jsonnet</span><br><span class="line">    │   ├── jupyter-web-app.jsonnet</span><br><span class="line">    │   ├── katib.jsonnet</span><br><span class="line">    │   ├── metacontroller.jsonnet</span><br><span class="line">    │   ├── notebook-controller.jsonnet</span><br><span class="line">    │   ├── params.libsonnet</span><br><span class="line">    │   ├── pipeline.jsonnet</span><br><span class="line">    │   ├── pytorch-operator.jsonnet</span><br><span class="line">    │   ├── tensorboard.jsonnet</span><br><span class="line">    │   └── tf-job-operator.jsonnet</span><br><span class="line">    ├── environments</span><br><span class="line">    │   ├── base.libsonnet</span><br><span class="line">    │   └── default</span><br><span class="line">    ├── lib</span><br><span class="line">    │   └── ksonnet-lib</span><br><span class="line">    └── vendor</span><br><span class="line">        └── kubeflow</span><br><span class="line">        </span><br><span class="line">8 directories, 15 files</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-部署"><a href="#3-部署" class="headerlink" title="#3 部署"></a>#3 部署</h3><p>最後等待部署完成，這部分會花比較長的時間，過程會需要安裝 <code>Components</code>所需要的Container (依照環境網路，所有Images下載部署完成時間約20~30分鐘)</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ kfctl apply all -V</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">INFO[0190] All components apply succeeded                filename=<span class="hljs-string">"ksonnet/ksonnet.go:192"</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>完成 kubeflow 部署後會顯示 <code>All components apply succeeded</code></li>
+<li>確認環境狀態</li>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kubeflow get pod</span><br><span class="line">NAME                                                       READY     STATUS    RESTARTS   AGE</span><br><span class="line">ambassador-b4d9cdb8-mng2c                                  1/1       Running   0          42m</span><br><span class="line">ambassador-b4d9cdb8-srj7k                                  1/1       Running   0          42m</span><br><span class="line">ambassador-b4d9cdb8-zlxpv                                  1/1       Running   0          42m</span><br><span class="line">argo-ui-cf5f88f78-d5h5d                                    1/1       Running   0          41m</span><br><span class="line">centraldashboard-c967f47b4-5xc8c                           1/1       Running   0          41m</span><br><span class="line">jupyter-web-app-7cc9c874bb-gzkfb                           1/1       Running   0          41m</span><br><span class="line">katib-ui-7c6887b55f-rbbbc                                  1/1       Running   0          41m</span><br><span class="line">metacontroller-0                                           1/1       Running   0          42m</span><br><span class="line">minio-8ccf48d9d-h69r6                                      1/1       Running   0          40m</span><br><span class="line">ml-pipeline-7885bc55dd-txmmz                               1/1       Running   0          40m</span><br><span class="line">ml-pipeline-persistenceagent-5564f6f75f-vpmhm              1/1       Running   1          40m</span><br><span class="line">ml-pipeline-scheduledworkflow-785bc5455c-l9mqn             1/1       Running   0          40m</span><br><span class="line">ml-pipeline-ui-66bf476679-xm4pm                            1/1       Running   0          40m</span><br><span class="line">ml-pipeline-viewer-controller-deployment-c84779fc5-p9ncm   1/1       Running   0          40m</span><br><span class="line">mysql-ffc889689-mldkf                                      1/1       Running   0          40m</span><br><span class="line">notebooks-controller-767b89b4d8-z5qj5                      1/1       Running   0          40m</span><br><span class="line">pytorch-operator-6cd9dbf586-7zwhp                          1/1       Running   0          39m</span><br><span class="line">studyjob-controller-855c6d8f84-f88fr                       1/1       Running   0          41m</span><br><span class="line">tensorboard-5b57bff466-rdjkc                               1/1       Running   0          39m</span><br><span class="line">tf-job-dashboard-6bddf98bc8-zzw7z                          1/1       Running   0          39m</span><br><span class="line">tf-job-operator-68455999cc-2w7vv                           1/1       Running   0          39m</span><br><span class="line">vizier-core-ccc5d9f5c-hpww6                                1/1       Running   0          41m</span><br><span class="line">vizier-core-rest-555957f4dc-tt59h                          1/1       Running   0          41m</span><br><span class="line">vizier-db-86dc7d89c5-fxcwk                                 1/1       Running   0          41m</span><br><span class="line">vizier-suggestion-bayesianoptimization-775474d6c9-xg4m8    1/1       Running   0          41m</span><br><span class="line">vizier-suggestion-grid-85d49b956f-ttqq2                    1/1       Running   0          41m</span><br><span class="line">vizier-suggestion-hyperband-54567d484f-v6jrb               1/1       Running   0          41m</span><br><span class="line">vizier-suggestion-random-64b5867867-wctrv                  1/1       Running   0          41m</span><br><span class="line">workflow-controller-cf79dfbff-j5n8x                        1/1       Running   0          41m</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="總整理-理解部署過程"><a href="#總整理-理解部署過程" class="headerlink" title="總整理-理解部署過程"></a>總整理-理解部署過程</h2><p>部署過程由四個 <code>CLI</code> 命令執行完成:</p>
+<ul>
+<li><p><strong>init</strong> - 初始化 kubeflow 安裝相關設定.</p>
+<ul>
+<li>生成 <strong>app.yaml</strong> 定義中包含 components、package 配置</li>
+</ul>
+</li>
+<li><p><strong>generate</strong> - 創建 <code>config files</code> 定義各種資源</p>
+</li>
+<li><strong>apply</strong> - 創建和更新部署資源</li>
+<li><strong>delete</strong> - 刪除部署資源</li>
+</ul>
+<p>:::info<br>kfctl 除<code>init</code> 之外，所有命令都可以使用參數來指定要執行叢集資源集：</p>
+<ul>
+<li>k8s - all resources that run on Kubernetes.</li>
+<li>all - GCP and Kubernetes resources.<br>:::</li>
+</ul>
+<hr>
+<h2 id="進入-kubeflow-UIs"><a href="#進入-kubeflow-UIs" class="headerlink" title="進入 kubeflow UIs"></a>進入 kubeflow UIs</h2><blockquote>
+<p>補充：<a href="https://www.kubeflow.org/docs/other-guides/accessing-uis/" target="_blank" rel="noopener">kubeflow UI 介紹說明</a></p>
+</blockquote>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="hljs-built_in">export</span> NAMESPACE=kubeflow</span><br><span class="line">kubectl port-forward svc/ambassador -n <span class="hljs-variable">$&#123;NAMESPACE&#125;</span> 8080:80</span><br><span class="line"></span><br><span class="line">$ kubectl port-forward svc/ambassador -n <span class="hljs-variable">$&#123;NAMESPACE&#125;</span> 8080:80</span><br><span class="line">Forwarding from 127.0.0.1:8080 -&gt; 80</span><br><span class="line">Forwarding from [::1]:8080 -&gt; 80</span><br><span class="line">Handling connection <span class="hljs-keyword">for</span> 8080</span><br></pre></td></tr></table></figure>
+<p>透過本地端連線即可看到 <code>kubeflow UI</code><br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://i.imgur.com/L1luU39.png" alt=""></p>
+<hr>
+<h2 id="刪除-Kubeflow"><a href="#刪除-Kubeflow" class="headerlink" title="刪除 Kubeflow"></a>刪除 Kubeflow</h2><p>如果測試完畢需要移除<code>kubeflow</code></p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="hljs-built_in">cd</span> <span class="hljs-variable">$&#123;KFAPP&#125;</span></span><br><span class="line"><span class="hljs-comment"># If you want to delete all the resources, including storage.</span></span><br><span class="line">$ kfctl delete all --delete_storage</span><br><span class="line"><span class="hljs-comment"># If you want to preserve storage, which contains metadata and information</span></span><br><span class="line"><span class="hljs-comment"># from mlpipeline.</span></span><br><span class="line">$ kfctl delete all</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="暫時退出-minikube"><a href="#暫時退出-minikube" class="headerlink" title="暫時退出 minikube"></a>暫時退出 minikube</h2><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ minikube stop</span><br><span class="line">Stopping <span class="hljs-built_in">local</span> Kubernetes cluster...</span><br><span class="line">Machine stopped.</span><br><span class="line"></span><br><span class="line">$ minikube status</span><br><span class="line">host: Stopped</span><br><span class="line">kubelet:</span><br><span class="line">apiserver:</span><br><span class="line">kubectl:</span><br></pre></td></tr></table></figure>
+<h2 id="刪除-minikube-虛擬機與檔案"><a href="#刪除-minikube-虛擬機與檔案" class="headerlink" title="刪除 minikube 虛擬機與檔案"></a>刪除 minikube 虛擬機與檔案</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> minikube delete</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> rm -rf <span class="hljs-variable">$HOME</span>/.minikube</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>而檔案只要刪除 Home 目錄的 <code>.minikube</code> 資料夾，以及 <code>minikube</code> 執行檔即可</li>
+</ul>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/deploy/">deploy</a>, <a class="has-link-grey -link" href="/tags/kubeflow/">kubeflow</a>, <a class="has-link-grey -link" href="/tags/minikube/">minikube</a>, <a class="has-link-grey -link" href="/tags/quickstart/">quickstart</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/02/03/kubeflow-0-4-release/">
+                <span class="level-item">Kubeflow v0.4.x 部署與概述</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
     <div class="card-content">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="/tags">標籤</a></li>
-            <li class="is-active"><a href="#" aria-current="page">API</a></li>
-        </ul>
-        </nav>
+        <h3 class="title is-5 has-text-weight-normal">評論</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://yylin1.github.io/2019/05/03/minikube-for-kubeflow/';
+        this.page.identifier = '2019/05/03/minikube-for-kubeflow/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'yylin' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
     </div>
 </div>
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/11/29/zabbix-api-trigger/" class="image is-7by1">
-            <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-11-29T15:55:00.000Z">2018-11-29</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Zabbix/">Zabbix</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    7 分鐘 read (About 1082 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/11/29/zabbix-api-trigger/">透過 Zabbix API 監測Trigger狀態</a>
-            
-        </h1>
-        <div class="content">
-            <p>此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過<code>python</code>直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/11/29/zabbix-api-trigger/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-image">
-        <a href="/2018/11/27/use-zabbix-api/" class="image is-7by1">
-            <img class="thumbnail" src="/images/zabbix_api.png" alt="監控工具 Zabbix API 使用記錄">
-        </a>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2018-11-26T16:36:51.000Z">2018-11-27</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Zabbix/">Zabbix</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    18 分鐘 read (About 2668 words)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2018/11/27/use-zabbix-api/">監控工具 Zabbix API 使用記錄</a>
-            
-        </h1>
-        <div class="content">
-            <p>此篇主要記錄為，在Openstack環境下觀察第三方監控工具Zabbix使用API獲取歷史數據。<br></p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2018/11/27/use-zabbix-api/#more">繼續閱讀</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
 
 </div>
                 
@@ -1415,7 +1519,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/artificial-intelligence.png" alt="Yi Yang&#39;s Blog" height="28">
+                    <img src="/images/artificial-intelligence.png" alt="利用 Minikube 快速測試部署 Kubeflow v0.5" height="28">
                 
                 </a>
                 <p class="is-size-7">

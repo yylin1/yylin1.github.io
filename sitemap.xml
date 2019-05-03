@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yylin1.github.io/2019/05/03/minikube-for-kubeflow/</loc>
+    
+    <lastmod>2019-05-03T15:54:26.644Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/</loc>
+    
+    <lastmod>2019-05-03T15:48:54.999Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/</loc>
     
     <lastmod>2019-04-08T14:34:23.183Z</lastmod>
@@ -103,13 +117,6 @@
     <loc>http://yylin1.github.io/2018/12/14/snap-microk8s-deploy-kubernetes/</loc>
     
     <lastmod>2018-12-16T04:56:21.586Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/</loc>
-    
-    <lastmod>2018-12-16T04:56:17.434Z</lastmod>
     
   </url>
   
