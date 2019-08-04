@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yylin1.github.io/about/index.html</loc>
+    
+    <lastmod>2019-08-04T15:54:57.091Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yylin1.github.io/2019/05/03/minikube-for-kubeflow/</loc>
     
     <lastmod>2019-05-03T15:54:26.644Z</lastmod>
@@ -47,13 +54,6 @@
     <loc>http://yylin1.github.io/2019/01/19/bastion-host/</loc>
     
     <lastmod>2019-03-08T15:29:56.590Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yylin1.github.io/about/index.html</loc>
-    
-    <lastmod>2019-03-03T15:50:21.692Z</lastmod>
     
   </url>
   
