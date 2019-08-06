@@ -7,18 +7,18 @@
 
 
 
-    <meta name="description" content="本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
+    <meta name="description" content="本篇主要介紹如何解決 Ubuntu 環境安裝 NVIDIA GPU Driver 後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
 <meta name="keywords" content="ubuntu,GPU,NVIDIA Driver">
 <meta property="og:type" content="article">
 <meta property="og:title" content="安裝NVIDIA顯卡驅動時可能遇到的問題">
 <meta property="og:url" content="http://yylin1.github.io/2018/12/01/install-nvidia-driver-problem/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
+<meta property="og:description" content="本篇主要介紹如何解決 Ubuntu 環境安裝 NVIDIA GPU Driver 後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-04-08T14:34:23.183Z">
+<meta property="og:updated_time" content="2019-08-05T04:28:09.098Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="安裝NVIDIA顯卡驅動時可能遇到的問題">
-<meta name="twitter:description" content="本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
+<meta name="twitter:description" content="本篇主要介紹如何解決 Ubuntu 環境安裝 NVIDIA GPU Driver 後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。">
 
 
 
@@ -168,26 +168,29 @@
             
         </h1>
         <div class="content">
-            <p>本篇主要介紹如何解決Ubuntu環境安裝NVIDIA GPU Driver後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。<br><a id="more"></a></p>
-<h2 id="卸載方法如下"><a href="#卸載方法如下" class="headerlink" title="卸載方法如下:"></a>卸載方法如下:</h2><p>首先在登錄介面進入到Linux的shell ie tty model，同時按下Ctrl+Alt+F1 （F1~F6其中一個就可以），然後輸入使用者輸入使用者帳號密碼，成功進入到shell，開始卸載NVIDIA驅動：</p>
-<p>卸載乾淨所有安裝過的nvidia驅動<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get remove --purge nvidia-*</span><br><span class="line">$ sudo apt-get autoremove</span><br></pre></td></tr></table></figure></p>
+            <p>本篇主要介紹如何解決 Ubuntu 環境安裝 NVIDIA GPU Driver 後，會出現「循環登入的問題」，當裝完驅動重啟後，輸入登錄密碼之後，桌面一閃就退回到登錄界面了，然後就陷入到了輸入密碼登錄、彈出的循環，這時就需要進行顯卡驅動程序的卸載重裝。<br><a id="more"></a></p>
+<h2 id="卸載方法如下"><a href="#卸載方法如下" class="headerlink" title="卸載方法如下:"></a>卸載方法如下:</h2><p>首先在登錄介面進入到 Linux 的 shell ie tty model，同時按下 Ctrl+Alt+F1 （F1~F6其中一個就可以），然後輸入使用者輸入使用者帳號密碼，成功進入到 shell，開始卸載 NVIDIA 驅動：</p>
+<p>卸載乾淨所有安裝過的 NVIDIA 驅動</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get remove --purge nvidia-*</span><br><span class="line">$ sudo apt-get autoremove</span><br></pre></td></tr></table></figure>
 <p>並透過直接下驅動解除安裝</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nvidia-uninstall</span><br></pre></td></tr></table></figure>
-<p>再次檢查，透過 dpkg 檢查是否有非透過 apt-get 安裝的需要移除<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo dpkg -l <span class="hljs-string">'nvidia'</span></span><br><span class="line">$ sudo dpkg --remove nvidia-&#123;name&#125;</span><br></pre></td></tr></table></figure></p>
+<p>再次檢查，透過 dpkg 檢查是否有非透過 apt-get 安裝的需要移除</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo dpkg -l <span class="hljs-string">'nvidia'</span></span><br><span class="line">$ sudo dpkg --remove nvidia-&#123;name&#125;</span><br></pre></td></tr></table></figure>
 <p>完成步驟後重啟系統</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ reboot</span><br></pre></td></tr></table></figure>
 <h3 id="重新安裝-NVIDIA-Driver"><a href="#重新安裝-NVIDIA-Driver" class="headerlink" title="重新安裝 NVIDIA Driver"></a>重新安裝 NVIDIA Driver</h3><p>官網連結：<a href="https://www.nvidia.com.tw/Download/index.aspx?lang=tw" target="_blank" rel="noopener">NVIDIA Driver 下載連結</a></p>
 <blockquote>
 <p>這邊測試環境GPU 為 GTX 1080 </p>
 </blockquote>
-<p>再次透過登入介面<code>Ctrl+Alt+F1</code>切換到<code>tty1</code>執行</p>
+<p>再次透過登入介面 <code>Ctrl+Alt+F1</code> 切換到 <code>tty1</code> 執行</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># 關閉X server</span></span><br><span class="line">$ sudo service lightdm stop    </span><br><span class="line">$ sudo  ./NVIDIA-Linux-x86_64-410.78.run -no-x-check -no-nouveau-check -no-opengl-files</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># -no-x-check 安裝時關閉X Server ;</span></span><br><span class="line"><span class="hljs-comment"># -no-nouveau-check 安装驅動時禁用Nouveau</span></span><br><span class="line"><span class="hljs-comment"># -no-opengl-files 安装時只裝驅動檔案，不安裝Opengl</span></span><br></pre></td></tr></table></figure>
-<p>安裝好後即，再次重啟電腦<code>reboot</code></p>
+<p>安裝好後即，再次重啟電腦 <code>reboot</code></p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service lightdm restart</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>重啟後即可透過UI介面登入環境，就可以解決<code>循環登入的問題</code>。</p>
 </blockquote>
-<p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nvidia-smi</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 390.87                 Driver Version: 390.87                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 108...  Off  | 00000000:02:00.0  On |                  N/A |</span><br><span class="line">| 26%   40C    P8    16W / 250W |    328MiB / 11173MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0       837      C   python                                       157MiB |</span><br><span class="line">|    0      1250      G   /usr/lib/xorg/Xorg                           159MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure></p>
+<p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nvidia-smi</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 390.87                 Driver Version: 390.87                    |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 108...  Off  | 00000000:02:00.0  On |                  N/A |</span><br><span class="line">| 26%   40C    P8    16W / 250W |    328MiB / 11173MiB |      0%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0       837      C   python                                       157MiB |</span><br><span class="line">|    0      1250      G   /usr/lib/xorg/Xorg                           159MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
 <h3 id="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："><a href="#補充：安裝NVIDIA顯卡驅動是可能遇到的問題：" class="headerlink" title="補充：安裝NVIDIA顯卡驅動是可能遇到的問題："></a>補充：安裝NVIDIA顯卡驅動是可能遇到的問題：</h3><p>出現 <code>An error occurred while p    erforming the step : &quot;Building kernel modules&quot;</code>這個問題 : </p>
 <h4 id="問題原因"><a href="#問題原因" class="headerlink" title="問題原因"></a>問題原因</h4><ul>
 <li>Linix系統的內核是在不斷更新的，而安裝的NVIDIA驅動是之前下載好的，沒有更新，因此安裝過程中無法創建內核。</li>
@@ -230,7 +233,7 @@
         
         <div class="level-end">
             <a class="level level-item has-link-grey  article-nav-next" href="/2018/11/29/zabbix-api-trigger/">
-                <span class="level-item">透過 Zabbix API 監測Trigger狀態</span>
+                <span class="level-item">透過 Zabbix API 監測 Trigger 狀態</span>
                 <i class="level-item fas fa-chevron-right"></i>
             </a>
         </div>

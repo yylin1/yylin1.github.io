@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.imgur.com/FreVFsv.png">
 <meta property="og:image" content="https://i.imgur.com/txqyKGf.png">
 <meta property="og:image" content="https://i.imgur.com/GsMPOwy.png">
-<meta property="og:updated_time" content="2019-02-06T15:57:43.446Z">
+<meta property="og:updated_time" content="2019-08-05T07:15:59.034Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="快速部署 Kubeflow v0.3 容器機器學習平台">
 <meta name="twitter:description" content="Kubeflow 是由 Google 與相關公司共同發起的開源專案，其目標是利用 Kubernetes 容器平台來簡化機器學習的建置與執行過程，使之更簡單、可重複的攜帶性與可擴展，並提供一套標準的雲原生(Cloud Native)機器學習解決方案，以幫助演算法科學家專注在模型開發本身，而由於 Kubeflow 以 Kubernetes 做基礎，因此只要有 Kubernetes 地方就能夠快速部署並">
@@ -199,9 +199,9 @@
 </ol>
 <p>我們透過Kubeflow工具管理，可以解決ML環境配置困難的問題，其中在Kubeflow提供Operator，對不同的機器學習框架，擴展的 Kubernetes API 進行自動建立、管理與配置應用程式容器實例，並提供訓練在不同環境和服務，包含數據準備、模型培訓、預測服務和服務管理。</p>
 <blockquote>
-<p>Kubernetes 有提供不同集群部署支援，包括單節點Minikube部署、 透過Hypervisor部署的Multipass &amp; Microk8s、Cloud。無論你在哪裡運行Kubernetes，你都能夠運行Kubeflow。</p>
+<p>Kubernetes 有提供不同集群部署支援，包括單節點Minikube部署、 透過 Hypervisor 部署的 Multipass &amp; Microk8s、Cloud。無論你在哪裡運行 Kubernetes，你都能夠運行 Kubeflow。</p>
 </blockquote>
-<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用Ubuntu 16.04 Destop，測試環境為實體機器部署HA Cluster：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用Ubuntu 16.04 Destop，測試環境為實體機器部署 HA Cluster：</p>
 <table>
 <thead>
 <tr>
@@ -356,8 +356,8 @@
 <p>查看 <code>PS</code>狀態:<br><img src="https://i.imgur.com/txqyKGf.png" alt=""></p>
 <p>查看 <code>Worker</code>狀態:<br><img src="https://i.imgur.com/GsMPOwy.png" alt=""></p>
 <h2 id="查看GPU資源狀態"><a href="#查看GPU資源狀態" class="headerlink" title="查看GPU資源狀態"></a>查看GPU資源狀態</h2><p>可以透過執行以下指令確認是否GPU可被分配資源：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get nodes <span class="hljs-string">"-o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu"</span></span><br><span class="line">NAME      GPU</span><br><span class="line">k8s-g1    1</span><br><span class="line">k8s-g11   1</span><br><span class="line">k8s-g2    1</span><br><span class="line">k8s-g3    1</span><br><span class="line">k8s-m1    &lt;none&gt;</span><br><span class="line">k8s-m2    &lt;none&gt;</span><br><span class="line">k8s-m3    &lt;none&gt;</span><br></pre></td></tr></table></figure></p>
-<p>後續有陸續關注，關於 kubeflow CLI的專案<a href="https://github.com/kubeflow/arena" target="_blank" rel="noopener"><code>kubeflow/Arena</code></a>，主要供資料科學家運行和監控機器學習培訓工作並以簡單的方式檢查其結果。目前它支持單獨/分佈式TensorFlow訓練。部署基於Kubernetes，helm和Kubeflow。</p>
-<p>同時，最終用戶需要GPU資源和節點管理。Arena還提供top檢查Kubernetes集群中可用GPU資源的命令。</p>
+<p>後續有陸續關注，關於 kubeflow CLI 的專案<a href="https://github.com/kubeflow/arena" target="_blank" rel="noopener"><code>kubeflow/Arena</code></a>，主要供資料科學家運行和監控機器學習培訓工作並以簡單的方式檢查其結果。目前它支持單獨/分佈式TensorFlow訓練。部署基於Kubernetes，helm和Kubeflow。</p>
+<p>同時，最終用戶需要 GPU 資源和節點管理。Arena還提供top檢查Kubernetes集群中可用GPU資源的命令。</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ arena top node                                     </span><br><span class="line">NAME     IPADDRESS      ROLE    GPU(Total)  GPU(Allocated)</span><br><span class="line">k8s-g1   172.22.132.84  &lt;none&gt;  1           0</span><br><span class="line">k8s-g11  172.22.132.94  &lt;none&gt;  1           0</span><br><span class="line">k8s-g2   172.22.132.97  &lt;none&gt;  1           0</span><br><span class="line">k8s-g3   172.22.132.86  &lt;none&gt;  1           1</span><br><span class="line">k8s-m1   172.22.132.81  master  0           0</span><br><span class="line">k8s-m2   172.22.132.82  master  0           0</span><br><span class="line">k8s-m3   172.22.132.83  master  0           0</span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line">Allocated/Total GPUs In Cluster:</span><br><span class="line">1/5 (20%)</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>透過CLI方式來 <code>watch -n1 arena top node</code>就能很清楚知道節點資源使用狀況。</p>

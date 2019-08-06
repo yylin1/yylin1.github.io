@@ -7,22 +7,22 @@
 
 
 
-    <meta name="description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
+    <meta name="description" content="此文章將記錄透過安裝 Microk8s ，在本地機器上輕鬆部署 kubernetes 集群，並且透過運行腳本讓 kubeflow 環境一起部署完成。最後您將擁有簡易的單節點 Kubernetes 集群以及在 Pod 中部署為服務的 Kubeflow 的所有默認核心組件。並且能訪問 JupyterHub 筆記本和 Kubeflow Dashboard，進行相關測試。">
 <meta name="keywords" content="kubernetes,kubeflow,microk8s,deploy">
 <meta property="og:type" content="article">
 <meta property="og:title" content="透過 Microk8s 快速部署 Kubeflow">
 <meta property="og:url" content="http://yylin1.github.io/2018/09/17/microk8s-deploy-kubeflow/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
+<meta property="og:description" content="此文章將記錄透過安裝 Microk8s ，在本地機器上輕鬆部署 kubernetes 集群，並且透過運行腳本讓 kubeflow 環境一起部署完成。最後您將擁有簡易的單節點 Kubernetes 集群以及在 Pod 中部署為服務的 Kubeflow 的所有默認核心組件。並且能訪問 JupyterHub 筆記本和 Kubeflow Dashboard，進行相關測試。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="https://i.imgur.com/aecctnI.png">
 <meta property="og:image" content="https://i.imgur.com/nEaOr0L.png">
 <meta property="og:image" content="https://i.imgur.com/Acr64W9.png">
 <meta property="og:image" content="https://i.imgur.com/sCqtj53.png">
-<meta property="og:updated_time" content="2019-05-03T15:48:54.999Z">
+<meta property="og:updated_time" content="2019-08-05T07:29:56.447Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Microk8s 快速部署 Kubeflow">
-<meta name="twitter:description" content="此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。">
+<meta name="twitter:description" content="此文章將記錄透過安裝 Microk8s ，在本地機器上輕鬆部署 kubernetes 集群，並且透過運行腳本讓 kubeflow 環境一起部署完成。最後您將擁有簡易的單節點 Kubernetes 集群以及在 Pod 中部署為服務的 Kubeflow 的所有默認核心組件。並且能訪問 JupyterHub 筆記本和 Kubeflow Dashboard，進行相關測試。">
 <meta name="twitter:image" content="https://i.imgur.com/aecctnI.png">
 
 
@@ -161,7 +161,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    12 分鐘 read (About 1798 words)
+                    12 分鐘 read (About 1796 words)
                 </span>
                 
             </div>
@@ -173,10 +173,10 @@
             
         </h1>
         <div class="content">
-            <p>此文章將記錄透過安裝Microk8s，在本地機器上輕鬆部署kubernetes 集群，並且透過運行腳本讓kubeflow環境一起部署完成。最後您將擁有簡易的單節點K8S集群以及在Pod中部署為服務的Kubeflow的所有默認核心組件。並且能訪問JupyterHub筆記本和Kubeflow Dashboard，進行kubeflow相關測試。</p>
+            <p>此文章將記錄透過安裝 Microk8s ，在本地機器上輕鬆部署 kubernetes 集群，並且透過運行腳本讓 kubeflow 環境一起部署完成。最後您將擁有簡易的單節點 Kubernetes 集群以及在 Pod 中部署為服務的 Kubeflow 的所有默認核心組件。並且能訪問 JupyterHub 筆記本和 Kubeflow Dashboard，進行相關測試。</p>
 <a id="more"></a>
-<h2 id="什麼是microk8s"><a href="#什麼是microk8s" class="headerlink" title="什麼是microk8s"></a>什麼是microk8s</h2><p>簡單來說，<a href="https://microk8s.io/" target="_blank" rel="noopener">microk8s</a>設計為快速輕巧Kubernetes最新版本安裝與主機隔離但不通過虛擬機。通過在單個快照包<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>中打包 Kubernetes、Docker.io、iptables和CNI的所有上游二進製文件來實現此隔離。<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>是一個應用程序容器，您可以將其想像為Docker容器的輕量級版本。它使用了許多相同的底層技術進行隔離，而不會有網絡隔離的所帶來的開銷。而<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>需使用虛擬化工具來環境隔離創建K8S集群，想必會快照更加耗時。</p>
-<h2 id="安裝Multipass"><a href="#安裝Multipass" class="headerlink" title="安裝Multipass"></a>安裝Multipass</h2><p>Mac OS X. (本篇文章以Mac環境進行))</p>
+<h2 id="什麼是microk8s"><a href="#什麼是microk8s" class="headerlink" title="什麼是microk8s"></a>什麼是microk8s</h2><p>簡單來說，<a href="https://microk8s.io/" target="_blank" rel="noopener">microk8s</a>設計為快速輕巧Kubernetes最新版本安裝與主機隔離但不通過虛擬機。通過在單個快照包<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>中打包 Kubernetes、Docker.io、iptables 和 CNI的所有上游二進製文件來實現此隔離。<a href="https://snapcraft.io/" target="_blank" rel="noopener">snap</a>是一個應用程序容器，您可以將其想像為Docker容器的輕量級版本。它使用了許多相同的底層技術進行隔離，而不會有網絡隔離的所帶來的開銷。而<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">minikube</a>需使用虛擬化工具來環境隔離創建K8S集群，想必會快照更加耗時。</p>
+<h2 id="安裝Multipass"><a href="#安裝Multipass" class="headerlink" title="安裝Multipass"></a>安裝Multipass</h2><p>Mac OS X. (本篇文章以 Mac 環境進行))</p>
 <ul>
 <li>本機Mac OS 安裝程序安裝<a href="https://github.com/CanonicalLtd/multipass/releases/download/2018.6.1/multipass-2018.6.1-full-Darwin-signed.zip" target="_blank" rel="noopener">Multipass</a></li>
 </ul>
@@ -186,11 +186,13 @@
 </ul>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo snap install multipass --beta --classic</span><br></pre></td></tr></table></figure>
 <hr>
-<h2 id="啟動Ubuntu虛擬機"><a href="#啟動Ubuntu虛擬機" class="headerlink" title="啟動Ubuntu虛擬機"></a>啟動Ubuntu虛擬機</h2><p>部署前要先下載cloud-init文件<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://bit.ly/2tOfMUA -O kubeflow.init</span><br></pre></td></tr></table></figure></p>
-<p>這邊查看一下文件內容，主要是配置kubeflow環境並去執行kubeflow 已經寫好script能更快速部署，有需要修正自己的環境可以修改後執行<br><figure class="highlight yaml hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># cloud-init for kubeflow</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-attr">package_update:</span> <span class="hljs-literal">true</span></span><br><span class="line"><span class="hljs-attr">package_upgrade:</span> <span class="hljs-literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-attr">runcmd:</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">mkdir</span> <span class="hljs-string">/kubeflow</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">wget</span> <span class="hljs-attr">https://bit.ly/2tp2aOo</span> <span class="hljs-bullet">-O</span> <span class="hljs-string">/kubeflow/install-kubeflow-pre-micro.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">chmod</span> <span class="hljs-string">a+x</span> <span class="hljs-string">/kubeflow/install-kubeflow-pre-micro.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">wget</span> <span class="hljs-attr">https://bit.ly/2tndL0g</span> <span class="hljs-bullet">-O</span> <span class="hljs-string">/kubeflow/install-kubeflow.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">chmod</span> <span class="hljs-string">a+x</span> <span class="hljs-string">/kubeflow/install-kubeflow.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">printf</span> <span class="hljs-string">"\n\nexport KUBECONFIG=/snap/microk8s/current/client.config\n\n"</span> <span class="hljs-string">&gt;&gt;</span> <span class="hljs-string">/home/multipass/.bashrc</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="啟動Ubuntu虛擬機"><a href="#啟動Ubuntu虛擬機" class="headerlink" title="啟動Ubuntu虛擬機"></a>啟動Ubuntu虛擬機</h2><p>部署前要先下載cloud-init文件</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://bit.ly/2tOfMUA -O kubeflow.init</span><br></pre></td></tr></table></figure>
+<p>這邊查看一下文件內容，主要是配置kubeflow環境並去執行kubeflow 已經寫好script能更快速部署，有需要修正自己的環境可以修改後執行</p>
+<figure class="highlight yaml hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># cloud-init for kubeflow</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-attr">package_update:</span> <span class="hljs-literal">true</span></span><br><span class="line"><span class="hljs-attr">package_upgrade:</span> <span class="hljs-literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-attr">runcmd:</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">mkdir</span> <span class="hljs-string">/kubeflow</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">wget</span> <span class="hljs-attr">https://bit.ly/2tp2aOo</span> <span class="hljs-bullet">-O</span> <span class="hljs-string">/kubeflow/install-kubeflow-pre-micro.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">chmod</span> <span class="hljs-string">a+x</span> <span class="hljs-string">/kubeflow/install-kubeflow-pre-micro.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">wget</span> <span class="hljs-attr">https://bit.ly/2tndL0g</span> <span class="hljs-bullet">-O</span> <span class="hljs-string">/kubeflow/install-kubeflow.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">chmod</span> <span class="hljs-string">a+x</span> <span class="hljs-string">/kubeflow/install-kubeflow.sh</span></span><br><span class="line"><span class="hljs-bullet"> -</span> <span class="hljs-string">printf</span> <span class="hljs-string">"\n\nexport KUBECONFIG=/snap/microk8s/current/client.config\n\n"</span> <span class="hljs-string">&gt;&gt;</span> <span class="hljs-string">/home/multipass/.bashrc</span></span><br></pre></td></tr></table></figure>
 <h3 id="啟動Multipass-VM"><a href="#啟動Multipass-VM" class="headerlink" title="啟動Multipass VM"></a>啟動Multipass VM</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> multipass launch bionic -n kubeflow -m 8G -d 40G -c 4 --cloud-init kubeflow.init</span></span><br><span class="line"></span><br><span class="line">Retrieving image: 66%</span><br><span class="line">Retrieving image: 87%</span><br><span class="line">Verifying image:  -</span><br><span class="line">Launched: kubeflow</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>預設備至Multipass為Kubeflow部署創建的VM上的<code>最低建議設置</code>，這邊是可以自由地調整根據主機的能力和工作負載需求。</p>
+<p>預設備至 Multipass 為 Kubeflow 部署創建的 VM 上的<code>最低建議設置</code>，這邊是可以自由地調整根據主機的能力和工作負載需求。</p>
 </blockquote>
 <p>依據環境狀況應該很快速就建立好單節點集群，這邊可以查看一下<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ multipass list                                    </span><br><span class="line">Name                    State       IPv4             Release</span><br><span class="line">kubeflow                RUNNING     192.168.64.2     Ubuntu 18.04 LTS</span><br></pre></td></tr></table></figure></p>
 <blockquote>
@@ -223,7 +225,7 @@
 <p>配置過程中有時會後有狀況，可能需要多嘗試</p>
 </blockquote>
 <p>完成後即可在透過Jupyter Notebook 編寫Model進行DL訓練<br><img src="https://i.imgur.com/sCqtj53.png" alt=""></p>
-<h2 id="Kubernetes-Addons"><a href="#Kubernetes-Addons" class="headerlink" title="Kubernetes Addons"></a>Kubernetes Addons</h2><p>microk8s在Kubernetes安裝了一個<code>準系統</code>。這代表只要安裝和運行api-server、controller-manager、scheduler、kubelet，cni、kube-proxy。可以使用該<code>microk8s.enable</code>命令運行kube-dns和Dashboard等附加服務。</p>
+<h2 id="Kubernetes-Addons"><a href="#Kubernetes-Addons" class="headerlink" title="Kubernetes Addons"></a>Kubernetes Addons</h2><p>microk8s在 Kubernetes 安裝了一個<code>準系統</code>。這代表只要安裝和運行 api-server、controller-manager、scheduler、kubelet，cni、kube-proxy。可以使用該 <code>microk8s.enable</code> 命令運行 kube-dns 和 Dashboard 等附加服務。</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">microk8s.enable dns dashboard</span><br></pre></td></tr></table></figure>
 <p>使用該<code>disable</code>命令隨時禁用這些插件<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">microk8s.disable dashboard dns</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ microk8s.kubectl cluster-info</span><br><span class="line">Kubernetes master is running at http://127.0.0.1:8080</span><br><span class="line">Heapster is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/heapster/proxy</span><br><span class="line">KubeDNS is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</span><br><span class="line">Grafana is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy</span><br><span class="line">InfluxDB is running at http://127.0.0.1:8080/api/v1/namespaces/kube-system/services/monitoring-influxdb:http/proxy</span><br><span class="line"></span><br><span class="line">To further debug and diagnose cluster problems, use <span class="hljs-string">'kubectl cluster-info dump'</span>.</span><br></pre></td></tr></table></figure>

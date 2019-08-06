@@ -2,18 +2,18 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>透過 Zabbix API 監測Trigger狀態 - Yi Yang&#39;s Blog</title>
+<title>透過 Zabbix API 監測 Trigger 狀態 - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
 
-    <meta name="description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
+    <meta name="description" content="此篇主要說明如何透過，Zabbix 提供的觸發器(Trigger)來監測 CPU 超標狀態，並透過 python 直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta name="keywords" content="zabbix,API">
 <meta property="og:type" content="article">
-<meta property="og:title" content="透過 Zabbix API 監測Trigger狀態">
+<meta property="og:title" content="透過 Zabbix API 監測 Trigger 狀態">
 <meta property="og:url" content="http://yylin1.github.io/2018/11/29/zabbix-api-trigger/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
+<meta property="og:description" content="此篇主要說明如何透過，Zabbix 提供的觸發器(Trigger)來監測 CPU 超標狀態，並透過 python 直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="https://i.imgur.com/xX8gHUR.png">
 <meta property="og:image" content="https://i.imgur.com/v9L91MO.jpg">
@@ -24,10 +24,10 @@
 <meta property="og:image" content="https://i.imgur.com/wcVt11H.jpg">
 <meta property="og:image" content="https://i.imgur.com/f59EMx8.jpg">
 <meta property="og:image" content="https://i.imgur.com/y8zNGRQ.jpg">
-<meta property="og:updated_time" content="2018-12-16T04:56:27.796Z">
+<meta property="og:updated_time" content="2019-08-06T04:22:57.667Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="透過 Zabbix API 監測Trigger狀態">
-<meta name="twitter:description" content="此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過python直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
+<meta name="twitter:title" content="透過 Zabbix API 監測 Trigger 狀態">
+<meta name="twitter:description" content="此篇主要說明如何透過，Zabbix 提供的觸發器(Trigger)來監測 CPU 超標狀態，並透過 python 直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。">
 <meta name="twitter:image" content="https://i.imgur.com/xX8gHUR.png">
 
 
@@ -94,7 +94,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/artificial-intelligence.png" alt="透過 Zabbix API 監測Trigger狀態" height="28">
+                <img src="/images/artificial-intelligence.png" alt="透過 Zabbix API 監測 Trigger 狀態" height="28">
             
             </a>
         </div>
@@ -148,7 +148,7 @@
     
     <div class="card-image">
         <span  class="image is-7by1">
-            <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測Trigger狀態">
+            <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測 Trigger 狀態">
         </span>
     </div>
     
@@ -174,11 +174,11 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                透過 Zabbix API 監測Trigger狀態
+                透過 Zabbix API 監測 Trigger 狀態
             
         </h1>
         <div class="content">
-            <p>此篇主要說明如何透過，Zabbix提供的觸發器(Trigger)來監測CPU超標狀態，並透過<code>python</code>直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。</p>
+            <p>此篇主要說明如何透過，Zabbix 提供的觸發器(Trigger)來監測 CPU 超標狀態，並透過 <code>python</code> 直接呼叫Zabbix API獲取所需要的狀態資訊，並協助監測遷移。</p>
 <a id="more"></a>
 <h2 id="1-新建Zabbix-Trigger觸發器"><a href="#1-新建Zabbix-Trigger觸發器" class="headerlink" title="1. 新建Zabbix Trigger觸發器"></a>1. 新建Zabbix Trigger觸發器</h2><p>本節你會學習如何配置一個觸發器（trigger）</p>
 <p>首先登入你Zabbix網頁並輸入帳號密碼</p>
@@ -1487,7 +1487,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/artificial-intelligence.png" alt="透過 Zabbix API 監測Trigger狀態" height="28">
+                    <img src="/images/artificial-intelligence.png" alt="透過 Zabbix API 監測 Trigger 狀態" height="28">
                 
                 </a>
                 <p class="is-size-7">

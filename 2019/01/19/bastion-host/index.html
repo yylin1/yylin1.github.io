@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
+    <meta name="description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行 Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
 <meta name="keywords" content="bastion">
 <meta property="og:type" content="article">
 <meta property="og:title" content="認識 Bastion Host 部署管理機">
 <meta property="og:url" content="http://yylin1.github.io/2019/01/19/bastion-host/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
+<meta property="og:description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行 Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*HLs0qwn9LdoedmIlQ8VlVw.png">
-<meta property="og:updated_time" content="2019-03-08T15:29:56.590Z">
+<meta property="og:updated_time" content="2019-08-05T04:16:15.672Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="認識 Bastion Host 部署管理機">
-<meta name="twitter:description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
+<meta name="twitter:description" content="由於最近接觸 Openshift 部署實體機，剛好部署過程學習到透過 Bastion 管理機，來統一管理分配對應依賴套件安裝給對應節點，並用於運行 Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中安全性問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。">
 <meta name="twitter:image" content="https://cdn-images-1.medium.com/max/1600/1*HLs0qwn9LdoedmIlQ8VlVw.png">
 
 
@@ -170,7 +170,7 @@
             
         </h1>
         <div class="content">
-            <p>由於最近接觸 <code>Openshift</code> 部署實體機，剛好部署過程學習到透過 <code>Bastion 管理機</code>，來統一管理分配對應依賴套件安裝給對應節點，並用於運行Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中<code>安全性</code>問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。</p>
+            <p>由於最近接觸 <code>Openshift</code> 部署實體機，剛好部署過程學習到透過 <code>Bastion 管理機</code>，來統一管理分配對應依賴套件安裝給對應節點，並用於運行 Ansible 腳本及配置叢集使用，但後來思考到整體部署過程中<code>安全性</code>問題，所以爬文搜尋一下大部分進行管理機部署情境與針對安全原則筆記。</p>
 <a id="more"></a>
 <h2 id="Bastion-Host-中繼管理機"><a href="#Bastion-Host-中繼管理機" class="headerlink" title="Bastion Host 中繼管理機"></a>Bastion Host 中繼管理機</h2><blockquote>
 <p>簡單來說就是為連線伺服器叢集限定一個入口，方便管理部署維運並權限控制以及監控</p>
@@ -181,7 +181,7 @@
 <p>這邊參考安全性做法 </p>
 <ul>
 <li><a href="https://medium.com/@puresmash/%E5%AE%89%E5%85%A8%E5%9C%B0%E5%88%A9%E7%94%A8-bastion-host-%E8%B7%B3%E8%BD%89-5f0529301362" target="_blank" rel="noopener">[Ref:安全地利用 Bastion Host 跳轉]</a></li>
-<li><a href="https://blog.wu-boy.com/2016/10/ssh-agent-forwarding-proxycommand-tutorial/" target="_blank" rel="noopener">[Ref:SSH agent forwarding 教學]</a></li>
+<li><a href="https://blog.wu-boy.com/2016/10/ssh-agent-forwarding-proxycommand-tutorial/" target="_blank" rel="noopener">[Ref:SSH Agent Forwarding 教學]</a></li>
 </ul>
 </blockquote>
 <ul>
@@ -193,10 +193,13 @@
 </ul>
 <p>舉例來說，首先 SSH 登入進 Server1，接著在 Server1 上登入 Server2 時，就會自動使用你本地的 SSH Key：</p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Local ---(SSH)---&gt; Server1 ---(SSH)---&gt; Server2</span><br></pre></td></tr></table></figure>
-<p>首先需要將要 <code>forwarding</code> 的 <code>private key</code> 加到清單裡面:<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-add</span><br></pre></td></tr></table></figure></p>
-<p>加上 <code>-L</code> 可以檢查這個清單<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-add -L</span><br></pre></td></tr></table></figure></p>
+<p>首先需要將要 <code>forwarding</code> 的 <code>private key</code> 加到清單裡面:</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-add</span><br></pre></td></tr></table></figure>
+<p>加上 <code>-L</code> 可以檢查這個清單</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-add -L</span><br></pre></td></tr></table></figure>
 <p>這邊注意可以將所有機器的 key pair 都放到 ~/.ssh/keys 目錄，並且設定 400 權限</p>
-<p>方法一：每次要 Local 連上 Server 時，加上 -A 參數：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -A user@&#123;you server1 ip&#125;</span><br></pre></td></tr></table></figure></p>
+<p>方法一：每次要 Local 連上 Server 時，加上 -A 參數：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -A user@&#123;you server1 ip&#125;</span><br></pre></td></tr></table></figure>
 <p>方法二：修改 <code>~/.ssh/config</code> 設定，加上 <code>ForwardAgent yes</code>，這樣就不需要每次連都加上 -A 參數。例如</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Host server1</span><br><span class="line">  HostName 106.187.36.122</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
 <ul>
@@ -206,11 +209,7 @@
 <p>安全隱憂的，起因於 agent service 於連線時會在 /tmp/ 目錄建立一個檔案 /tmp/ssh-xxxxxx/agent.xxxx，在正常的情況下，它會用原使用者透過 ssh-add 所設定的密鑰對，替我們回答目的伺服器所發起的密鑰驗證要求。</p>
 </blockquote>
 <p><img src="https://cdn-images-1.medium.com/max/1600/1*HLs0qwn9LdoedmIlQ8VlVw.png" alt=""></p>
-<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Host hosta</span><br><span class="line">  User userfoo</span><br><span class="line">  Hostname 123.123.123.123</span><br><span class="line"> </span><br><span class="line">Host hostb</span><br><span class="line">  User userbar</span><br><span class="line">  Hostname 192.168.1.1</span><br><span class="line">  Port 22</span><br><span class="line">  ProxyCommand ssh -q -W %h:%p hosta</span><br><span class="line">  IdentityFile ~/.ssh/keys/xxxx.pem</span><br></pre></td></tr></table></figure>
-<p>此配置告訴本地SSH客戶端通過直接連接連接到主機A. 現在，如果你鍵入ssh hostb它將要做的是首先連接到主機A然後通過參數ProxyCommand指定的主機和Port轉發你的SSH客戶端-W，在這種情況下<code>192.168.1.1</code>強調這是一個內部主機。然後，您的本地SSH客戶端將對主機B進行身份驗證，就像您直接連接到它一樣。</p>
-<p>這裡的另一個觀察是你不需要記住關於主機的任何信息，當你可以簡單地用Host線對它進行別名時，它不需要IP或模糊的主機名，端口或用戶名。</p>
-<p>ProxyCommand 不用將 pem 透過 ssh-add 匯入，省下一步指令，接著執行底下指令就可以 ssh 到指定機器，跟方法一比起來更安全又快速</p>
-<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh hostb</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Host hosta</span><br><span class="line">  User userfoo</span><br><span class="line">  Hostname 123.123.123.123</span><br><span class="line"> </span><br><span class="line">Host hostb</span><br><span class="line">  User userbar</span><br><span class="line">  Hostname 192.168.1.1</span><br><span class="line">  Port 22</span><br><span class="line">  ProxyCommand ssh -q -W %h:%p hosta</span><br><span class="line">  IdentityFile ~/.ssh/keys/xxxx.pem</span><br><span class="line">``` </span><br><span class="line">此配置告訴本地SSH客戶端通過直接連接連接到主機A. 現在，如果你鍵入 ssh hostB 它將要做的是首先連接到 主機A 然後通過參數 ProxyCommand 指定的主機和 Port 轉發你的SSH客戶端-W，在這種情況下 `192.168.1.1` 強調這是一個內部主機。然後，您的本地 SSH 客戶端將對 主機B 進行身份驗證，就像您直接連接到它一樣。</span><br><span class="line"></span><br><span class="line">這裡的另一個觀察是你不需要記住關於主機的任何信息，當你可以簡單地用Host線對它進行別名時，它不需要IP或模糊的主機名，端口或用戶名。</span><br><span class="line"></span><br><span class="line">ProxyCommand 不用將 pem 透過 ssh-add 匯入，省下一步指令，接著執行底下指令就可以 ssh 到指定機器，跟方法一比起來更安全又快速</span><br><span class="line"></span><br><span class="line">```bash=</span><br><span class="line">$ ssh hostb</span><br></pre></td></tr></table></figure>
 <p>這個方法可以讓我們直接登入遠端主機，省略第二次的 ssh 指令。</p>
 
         </div>
