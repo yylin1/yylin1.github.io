@@ -15,20 +15,14 @@
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="Kubeflow 專案致力於使 ML Workflow 發展更具簡易性、可攜帶性和規模性。 Kubeflow於2017年底正式開源，並於2018年5月發布了首個0.1版本，至今 kubeflow 各項目發展迅速，而我參與 2018 KubeCon Shanghai 聆聽好幾場來自 各大企業與 Google等議程，分享 Kubeflow 導入企業實際應用情境，深刻感受到 kubeflow 在開源社區">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="https://i.imgur.com/oU86YTx.png">
-<meta property="og:image" content="https://i.imgur.com/PEOizuf.png">
-<meta property="og:image" content="https://i.imgur.com/zkIWIkP.png">
-<meta property="og:image" content="https://i.imgur.com/4KRHrPA.png">
-<meta property="og:image" content="https://i.imgur.com/NywKU10.png">
-<meta property="og:image" content="https://i.imgur.com/PrKHHr8.png">
-<meta property="og:image" content="https://i.imgur.com/7iiyIys.png">
-<meta property="og:image" content="https://i.imgur.com/shEDXxm.png">
-<meta property="og:image" content="https://i.imgur.com/tEocDzK.png">
+<meta property="og:image" content="http://yylin1.github.io/images/kubeflow-deploy-0-4.png">
 <meta property="og:updated_time" content="2019-08-05T06:56:39.498Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kubeflow v0.4.x 部署與概述">
 <meta name="twitter:description" content="Kubeflow 專案致力於使 ML Workflow 發展更具簡易性、可攜帶性和規模性。 Kubeflow於2017年底正式開源，並於2018年5月發布了首個0.1版本，至今 kubeflow 各項目發展迅速，而我參與 2018 KubeCon Shanghai 聆聽好幾場來自 各大企業與 Google等議程，分享 Kubeflow 導入企業實際應用情境，深刻感受到 kubeflow 在開源社區">
-<meta name="twitter:image" content="https://i.imgur.com/oU86YTx.png">
+<meta name="twitter:image" content="http://yylin1.github.io/images/kubeflow-deploy-0-4.png">
+
+
 
 
 
@@ -40,7 +34,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/dracula.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
 
 
     
@@ -84,6 +78,12 @@
 <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
 
     
+    
+    
+
+    
+    
+    
 
 
 <link rel="stylesheet" href="/css/style.css">
@@ -123,7 +123,7 @@
                 
                     
                     
-                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -132,7 +132,7 @@
                 
                 
                 
-                <a class="navbar-item search" title="搜索" href="javascript:;">
+                <a class="navbar-item search" title="搜尋" href="javascript:;">
                     <i class="fas fa-search"></i>
                 </a>
                 
@@ -166,8 +166,9 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    14 分鐘 read (About 2032 words)
+                    14 分鐘 閱讀文 (大約 2032 個字)
                 </span>
+                
                 
             </div>
         </div>
@@ -305,6 +306,43 @@
 </div>
 
 
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜歡這篇文章嗎? 贊助一下作者吧!</h3>
+        <div class="buttons is-centered">
+            
+                
+<div class="notification is-danger">
+    You forgot to set the <code>qrcode</code> for Alipay. Please set it in <code>_config.yml</code>.
+</div>
+
+                
+                
+<div class="notification is-danger">
+    You forgot to set the <code>qrcode</code> for Wechat. Please set it in <code>_config.yml</code>.
+</div>
+
+                
+                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
+
+<div class="notification is-danger">
+    You forgot to set the <code>business</code> and <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.
+</div>
+
+                
+                
+<div class="notification is-danger">
+    You forgot to set the <code>url</code> Patreon. Please set it in <code>_config.yml</code>.
+</div>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
 <div class="card card-transparent">
     <div class="level post-navigation is-flex-wrap is-mobile">
         
@@ -327,31 +365,6 @@
 </div>
 
 
-
-<div class="card">
-    <div class="card-content">
-        <h3 class="title is-5 has-text-weight-normal">評論</h3>
-        
-<script>
-    var disqus_config = function () {
-        this.page.url = 'http://yylin1.github.io/2019/02/03/kubeflow-0-4-release/';
-        this.page.identifier = '2019/02/03/kubeflow-0-4-release/';
-    };
-    (function() {
-        var d = document, s = d.createElement('script');  
-        s.src = '//' + 'yylin' + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-
-<div id="disqus_thread">
-    
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </div>
-</div>
-
 </div>
                 
 
@@ -366,7 +379,9 @@
         <nav class="level">
             <div class="level-item has-text-centered">
                 <div>
-                    <img class="image is-128x128 has-mb-6" src="/images/yiyang.png" alt="Yi Yang">
+                    
+                        <img class="image is-128x128 has-mb-6" src="/images/yiyang.png" alt="Yi Yang">
+                    
                     
                     <p class="is-size-4 is-block">
                         Yi Yang
@@ -419,22 +434,22 @@
             </div>
         </nav>
         <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/yylin1/">
-                關注我</a>
+            <a class="level-item button is-link is-rounded" href="https://github.com/yylin1" target="_blank">
+                追蹤</a>
         </div>
         
         
         <div class="level is-mobile">
             
             <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1/">
+                title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
             <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://www.facebook.com/frank.yiyanglin">
+                title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
@@ -455,6 +470,41 @@
         
     
         
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            連結
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://hexo.io" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Hexo</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">hexo.io</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/ppoffice" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">PPOffice</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
 
 
     
@@ -676,7 +726,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            歸檔
+            彙整
         </h3>
         <ul class="menu-list">
         
@@ -768,262 +818,170 @@
             <h3 class="menu-label">
                 標籤
             </h3>
-            <ul class="menu-list">
+            <div class="field is-grouped is-grouped-multiline">
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/API/">
-                        <span class="level-start">
-                            <span class="level-item">API</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/API/">
+                        <span class="tag">API</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/GPU/">
-                        <span class="level-start">
-                            <span class="level-item">GPU</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">3</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/GPU/">
+                        <span class="tag">GPU</span>
+                        <span class="tag is-grey">3</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
-                        <span class="level-start">
-                            <span class="level-item">NVIDIA Driver</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/NVIDIA-Driver/">
+                        <span class="tag">NVIDIA Driver</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/Retrospect/">
-                        <span class="level-start">
-                            <span class="level-item">Retrospect</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Retrospect/">
+                        <span class="tag">Retrospect</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/UI/">
-                        <span class="level-start">
-                            <span class="level-item">UI</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/UI/">
+                        <span class="tag">UI</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/ansible/">
-                        <span class="level-start">
-                            <span class="level-item">ansible</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ansible/">
+                        <span class="tag">ansible</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/bastion/">
-                        <span class="level-start">
-                            <span class="level-item">bastion</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/bastion/">
+                        <span class="tag">bastion</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/benchmark/">
-                        <span class="level-start">
-                            <span class="level-item">benchmark</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/benchmark/">
+                        <span class="tag">benchmark</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/deploy/">
-                        <span class="level-start">
-                            <span class="level-item">deploy</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">5</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/deploy/">
+                        <span class="tag">deploy</span>
+                        <span class="tag is-grey">5</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/distributed/">
-                        <span class="level-start">
-                            <span class="level-item">distributed</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/distributed/">
+                        <span class="tag">distributed</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/docker/">
-                        <span class="level-start">
-                            <span class="level-item">docker</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/docker/">
+                        <span class="tag">docker</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/kubecon/">
-                        <span class="level-start">
-                            <span class="level-item">kubecon</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/kubecon/">
+                        <span class="tag">kubecon</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/kubeflow/">
-                        <span class="level-start">
-                            <span class="level-item">kubeflow</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">7</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/kubeflow/">
+                        <span class="tag">kubeflow</span>
+                        <span class="tag is-grey">7</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/kubernetes/">
-                        <span class="level-start">
-                            <span class="level-item">kubernetes</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">7</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/kubernetes/">
+                        <span class="tag">kubernetes</span>
+                        <span class="tag is-grey">7</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/linpack/">
-                        <span class="level-start">
-                            <span class="level-item">linpack</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linpack/">
+                        <span class="tag">linpack</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/microk8s/">
-                        <span class="level-start">
-                            <span class="level-item">microk8s</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/microk8s/">
+                        <span class="tag">microk8s</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/minikube/">
-                        <span class="level-start">
-                            <span class="level-item">minikube</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/minikube/">
+                        <span class="tag">minikube</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/openshift/">
-                        <span class="level-start">
-                            <span class="level-item">openshift</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/openshift/">
+                        <span class="tag">openshift</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/parmeter-server/">
-                        <span class="level-start">
-                            <span class="level-item">parmeter server</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/parmeter-server/">
+                        <span class="tag">parmeter server</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/quickstart/">
-                        <span class="level-start">
-                            <span class="level-item">quickstart</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/quickstart/">
+                        <span class="tag">quickstart</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/scheduler/">
-                        <span class="level-start">
-                            <span class="level-item">scheduler</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/scheduler/">
+                        <span class="tag">scheduler</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/ubuntu/">
-                        <span class="level-start">
-                            <span class="level-item">ubuntu</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ubuntu/">
+                        <span class="tag">ubuntu</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/zabbix/">
-                        <span class="level-start">
-                            <span class="level-item">zabbix</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/zabbix/">
+                        <span class="tag">zabbix</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-            </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -1149,7 +1107,7 @@
     <div class="card-content">
         <div class="menu">
         <h3 class="menu-label">
-            歸檔
+            彙整
         </h3>
         <ul class="menu-list">
         
@@ -1241,262 +1199,170 @@
             <h3 class="menu-label">
                 標籤
             </h3>
-            <ul class="menu-list">
+            <div class="field is-grouped is-grouped-multiline">
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/API/">
-                        <span class="level-start">
-                            <span class="level-item">API</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/API/">
+                        <span class="tag">API</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/GPU/">
-                        <span class="level-start">
-                            <span class="level-item">GPU</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">3</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/GPU/">
+                        <span class="tag">GPU</span>
+                        <span class="tag is-grey">3</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/NVIDIA-Driver/">
-                        <span class="level-start">
-                            <span class="level-item">NVIDIA Driver</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/NVIDIA-Driver/">
+                        <span class="tag">NVIDIA Driver</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/Retrospect/">
-                        <span class="level-start">
-                            <span class="level-item">Retrospect</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Retrospect/">
+                        <span class="tag">Retrospect</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/UI/">
-                        <span class="level-start">
-                            <span class="level-item">UI</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/UI/">
+                        <span class="tag">UI</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/ansible/">
-                        <span class="level-start">
-                            <span class="level-item">ansible</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ansible/">
+                        <span class="tag">ansible</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/bastion/">
-                        <span class="level-start">
-                            <span class="level-item">bastion</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/bastion/">
+                        <span class="tag">bastion</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/benchmark/">
-                        <span class="level-start">
-                            <span class="level-item">benchmark</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/benchmark/">
+                        <span class="tag">benchmark</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/deploy/">
-                        <span class="level-start">
-                            <span class="level-item">deploy</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">5</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/deploy/">
+                        <span class="tag">deploy</span>
+                        <span class="tag is-grey">5</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/distributed/">
-                        <span class="level-start">
-                            <span class="level-item">distributed</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/distributed/">
+                        <span class="tag">distributed</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/docker/">
-                        <span class="level-start">
-                            <span class="level-item">docker</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/docker/">
+                        <span class="tag">docker</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/kubecon/">
-                        <span class="level-start">
-                            <span class="level-item">kubecon</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/kubecon/">
+                        <span class="tag">kubecon</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/kubeflow/">
-                        <span class="level-start">
-                            <span class="level-item">kubeflow</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">7</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/kubeflow/">
+                        <span class="tag">kubeflow</span>
+                        <span class="tag is-grey">7</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/kubernetes/">
-                        <span class="level-start">
-                            <span class="level-item">kubernetes</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">7</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/kubernetes/">
+                        <span class="tag">kubernetes</span>
+                        <span class="tag is-grey">7</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/linpack/">
-                        <span class="level-start">
-                            <span class="level-item">linpack</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linpack/">
+                        <span class="tag">linpack</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/microk8s/">
-                        <span class="level-start">
-                            <span class="level-item">microk8s</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/microk8s/">
+                        <span class="tag">microk8s</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/minikube/">
-                        <span class="level-start">
-                            <span class="level-item">minikube</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/minikube/">
+                        <span class="tag">minikube</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/openshift/">
-                        <span class="level-start">
-                            <span class="level-item">openshift</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/openshift/">
+                        <span class="tag">openshift</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/parmeter-server/">
-                        <span class="level-start">
-                            <span class="level-item">parmeter server</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/parmeter-server/">
+                        <span class="tag">parmeter server</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/quickstart/">
-                        <span class="level-start">
-                            <span class="level-item">quickstart</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/quickstart/">
+                        <span class="tag">quickstart</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/scheduler/">
-                        <span class="level-start">
-                            <span class="level-item">scheduler</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/scheduler/">
+                        <span class="tag">scheduler</span>
+                        <span class="tag is-grey">1</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/ubuntu/">
-                        <span class="level-start">
-                            <span class="level-item">ubuntu</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ubuntu/">
+                        <span class="tag">ubuntu</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-                <li>
-                    <a class="level is-marginless" href="/tags/zabbix/">
-                        <span class="level-start">
-                            <span class="level-item">zabbix</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">2</span>
-                        </span>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/zabbix/">
+                        <span class="tag">zabbix</span>
+                        <span class="tag is-grey">2</span>
                     </a>
-                </li>
+                </div>
                 
-            </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -1518,10 +1384,9 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2019 Yi Yang&nbsp;
-                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
-                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-                &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                
                 </p>
             </div>
             <div class="level-end">
@@ -1546,7 +1411,7 @@
                 </p>
                 
                 <p class="control">
-                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
                         
                         <i class="fab fa-github"></i>
                         
@@ -1559,7 +1424,6 @@
         </div>
     </div>
 </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
 <script>moment.locale("zh-TW");</script>
@@ -1606,9 +1470,21 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     MathJax.Hub.Config({
-        'HTML-CSS': {matchFontHeight: false},
-        SVG: {matchFontHeight: false},
-        CommonHTML: {matchFontHeight: false}
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
     });
 });
 </script>
@@ -1616,7 +1492,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     
 
-<a id="back-to-top" title="Back to Top" href="javascript:;">
+<a id="back-to-top" title="回到頁首" href="javascript:;">
     <i class="fas fa-chevron-up"></i>
 </a>
 <script src="/js/back-to-top.js" defer></script>
@@ -1633,6 +1509,15 @@ document.addEventListener('DOMContentLoaded', function () {
     
     
     
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
 
 
 <script src="/js/main.js" defer></script>
@@ -1641,7 +1526,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -1654,10 +1539,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var INSIGHT_CONFIG = {
             TRANSLATION: {
                 POSTS: '文章',
-                PAGES: 'Pages',
+                PAGES: '頁面',
                 CATEGORIES: '分類',
                 TAGS: '標籤',
-                UNTITLED: '(Untitled)',
+                UNTITLED: '(無標題)',
             },
             CONTENT_URL: '/content.json',
         };
