@@ -16,7 +16,7 @@
 <meta property="og:description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸 kube-ansible 感謝 KaiRen 改版後增加 Nvidia Docker 為 ansible 部署過程中，協助增加 NVIDIA Docker 與 k8s-device-plugin，完成 Node 節點環境的 GPU 資源使用（內文為裸機加載GPU部之署">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/ansible_deploy_kubernetes_GPU.png">
-<meta property="og:updated_time" content="2019-08-05T02:25:09.492Z">
+<meta property="og:updated_time" content="2019-08-07T08:05:12.340Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU 叢集">
 <meta name="twitter:description" content="本篇記錄部署過程，主要參考「開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集」延伸 kube-ansible 感謝 KaiRen 改版後增加 Nvidia Docker 為 ansible 部署過程中，協助增加 NVIDIA Docker 與 k8s-device-plugin，完成 Node 節點環境的 GPU 資源使用（內文為裸機加載GPU部之署">
@@ -130,6 +130,10 @@
                     </a>
                     
                 
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="文章目錄" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
                 
                 
                 <a class="navbar-item search" title="搜尋" href="javascript:;">
@@ -537,6 +541,73 @@
 </div>
     
         
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                文章目錄
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#節點資訊">
+        <span class="has-mr-6">1</span>
+        <span>節點資訊</span>
+        </a></li><li>
+        <a class="is-flex" href="#節點資訊-1">
+        <span class="has-mr-6">2</span>
+        <span>節點資訊</span>
+        </a></li><li>
+        <a class="is-flex" href="#所有節點事前準備">
+        <span class="has-mr-6">3</span>
+        <span>所有節點事前準備</span>
+        </a></li><li>
+        <a class="is-flex" href="#GPU節點事前準備-Node">
+        <span class="has-mr-6">4</span>
+        <span>GPU節點事前準備 (Node)</span>
+        </a></li><li>
+        <a class="is-flex" href="#部署節點（Master）">
+        <span class="has-mr-6">5</span>
+        <span>部署節點（Master）</span>
+        </a></li><li>
+        <a class="is-flex" href="#透過-Ansible-部署-Kubernetes">
+        <span class="has-mr-6">6</span>
+        <span>透過 Ansible 部署 Kubernetes</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Kubernetes-叢集-GPU">
+        <span class="has-mr-6">6.1</span>
+        <span>Kubernetes 叢集 + GPU</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#這邊測試發現，需要事先確認確認，所有節點中每個節點上的網卡名稱是否一致，如實驗環境-Ubuntu16-04-網卡名稱都為-enp0s25。">
+        <span class="has-mr-6">7</span>
+        <span>這邊測試發現，需要事先確認確認，所有節點中每個節點上的網卡名稱是否一致，如實驗環境 Ubuntu16.04 網卡名稱都為 enp0s25。</span>
+        </a></li><li>
+        <a class="is-flex" href="#查看元件狀態">
+        <span class="has-mr-6">8</span>
+        <span>查看元件狀態</span>
+        </a></li><li>
+        <a class="is-flex" href="#測試GPU節點是否可以正常運作">
+        <span class="has-mr-6">9</span>
+        <span>測試GPU節點是否可以正常運作</span>
+        </a></li><li>
+        <a class="is-flex" href="#Addons-部署">
+        <span class="has-mr-6">10</span>
+        <span>Addons 部署</span>
+        </a></li><li>
+        <a class="is-flex" href="#重置叢集狀態">
+        <span class="has-mr-6">11</span>
+        <span>重置叢集狀態</span>
+        </a></li><li>
+        <a class="is-flex" href="#補充-部署修正網卡一致">
+        <span class="has-mr-6">12</span>
+        <span>[#補充]部署修正網卡一致</span>
+        </a></li><li>
+        <a class="is-flex" href="#補充-若無需要-HA-部署-單M-單N-測試">
+        <span class="has-mr-6">13</span>
+        <span>[#補充] 若無需要 HA 部署 (單M,單N-測試)</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
     
         
 

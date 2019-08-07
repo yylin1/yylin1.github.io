@@ -16,7 +16,7 @@
 <meta property="og:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling]，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。  tf-operator 實現 gang-schedu">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/kubeflow-job-scheduling.png">
-<meta property="og:updated_time" content="2019-08-07T02:46:42.095Z">
+<meta property="og:updated_time" content="2019-08-07T08:05:43.438Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何更換 Kubeflow 預設 Scheduling">
 <meta name="twitter:description" content="本篇文章將說明實作官網 [kubeflow/Job Scheduling]，所介紹的如何使用 gang-scheduling 更換原 kubeflow 預設 scheduler 機制。文章教學介紹透過使用kube-batch以支持 kubeflow 透過gang-scheduling排程方式，來同時允許多個Pod執行解決deadlock問題。  tf-operator 實現 gang-schedu">
@@ -130,6 +130,10 @@
                     </a>
                     
                 
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="文章目錄" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
                 
                 
                 <a class="navbar-item search" title="搜尋" href="javascript:;">
@@ -517,6 +521,61 @@
 </div>
     
         
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                文章目錄
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#實驗環境">
+        <span class="has-mr-6">1</span>
+        <span>實驗環境</span>
+        </a></li><li>
+        <a class="is-flex" href="#配置更換預設-scheduling">
+        <span class="has-mr-6">2</span>
+        <span>配置更換預設 scheduling</span>
+        </a><ul class="menu-list"><ul class="menu-list"><li>
+        <a class="is-flex" href="#Note-by-job-scheduling">
+        <span class="has-mr-6">2.1.1</span>
+        <span>Note by job scheduling :</span>
+        </a></li></ul><li>
+        <a class="is-flex" href="#1-kube-batch-install">
+        <span class="has-mr-6">2.2</span>
+        <span>1. kube-batch install</span>
+        </a></li><li>
+        <a class="is-flex" href="#Config-kube-batch-for-Kubernetes">
+        <span class="has-mr-6">2.3</span>
+        <span># Config kube-batch for Kubernetes</span>
+        </a></li><li>
+        <a class="is-flex" href="#2-新增-RBAC-給-kube-batch">
+        <span class="has-mr-6">2.4</span>
+        <span>2. 新增 RBAC 給 kube-batch</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Note-by-kube-batch">
+        <span class="has-mr-6">2.4.1</span>
+        <span>Note by kube-batch :</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#3-kube-batch-啟用-gang-scheduling-配置">
+        <span class="has-mr-6">2.5</span>
+        <span>3. kube-batch 啟用 gang-scheduling 配置</span>
+        </a></li><li>
+        <a class="is-flex" href="#4-測試範例-配置-YAML-增加-PodGroups">
+        <span class="has-mr-6">2.6</span>
+        <span>4. 測試範例 - 配置 YAML 增加 PodGroups</span>
+        </a></li><li>
+        <a class="is-flex" href="#補充說明-TFJob-配置-YAML-實現-gang-scheduling">
+        <span class="has-mr-6">2.7</span>
+        <span>[補充說明] TFJob 配置 YAML 實現 gang-scheduling</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#補充說明-gang-scheduling-實驗測試">
+        <span class="has-mr-6">3</span>
+        <span>[補充說明] gang-scheduling 實驗測試</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
     
         
 

@@ -2,7 +2,7 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>如何自行編譯 HPL-GPU 來測試 Benchmarks - Yi Yang&#39;s Blog</title>
+<title>如何自行編譯 HPL-GPU 來測試 Benchmark - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
@@ -10,15 +10,15 @@
     <meta name="description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
 <meta name="keywords" content="GPU,linpack,benchmark">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何自行編譯 HPL-GPU 來測試 Benchmarks">
+<meta property="og:title" content="如何自行編譯 HPL-GPU 來測試 Benchmark">
 <meta property="og:url" content="http://yylin1.github.io/2018/10/23/build-hpl-gpu/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
 <meta property="og:description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/hpl_gpu.png">
-<meta property="og:updated_time" content="2019-08-05T04:26:31.125Z">
+<meta property="og:updated_time" content="2019-08-07T08:05:21.713Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="如何自行編譯 HPL-GPU 來測試 Benchmarks">
+<meta name="twitter:title" content="如何自行編譯 HPL-GPU 來測試 Benchmark">
 <meta name="twitter:description" content="構建 NVIDIA CUDA Linpack 環境執行環境非常困難，網路上訊息非常少，然後linkpack測試更新版本已經有一段時間，記錄實作主要參考「Hybrid HPL(GPU版HPL)安装教程」與「AWS-GPUとスパコンを比較する方法-スパコン用ベンチマークソフトを動かしてみる」兩個文章教學，並嘗試運行現在環境支援的版本，部署過程記錄。">
 <meta name="twitter:image" content="http://yylin1.github.io/images/hpl_gpu.png">
 
@@ -94,7 +94,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/artificial-intelligence.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmarks" height="28">
+                <img src="/images/artificial-intelligence.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmark" height="28">
             
             </a>
         </div>
@@ -131,6 +131,10 @@
                     
                 
                 
+                <a class="navbar-item is-hidden-tablet catalogue" title="文章目錄" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
                 
                 <a class="navbar-item search" title="搜尋" href="javascript:;">
                     <i class="fas fa-search"></i>
@@ -148,7 +152,7 @@
     
     <div class="card-image">
         <span  class="image is-7by1">
-            <img class="thumbnail" src="/images/hpl_gpu.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmarks">
+            <img class="thumbnail" src="/images/hpl_gpu.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmark">
         </span>
     </div>
     
@@ -175,7 +179,7 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                如何自行編譯 HPL-GPU 來測試 Benchmarks
+                如何自行編譯 HPL-GPU 來測試 Benchmark
             
         </h1>
         <div class="content">
@@ -456,6 +460,77 @@
 </div>
     
         
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                文章目錄
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#環境部署資訊">
+        <span class="has-mr-6">1</span>
+        <span>環境部署資訊</span>
+        </a><ul class="menu-list"><ul class="menu-list"><li>
+        <a class="is-flex" href="#Linpack-部署的版本資訊：">
+        <span class="has-mr-6">1.1.1</span>
+        <span>Linpack 部署的版本資訊：</span>
+        </a></li></ul></ul></li><li>
+        <a class="is-flex" href="#實驗環境">
+        <span class="has-mr-6">2</span>
+        <span>實驗環境</span>
+        </a></li><li>
+        <a class="is-flex" href="#事前準備">
+        <span class="has-mr-6">3</span>
+        <span>事前準備</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#安裝-NVIDIA驅動和CUDA-Tookit">
+        <span class="has-mr-6">3.1</span>
+        <span>安裝 NVIDIA驅動和CUDA Tookit</span>
+        </a></li><li>
+        <a class="is-flex" href="#準備-Linpack">
+        <span class="has-mr-6">3.2</span>
+        <span>準備 Linpack</span>
+        </a></li><li>
+        <a class="is-flex" href="#安裝INTEL-MKL">
+        <span class="has-mr-6">3.3</span>
+        <span>安裝INTEL MKL</span>
+        </a></li><li>
+        <a class="is-flex" href="#安装mpich2">
+        <span class="has-mr-6">3.4</span>
+        <span>安装mpich2</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#配置環境">
+        <span class="has-mr-6">3.4.1</span>
+        <span>配置環境</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#安裝openmpi">
+        <span class="has-mr-6">3.5</span>
+        <span>安裝openmpi</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#配置環境變量">
+        <span class="has-mr-6">4</span>
+        <span>配置環境變量</span>
+        </a></li><li>
+        <a class="is-flex" href="#開始編譯Linpack-benchmark-for-CUDA">
+        <span class="has-mr-6">5</span>
+        <span>開始編譯Linpack benchmark for CUDA</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#編譯Make-CUDA編輯配置">
+        <span class="has-mr-6">5.1</span>
+        <span>編譯Make.CUDA編輯配置</span>
+        </a></li><li>
+        <a class="is-flex" href="#輸出結果">
+        <span class="has-mr-6">5.2</span>
+        <span>輸出結果</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#補充-直接使用-Docker測試HPL-GPU-參考連結">
+        <span class="has-mr-6">5.2.1</span>
+        <span>#補充-直接使用 Docker測試HPL GPU: 參考連結</span>
+        </a></li></ul></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
     
         
 
@@ -1367,7 +1442,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/artificial-intelligence.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmarks" height="28">
+                    <img src="/images/artificial-intelligence.png" alt="如何自行編譯 HPL-GPU 來測試 Benchmark" height="28">
                 
                 </a>
                 <p class="is-size-7">

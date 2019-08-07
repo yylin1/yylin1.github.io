@@ -16,7 +16,7 @@
 <meta property="og:description" content="此文章將記錄透過安裝 Microk8s ，在本地機器上輕鬆部署 kubernetes 集群，並且透過運行腳本讓 kubeflow 環境一起部署完成。最後您將擁有簡易的單節點 Kubernetes 集群以及在 Pod 中部署為服務的 Kubeflow 的所有默認核心組件。並且能訪問 JupyterHub 筆記本和 Kubeflow Dashboard，進行相關測試。">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/microk8s.png">
-<meta property="og:updated_time" content="2019-08-05T07:29:56.447Z">
+<meta property="og:updated_time" content="2019-08-07T08:05:46.962Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Microk8s 快速部署 Kubeflow">
 <meta name="twitter:description" content="此文章將記錄透過安裝 Microk8s ，在本地機器上輕鬆部署 kubernetes 集群，並且透過運行腳本讓 kubeflow 環境一起部署完成。最後您將擁有簡易的單節點 Kubernetes 集群以及在 Pod 中部署為服務的 Kubeflow 的所有默認核心組件。並且能訪問 JupyterHub 筆記本和 Kubeflow Dashboard，進行相關測試。">
@@ -130,6 +130,10 @@
                     </a>
                     
                 
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="文章目錄" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
                 
                 
                 <a class="navbar-item search" title="搜尋" href="javascript:;">
@@ -420,6 +424,81 @@
 </div>
     
         
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                文章目錄
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#什麼是microk8s">
+        <span class="has-mr-6">1</span>
+        <span>什麼是microk8s</span>
+        </a></li><li>
+        <a class="is-flex" href="#安裝Multipass">
+        <span class="has-mr-6">2</span>
+        <span>安裝Multipass</span>
+        </a></li><li>
+        <a class="is-flex" href="#啟動Ubuntu虛擬機">
+        <span class="has-mr-6">3</span>
+        <span>啟動Ubuntu虛擬機</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#啟動Multipass-VM">
+        <span class="has-mr-6">3.1</span>
+        <span>啟動Multipass VM</span>
+        </a></li><li>
+        <a class="is-flex" href="#安裝kubernetes">
+        <span class="has-mr-6">3.2</span>
+        <span>安裝kubernetes</span>
+        </a></li><li>
+        <a class="is-flex" href="#安裝microk8s、etc">
+        <span class="has-mr-6">3.3</span>
+        <span>安裝microk8s、etc</span>
+        </a></li><li>
+        <a class="is-flex" href="#更換自己的Token">
+        <span class="has-mr-6">3.4</span>
+        <span>更換自己的Token</span>
+        </a></li><li>
+        <a class="is-flex" href="#kubeflow-部署">
+        <span class="has-mr-6">3.5</span>
+        <span>kubeflow 部署</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#部署完成後環境">
+        <span class="has-mr-6">4</span>
+        <span>部署完成後環境</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#運行JupyterHub測試">
+        <span class="has-mr-6">4.1</span>
+        <span>運行JupyterHub測試</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#Kubernetes-Addons">
+        <span class="has-mr-6">5</span>
+        <span>Kubernetes Addons</span>
+        </a></li><li>
+        <a class="is-flex" href="#停止並重新啟動microk8-測試環境為Mac">
+        <span class="has-mr-6">6</span>
+        <span>停止並重新啟動microk8 (測試環境為Mac)</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#暫時關閉vm運行">
+        <span class="has-mr-6">6.1</span>
+        <span>暫時關閉vm運行</span>
+        </a></li><li>
+        <a class="is-flex" href="#啟動vm運行">
+        <span class="has-mr-6">6.2</span>
+        <span>啟動vm運行</span>
+        </a></li><li>
+        <a class="is-flex" href="#查看multipass目前vm狀態">
+        <span class="has-mr-6">6.3</span>
+        <span>查看multipass目前vm狀態</span>
+        </a></li><li>
+        <a class="is-flex" href="#刪除microk8s">
+        <span class="has-mr-6">6.4</span>
+        <span>刪除microk8s</span>
+        </a></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
     
         
 

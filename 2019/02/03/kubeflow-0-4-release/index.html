@@ -16,7 +16,7 @@
 <meta property="og:description" content="Kubeflow 專案致力於使 ML Workflow 發展更具簡易性、可攜帶性和規模性。 Kubeflow於2017年底正式開源，並於2018年5月發布了首個0.1版本，至今 kubeflow 各項目發展迅速，而我參與 2018 KubeCon Shanghai 聆聽好幾場來自 各大企業與 Google等議程，分享 Kubeflow 導入企業實際應用情境，深刻感受到 kubeflow 在開源社區">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/kubeflow-deploy-0-4.png">
-<meta property="og:updated_time" content="2019-08-05T06:56:39.498Z">
+<meta property="og:updated_time" content="2019-08-07T08:05:36.513Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kubeflow v0.4.x 部署與概述">
 <meta name="twitter:description" content="Kubeflow 專案致力於使 ML Workflow 發展更具簡易性、可攜帶性和規模性。 Kubeflow於2017年底正式開源，並於2018年5月發布了首個0.1版本，至今 kubeflow 各項目發展迅速，而我參與 2018 KubeCon Shanghai 聆聽好幾場來自 各大企業與 Google等議程，分享 Kubeflow 導入企業實際應用情境，深刻感受到 kubeflow 在開源社區">
@@ -130,6 +130,10 @@
                     </a>
                     
                 
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="文章目錄" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
                 
                 
                 <a class="navbar-item search" title="搜尋" href="javascript:;">
@@ -468,6 +472,89 @@
 </div>
     
         
+<div class="card widget" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                文章目錄
+            </h3>
+            <ul class="menu-list"><ul class="menu-list"><li>
+        <a class="is-flex" href="#Related-Posts">
+        <span class="has-mr-6">1.1</span>
+        <span>Related Posts</span>
+        </a></li></ul><li>
+        <a class="is-flex" href="#Kubeflow-0-4提供了以下主要功能和更新：">
+        <span class="has-mr-6">2</span>
+        <span>Kubeflow 0.4提供了以下主要功能和更新：</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Reference">
+        <span class="has-mr-6">2.1</span>
+        <span>Reference</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#事前準備">
+        <span class="has-mr-6">3</span>
+        <span>事前準備</span>
+        </a><ul class="menu-list"><ul class="menu-list"><li>
+        <a class="is-flex" href="#部署-Kubeflow-之前，需要確保以下條件達成：">
+        <span class="has-mr-6">3.1.1</span>
+        <span>部署 Kubeflow 之前，需要確保以下條件達成：</span>
+        </a></li></ul></ul></li><li>
+        <a class="is-flex" href="#部署-Kubeflow">
+        <span class="has-mr-6">4</span>
+        <span>部署 Kubeflow</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#安裝ksonnet">
+        <span class="has-mr-6">4.1</span>
+        <span>安裝ksonnet</span>
+        </a></li><li>
+        <a class="is-flex" href="#部署儲存需求-PVC">
+        <span class="has-mr-6">4.2</span>
+        <span>部署儲存需求 PVC</span>
+        </a></li><li>
+        <a class="is-flex" href="#下載-Kubeflow-相關-repo">
+        <span class="has-mr-6">4.3</span>
+        <span>下載 Kubeflow 相關 repo</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#執行安裝腳本配置與部署">
+        <span class="has-mr-6">5</span>
+        <span>執行安裝腳本配置與部署</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#完成後檢查-Kubeflow-元件部署結果：">
+        <span class="has-mr-6">5.1</span>
+        <span>完成後檢查 Kubeflow 元件部署結果：</span>
+        </a></li><li>
+        <a class="is-flex" href="#補充-關閉-Kubeflow使用報告-可選擇">
+        <span class="has-mr-6">5.2</span>
+        <span>#補充 關閉 Kubeflow使用報告 (可選擇)</span>
+        </a></li><li>
+        <a class="is-flex" href="#訪問-Kubeflow-Web-UI">
+        <span class="has-mr-6">5.3</span>
+        <span>訪問 Kubeflow Web UI</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#測試-Jupyter-Notebook">
+        <span class="has-mr-6">6</span>
+        <span>測試 Jupyter Notebook</span>
+        </a></li><li>
+        <a class="is-flex" href="#Kubeflow-Pipelines-UI-待補">
+        <span class="has-mr-6">7</span>
+        <span>Kubeflow Pipelines UI (待補)</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#相關文章（補充">
+        <span class="has-mr-6">7.1</span>
+        <span># 相關文章（補充)</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#Summary">
+        <span class="has-mr-6">8</span>
+        <span>Summary</span>
+        </a></li><li>
+        <a class="is-flex" href="#Reference-1">
+        <span class="has-mr-6">9</span>
+        <span>Reference</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
     
         
 
