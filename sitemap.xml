@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yylin1.github.io/2019/02/03/kubeflow-0-4-release/</loc>
+    
+    <lastmod>2019-08-07T08:50:54.986Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yylin1.github.io/2019/01/28/portainer-set-tls/</loc>
+    
+    <lastmod>2019-08-07T08:10:50.680Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yylin1.github.io/2018/11/29/zabbix-api-trigger/</loc>
     
     <lastmod>2019-08-07T08:06:07.716Z</lastmod>
@@ -19,13 +33,6 @@
     <loc>http://yylin1.github.io/2018/12/14/snap-microk8s-deploy-kubernetes/</loc>
     
     <lastmod>2019-08-07T08:06:02.613Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yylin1.github.io/2019/01/28/portainer-set-tls/</loc>
-    
-    <lastmod>2019-08-07T08:05:58.703Z</lastmod>
     
   </url>
   
@@ -61,13 +68,6 @@
     <loc>http://yylin1.github.io/2018/10/23/kubeflow-deploy-v0.3.0/</loc>
     
     <lastmod>2019-08-07T08:05:39.677Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yylin1.github.io/2019/02/03/kubeflow-0-4-release/</loc>
-    
-    <lastmod>2019-08-07T08:05:36.513Z</lastmod>
     
   </url>
   

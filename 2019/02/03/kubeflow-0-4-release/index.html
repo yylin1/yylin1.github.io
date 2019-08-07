@@ -16,7 +16,7 @@
 <meta property="og:description" content="Kubeflow 專案致力於使 ML Workflow 發展更具簡易性、可攜帶性和規模性。 Kubeflow於2017年底正式開源，並於2018年5月發布了首個0.1版本，至今 kubeflow 各項目發展迅速，而我參與 2018 KubeCon Shanghai 聆聽好幾場來自 各大企業與 Google等議程，分享 Kubeflow 導入企業實際應用情境，深刻感受到 kubeflow 在開源社區">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/kubeflow-deploy-0-4.png">
-<meta property="og:updated_time" content="2019-08-07T08:05:36.513Z">
+<meta property="og:updated_time" content="2019-08-07T08:50:54.986Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kubeflow v0.4.x 部署與概述">
 <meta name="twitter:description" content="Kubeflow 專案致力於使 ML Workflow 發展更具簡易性、可攜帶性和規模性。 Kubeflow於2017年底正式開源，並於2018年5月發布了首個0.1版本，至今 kubeflow 各項目發展迅速，而我參與 2018 KubeCon Shanghai 聆聽好幾場來自 各大企業與 Google等議程，分享 Kubeflow 導入企業實際應用情境，深刻感受到 kubeflow 在開源社區">
@@ -170,7 +170,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    14 分鐘 閱讀文 (大約 2032 個字)
+                    14 分鐘 閱讀文 (大約 2030 個字)
                 </span>
                 
                 
@@ -232,10 +232,10 @@
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ks version</span><br><span class="line">ksonnet version: 0.13.1</span><br><span class="line">jsonnet version: v0.11.2</span><br><span class="line">client-go version: kubernetes-1.10.4</span><br></pre></td></tr></table></figure>
 <h3 id="部署儲存需求-PVC"><a href="#部署儲存需求-PVC" class="headerlink" title="部署儲存需求 PVC"></a>部署儲存需求 PVC</h3><p>在kubeflow v0.4版本中，Kubeflow 依賴 <code>katib-mysql</code>、<code>pipeline-mino</code>、<code>pipeline-mysql</code>這三個有狀態服務。而這些服務需要提前部署儲存空間：</p>
 <blockquote>
-<p>這邊為實驗快速部署，所以簡單建立三個<code>NFS PV</code>儲存空間來提供給三個服務使用:</p>
-<blockquote>
-<p>請更換自己環境中 {NFS-server IP} </p>
-</blockquote>
+<p>實驗為測試採用快速部署，所以簡單建立三個 <code>NFS PV</code> 儲存空間供給服務使用:</p>
+<ul>
+<li>請更換自己環境中 <code>{NFS-server IP}</code> </li>
+</ul>
 </blockquote>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> $(seq 1 3); <span class="hljs-keyword">do</span></span><br><span class="line">cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">    name: kubeflow-pv<span class="hljs-variable">$&#123;i&#125;</span></span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 20Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  nfs:</span><br><span class="line">    server: &#123;NFS-server IP&#125;</span><br><span class="line">    path: /nfs-data/kubeflow-pv</span><br><span class="line">EOF</span><br><span class="line"> <span class="hljs-keyword">done</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">persistentvolume/kubeflow-pv1 created</span><br><span class="line">persistentvolume/kubeflow-pv2 created</span><br><span class="line">persistentvolume/kubeflow-pv3 created</span><br></pre></td></tr></table></figure>
 <h3 id="下載-Kubeflow-相關-repo"><a href="#下載-Kubeflow-相關-repo" class="headerlink" title="下載 Kubeflow 相關 repo"></a>下載 Kubeflow 相關 repo</h3><p>本節將說明如何利用 ksonnet 來部署 Kubeflow 到 Kubernetes 叢集中</p>
@@ -316,31 +316,6 @@
         <h3 class="menu-label has-text-centered">喜歡這篇文章嗎? 贊助一下作者吧!</h3>
         <div class="buttons is-centered">
             
-                
-<div class="notification is-danger">
-    You forgot to set the <code>qrcode</code> for Alipay. Please set it in <code>_config.yml</code>.
-</div>
-
-                
-                
-<div class="notification is-danger">
-    You forgot to set the <code>qrcode</code> for Wechat. Please set it in <code>_config.yml</code>.
-</div>
-
-                
-                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
-
-<div class="notification is-danger">
-    You forgot to set the <code>business</code> and <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.
-</div>
-
-                
-                
-<div class="notification is-danger">
-    You forgot to set the <code>url</code> Patreon. Please set it in <code>_config.yml</code>.
-</div>
-
-                
         </div>
     </div>
 </div>
