@@ -16,7 +16,7 @@
 <meta property="og:description" content="本篇將介紹透過 OpenShift Ansible 來快速部署 RedHat OpenShift 社區版本 OKD (The Origin Community Distribution of Kubernetes) 的 release-3.11 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。 共同編輯: Hank Lin - 靠著13%技術與87">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/openshift%203.11.jpg">
-<meta property="og:updated_time" content="2019-08-12T15:54:32.886Z">
+<meta property="og:updated_time" content="2019-08-12T15:54:49.416Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
 <meta name="twitter:description" content="本篇將介紹透過 OpenShift Ansible 來快速部署 RedHat OpenShift 社區版本 OKD (The Origin Community Distribution of Kubernetes) 的 release-3.11 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。 共同編輯: Hank Lin - 靠著13%技術與87">
@@ -170,7 +170,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    16 分鐘 閱讀文 (大約 2442 個字)
+                    16 分鐘 閱讀文 (大約 2440 個字)
                 </span>
                 
                 
@@ -225,7 +225,7 @@
 </li>
 </ul>
 <figure class="highlight rust hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">                             +-------------------------+</span><br><span class="line">                             |          Pod            |</span><br><span class="line">                             | +---------------------+ |</span><br><span class="line">+---------------------+   +----+    Route(HAProxy)   | |</span><br><span class="line">|    Infra  node      |   |  | +---------------------+ |</span><br><span class="line">|---------------------|   |  |                         |</span><br><span class="line">|                     |   |  | +---------------------+ |</span><br><span class="line">|    <span class="hljs-number">192.168</span>.<span class="hljs-number">101.131</span>  +---+----+  Openshift Monitor  | |</span><br><span class="line">|                     |   |  | +---------------------+ |</span><br><span class="line">|paas02.paas.domain.tw|   |  |                         |</span><br><span class="line">|        (<span class="hljs-number">8</span>C/<span class="hljs-number">8</span>G)      |   |  | +---------------------+ |</span><br><span class="line">+---------------------+   +----+    Metrics Server   | |</span><br><span class="line">                             | +---------------------+ |</span><br><span class="line">                             +-------------------------+</span><br></pre></td></tr></table></figure>
-<h2 id="A-事前準備"><a href="#A-事前準備" class="headerlink" title="A. 事前準備"></a>A. 事前準備</h2><p>安裝前需要確認以下幾個項目：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認以下幾個項目：</p>
 <ul>
 <li>所有節點的網路之間可以互相溝通。</li>
 <li>部署節點對其他節點不需要 SSH 密碼即可登入。</li>
@@ -312,7 +312,7 @@
 <h3 id="安裝-Docker-Install-docker"><a href="#安裝-Docker-Install-docker" class="headerlink" title="安裝 Docker (Install docker)"></a>安裝 Docker (Install docker)</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw yum install docker-1.13.1 -y;</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw echo pupaas0$seq done;</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw systemctl enable docker;</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw systemctl restart docker ;</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw echo pupaas0$seq done;</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw docker info | grep Version;</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw echo pupaas0$seq done;</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 <h2 id="安裝-Ansible"><a href="#安裝-Ansible" class="headerlink" title="安裝 Ansible"></a>安裝 Ansible</h2><p>此部分於部署節點 (此實驗採用 <code>Master節點</code>） 啟用 EPEL 倉庫以安裝 Ansible</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> 全局禁用EPEL套件庫，以便在安裝的後續步驟中不會有狀況</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum -y install epel-release;</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum -y --enablerepo=epel install ansible pyOpenSSL;</span></span><br></pre></td></tr></table></figure>
-<h2 id="B-Openshift-Ansible-下載"><a href="#B-Openshift-Ansible-下載" class="headerlink" title="B. Openshift Ansible 下載"></a>B. Openshift Ansible 下載</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget https://github.com/openshift/openshift-ansible/archive/openshift-ansible-3.11.136-1.zip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum install unzip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> unzip openshift-ansible-3.11.136-1.zip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> openshift-ansible-openshift-ansible-3.11.136-1/</span></span><br><span class="line">...</span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> ..</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> cp openshift-ansible-openshift-ansible-3.11.136-1/ansible.cfg .</span></span><br></pre></td></tr></table></figure>
+<h2 id="Openshift-Ansible-下載"><a href="#Openshift-Ansible-下載" class="headerlink" title="Openshift Ansible 下載"></a>Openshift Ansible 下載</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget https://github.com/openshift/openshift-ansible/archive/openshift-ansible-3.11.136-1.zip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum install unzip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> unzip openshift-ansible-3.11.136-1.zip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> openshift-ansible-openshift-ansible-3.11.136-1/</span></span><br><span class="line">...</span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> ..</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> cp openshift-ansible-openshift-ansible-3.11.136-1/ansible.cfg .</span></span><br></pre></td></tr></table></figure>
 <h2 id="配置-Openshift-Ansible-「inventory-file」-描述"><a href="#配置-Openshift-Ansible-「inventory-file」-描述" class="headerlink" title="配置 Openshift Ansible 「inventory file」 描述"></a>配置 Openshift Ansible 「inventory file」 描述</h2><h2 id="Inventory"><a href="#Inventory" class="headerlink" title="Inventory"></a>Inventory</h2><ul>
 <li>Inventory 主要是設定整個Cluster 的重要角色</li>
 <li>這次的 Inventory 我們主要有幾個重點<ul>
@@ -545,9 +545,9 @@
         <span class="has-mr-6">2.3</span>
         <span>Infra Node</span>
         </a></li></ul></li><li>
-        <a class="is-flex" href="#A-事前準備">
+        <a class="is-flex" href="#事前準備">
         <span class="has-mr-6">3</span>
-        <span>A. 事前準備</span>
+        <span>事前準備</span>
         </a><ul class="menu-list"><li>
         <a class="is-flex" href="#設置主機名">
         <span class="has-mr-6">3.1</span>
@@ -585,9 +585,9 @@
         <span class="has-mr-6">6</span>
         <span>安裝 Ansible</span>
         </a></li><li>
-        <a class="is-flex" href="#B-Openshift-Ansible-下載">
+        <a class="is-flex" href="#Openshift-Ansible-下載">
         <span class="has-mr-6">7</span>
-        <span>B. Openshift Ansible 下載</span>
+        <span>Openshift Ansible 下載</span>
         </a></li><li>
         <a class="is-flex" href="#配置-Openshift-Ansible-「inventory-file」-描述">
         <span class="has-mr-6">8</span>
