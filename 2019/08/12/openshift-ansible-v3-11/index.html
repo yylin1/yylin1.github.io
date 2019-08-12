@@ -2,25 +2,25 @@
 <html  lang="zh">
 <head>
     <meta charset="utf-8">
-<title>利用 Minikube 快速測試部署 Kubeflow v0.5 - Yi Yang&#39;s Blog</title>
+<title>透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集 - Yi Yang&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 
 
-    <meta name="description" content="本文介紹如何在 Minikube 上運行 Kubeflow v0.5 基本安裝步驟 Minikube 會透過虛擬機（VM）運行簡單的單節點 Kubernetes 叢集 文章最後，你將擁有 Minikube 單節點kubernetes 叢集安裝以及Kubeflow的所有默認核心 Components 最後能夠訪問 kubeflow UIs 包含 Jupyter Notebook、katib、pip">
-<meta name="keywords" content="kubeflow,deploy,minikube,quickstart">
+    <meta name="description" content="本篇將介紹透過 OpenShift Ansible 來快速部署 RedHat OpenShift 社區版本 OKD (The Origin Community Distribution of Kubernetes) 的 release-3.11 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。 共同編輯: Hank Lin - 靠著13%技術與87">
+<meta name="keywords" content="openshift,ansible">
 <meta property="og:type" content="article">
-<meta property="og:title" content="利用 Minikube 快速測試部署 Kubeflow v0.5">
-<meta property="og:url" content="http://yylin1.github.io/2019/05/03/minikube-for-kubeflow/index.html">
+<meta property="og:title" content="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
+<meta property="og:url" content="http://yylin1.github.io/2019/08/12/openshift-ansible-v3-11/index.html">
 <meta property="og:site_name" content="Yi Yang&#39;s Blog">
-<meta property="og:description" content="本文介紹如何在 Minikube 上運行 Kubeflow v0.5 基本安裝步驟 Minikube 會透過虛擬機（VM）運行簡單的單節點 Kubernetes 叢集 文章最後，你將擁有 Minikube 單節點kubernetes 叢集安裝以及Kubeflow的所有默認核心 Components 最後能夠訪問 kubeflow UIs 包含 Jupyter Notebook、katib、pip">
+<meta property="og:description" content="本篇將介紹透過 OpenShift Ansible 來快速部署 RedHat OpenShift 社區版本 OKD (The Origin Community Distribution of Kubernetes) 的 release-3.11 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。 共同編輯: Hank Lin - 靠著13%技術與87">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="http://yylin1.github.io/images/minikube_for_kubeflow.jpg">
-<meta property="og:updated_time" content="2019-08-12T06:07:26.212Z">
+<meta property="og:image" content="http://yylin1.github.io/images/openshift%203.11.jpg">
+<meta property="og:updated_time" content="2019-08-12T15:41:50.479Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="利用 Minikube 快速測試部署 Kubeflow v0.5">
-<meta name="twitter:description" content="本文介紹如何在 Minikube 上運行 Kubeflow v0.5 基本安裝步驟 Minikube 會透過虛擬機（VM）運行簡單的單節點 Kubernetes 叢集 文章最後，你將擁有 Minikube 單節點kubernetes 叢集安裝以及Kubeflow的所有默認核心 Components 最後能夠訪問 kubeflow UIs 包含 Jupyter Notebook、katib、pip">
-<meta name="twitter:image" content="http://yylin1.github.io/images/minikube_for_kubeflow.jpg">
+<meta name="twitter:title" content="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
+<meta name="twitter:description" content="本篇將介紹透過 OpenShift Ansible 來快速部署 RedHat OpenShift 社區版本 OKD (The Origin Community Distribution of Kubernetes) 的 release-3.11 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。 共同編輯: Hank Lin - 靠著13%技術與87">
+<meta name="twitter:image" content="http://yylin1.github.io/images/openshift%203.11.jpg">
 
 
 
@@ -94,7 +94,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/artificial-intelligence.png" alt="利用 Minikube 快速測試部署 Kubeflow v0.5" height="28">
+                <img src="/images/artificial-intelligence.png" alt="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集" height="28">
             
             </a>
         </div>
@@ -152,7 +152,7 @@
     
     <div class="card-image">
         <span  class="image is-7by1">
-            <img class="thumbnail" src="/images/minikube_for_kubeflow.jpg" alt="利用 Minikube 快速測試部署 Kubeflow v0.5">
+            <img class="thumbnail" src="/images/openshift 3.11.jpg" alt="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
         </span>
     </div>
     
@@ -160,17 +160,17 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-05-03T15:46:54.000Z">2019-05-03</time>
+                <time class="level-item has-text-grey" datetime="2019-08-12T15:41:13.000Z">2019-08-12</time>
                 
                 <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
+                <a class="has-link-grey -link" href="/categories/Openshift/">Openshift</a>
                 </div>
                 
                 
                 <span class="level-item has-text-grey">
                     
                     
-                    12 分鐘 閱讀文 (大約 1840 個字)
+                    16 分鐘 閱讀文 (大約 2443 個字)
                 </span>
                 
                 
@@ -179,138 +179,172 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                利用 Minikube 快速測試部署 Kubeflow v0.5
+                透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集
             
         </h1>
         <div class="content">
-            <ul>
-<li>本文介紹如何在 Minikube 上運行 Kubeflow v0.5 基本安裝步驟</li>
-<li>Minikube 會透過虛擬機（VM）運行簡單的單節點 Kubernetes 叢集</li>
-<li>文章最後，你將擁有 Minikube 單節點kubernetes 叢集安裝以及Kubeflow的所有默認核心 Components</li>
-<li>最後能夠訪問 kubeflow UIs 包含 <code>Jupyter Notebook</code>、<code>katib</code>、<code>pipeline</code></li>
-</ul>
+            <p>本篇將介紹透過 <a href="https://github.com/openshift/openshift-ansible" target="_blank" rel="noopener">OpenShift Ansible</a> 來快速部署 RedHat OpenShift 社區版本 <code>OKD (The Origin Community Distribution of Kubernetes)</code> 的 <code>release-3.11</code> 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。</p>
+<p>共同編輯: <a href="https://github.com/chlin62" target="_blank" rel="noopener">Hank Lin - 靠著13%技術與87%嘴砲</a></p>
 <a id="more"></a>
-<p>此篇文章介紹「實驗環境」採用 <a href="https://github.com/kairen" target="_blank" rel="noopener">@Kyle Bai</a>  <code>修正過後的 minikube</code> 進行測試，如果環境資源充足想測試多節點 <code>minikube</code>，詳細可以透過參考文章步驟，快速建立多節點的 minikube 叢集：「<a href="https://k2r2bai.com/2019/01/22/kubernetes/deploy/minikube-multi-node/" target="_blank" rel="noopener">利用 Minikube 快速建立測試用 Kubernetes 叢集</a>」</p>
+<h2 id="實驗節點資訊"><a href="#實驗節點資訊" class="headerlink" title="實驗節點資訊"></a>實驗節點資訊</h2><p>本次安裝作業系統採用 <strong>CentOS 7</strong>，測試環境為實體主機：<br>| IP Address| Hostname | Sepc | Remark | Hard Disk Drive|<br>| ——–  | ——– | ——– | ——– |——–|<br>| 192.168.101.130 | paas01 | 8 core/ 8G| Master node| SSD 256 GB|<br>| 192.168.101.131 | paas02 | 8 core/ 8G| Infra node| HDD 1TB |<br>| 192.168.101.132 | paas03 | 8 core/ 8G| AP node| HDD 1TB |<br>| 192.168.101.133 | paas04 | 8 core/ 8G| AP node| HDD 500 GB |<br>| 192.168.101.134 | paas05 | 8 core/ 8G| AP node| HDD 500 GB |</p>
+<blockquote>
+<p>ISO: Centos-7-x86_64-Minimal-1810.iso</p>
+</blockquote>
+<h2 id="實驗-部署節點架構圖"><a href="#實驗-部署節點架構圖" class="headerlink" title="實驗-部署節點架構圖"></a>實驗-部署節點架構圖</h2><h3 id="OKD-System-Architecture"><a href="#OKD-System-Architecture" class="headerlink" title="OKD: System Architecture"></a>OKD: System Architecture</h3><ul>
+<li>這次部署的架構主要是針對 <code>small size</code> 的 Single Master and Infra node 的架構進行部署</li>
+<li>Production 環境建議採用 HA 架構的 OKD cluster</li>
+<li>所有進出 Cluster 流量會透過 Infra Node 進行流量進出，Web based (http/https and ws/wss) 會透過 Infra node 中的 HAProxy 進出，TCP based 的則透過 External IP</li>
+</ul>
+<figure class="highlight rust hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Route(Ingress Controller)            +---------------------+</span><br><span class="line">*.apps.paas.domain.tw                |    Master node      |</span><br><span class="line">  +----------------+                 |---------------------| Webconsole:</span><br><span class="line">  |                |                 |                     | https:<span class="hljs-comment">//webconsole.paas.domain.me</span></span><br><span class="line">  |    Internet    |                 |    <span class="hljs-number">192.168</span>.<span class="hljs-number">101.130</span>  |</span><br><span class="line">  |                |                 |                     | Cluster Console:</span><br><span class="line">  +-----^----+-----+                 |paas01.paas.domain.tw| https:<span class="hljs-comment">//console.apps.paas.domain.me</span></span><br><span class="line">        |    |                       |     (<span class="hljs-number">8</span>C/<span class="hljs-number">8</span>G, SSD)    |</span><br><span class="line">        |    |                       +---------+-----------+</span><br><span class="line">        |    |                                 |</span><br><span class="line">        |    | +---------------------+---------+-----------+----------------------+</span><br><span class="line">        |    | |                     |                     |                      |</span><br><span class="line">     +--+----v-+-----------+ +---------+-----------+ +---------+-----------+ +----------+----------+</span><br><span class="line">     |     Infra   node    | |      AP    node     | |      AP   node      | |      AP   node      |</span><br><span class="line">     |---------------------| |---------------------| |---------------------| |---------------------|</span><br><span class="line">     |                     | |                     | |                     | |                     |</span><br><span class="line">     |   <span class="hljs-number">192.168</span>.<span class="hljs-number">101.131</span>   | |    <span class="hljs-number">192.168</span>.<span class="hljs-number">101.132</span>  | |   <span class="hljs-number">192.168</span>.<span class="hljs-number">101.133</span>   | |    <span class="hljs-number">192.168</span>.<span class="hljs-number">101.134</span>  |</span><br><span class="line">     |                     | |                     | |                     | |                     |</span><br><span class="line">     |paas02.paas.domain.tw| |paas03.paas.domain.tw| |paas04.paas.domain.tw| |paas05.paas.domain.tw|</span><br><span class="line">     |       (<span class="hljs-number">8</span>C/<span class="hljs-number">8</span>G)       | |       (<span class="hljs-number">8</span>C/<span class="hljs-number">8</span>G)       | |        (<span class="hljs-number">8</span>C/<span class="hljs-number">8</span>G)      | |        (<span class="hljs-number">8</span>C/<span class="hljs-number">8</span>G)      |</span><br><span class="line">     +---------------------+ +---------------------+ +---------------------+ +---------------------+</span><br></pre></td></tr></table></figure>
+<h3 id="Master-Node"><a href="#Master-Node" class="headerlink" title="Master Node"></a>Master Node</h3><ul>
+<li>Master node 主要包含了三個 Core Componet (Control plane)<ul>
+<li><strong>ETCD</strong>: 用於保存cluster狀態及配置</li>
+<li><strong>API server</strong>: Kubernetes API service的驗證以及pod配置。另外也掌管 pod scheduling and 訊息同步</li>
+<li><strong>Conroller Manager Server</strong>: Controller Manager 主要透過ETCD上的資料對cluster 物件進行 replication controll，並透過 API 強制將物件執行至指定狀態</li>
+</ul>
+</li>
+<li>Control plane 在 OKD 3.10 之後會透過 static pod 的形式存在於 Master 中，它們的設定 yaml 檔會存在於 /etc/origin/node/pods 中，有必要時可以對其設定進行調整</li>
+</ul>
+<figure class="highlight rust hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">                             +-------------------------+</span><br><span class="line">                             | Control Plan Static Pod |</span><br><span class="line">                             | +---------------------+ |</span><br><span class="line">+---------------------+   +----+        ETCD         | |</span><br><span class="line">|     Master node     |   |  | +---------------------+ |</span><br><span class="line">|---------------------|   |  |                         |</span><br><span class="line">|                     |   |  | +---------------------+ |</span><br><span class="line">|    <span class="hljs-number">192.168</span>.<span class="hljs-number">101.130</span>  +---+----+     API Server      | |</span><br><span class="line">|                     |   |  | +---------------------+ |</span><br><span class="line">|paas01.paas.domain.tw|   |  |                         |</span><br><span class="line">|     (<span class="hljs-number">8</span>C/<span class="hljs-number">8</span>G, SSD)    |   |  | +---------------------+ |</span><br><span class="line">+---------------------+   +----+  Controller Server  | |</span><br><span class="line">                             | +---------------------+ |</span><br><span class="line">                             +-------------------------+</span><br></pre></td></tr></table></figure>
+<h3 id="Infra-Node"><a href="#Infra-Node" class="headerlink" title="Infra Node"></a>Infra Node</h3><ul>
+<li>Infra node目前規劃上主要會存在下列幾個Componets<ul>
+<li><strong>Route (HAProxy)</strong>: HAProxy 主要負責 HTTP/HTTPS based 的網路流量，Openshift 預設採用 HAProxy。 如果有 Nginx 需要也可透過 Nginx 將 HAProxy 置換成 Nginx ingress controller.</li>
+<li><strong>Openshift Monitor</strong>: 主要會透過 Cluster monitoring operator 去部署 prometheus and grafana</li>
+<li><strong>Metrics</strong>: kube-state-metrics，會負責監控 cluster metrics 並提供HPA 功能</li>
+</ul>
+</li>
+<li><p>Production 環境建議infra node 分拆角色</p>
 <ul>
-<li><strong>R-Ladies Taipei x Cloud Native Taiwan User Group Meetup 分享</strong><ul>
-<li>投影片：<a href="https://speakerdeck.com/yylin1/kubeflow-dui-yu-ji-qi-xue-xi-ping-tai-de-yuan-jing" target="_blank" rel="noopener">Kubeflow 對於機器學習平台的願景</a></li>
+<li>Ingress, Egress, External IP 相關 service 合併為一個 routing node 只負責流量控管</li>
+<li>Metrics Monitoring 相關 service 獨立出一個 Monitor node</li>
+<li>logging EFK 自己有自己的 logging node</li>
+</ul>
+<ul>
+<li>Remark: 因為resource不足的緣故，故沒有安裝EFK</li>
 </ul>
 </li>
 </ul>
-<hr>
-<h2 id="配置-Minikube-環境"><a href="#配置-Minikube-環境" class="headerlink" title="配置 Minikube 環境"></a>配置 Minikube 環境</h2><p><strong>首先請事先下載 Minikube、Virtualbox 與 kubectl 於當前實驗環境：</strong></p>
+<figure class="highlight rust hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">                             +-------------------------+</span><br><span class="line">                             |          Pod            |</span><br><span class="line">                             | +---------------------+ |</span><br><span class="line">+---------------------+   +----+    Route(HAProxy)   | |</span><br><span class="line">|    Infra  node      |   |  | +---------------------+ |</span><br><span class="line">|---------------------|   |  |                         |</span><br><span class="line">|                     |   |  | +---------------------+ |</span><br><span class="line">|    <span class="hljs-number">192.168</span>.<span class="hljs-number">101.131</span>  +---+----+  Openshift Monitor  | |</span><br><span class="line">|                     |   |  | +---------------------+ |</span><br><span class="line">|paas02.paas.domain.me|   |  |                         |</span><br><span class="line">|        (<span class="hljs-number">8</span>C/<span class="hljs-number">8</span>G)      |   |  | +---------------------+ |</span><br><span class="line">+---------------------+   +----+    Metrics Server   | |</span><br><span class="line">                             | +---------------------+ |</span><br><span class="line">                             +-------------------------+</span><br></pre></td></tr></table></figure>
+<h2 id="A-事前準備"><a href="#A-事前準備" class="headerlink" title="A. 事前準備"></a>A. 事前準備</h2><p>安裝前需要確認以下幾個項目：</p>
 <ul>
-<li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">Virtual Box</a></li>
-<li><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/" target="_blank" rel="noopener">kubectl</a></li>
-</ul>
-<p><strong>Minikube （請依據自己當下實驗環境選擇下載）</strong></p>
-<ul>
-<li><a href="https://github.com/kairen/minikube/releases/download/v0.33.1-multi-node/minikube-linux-amd64" target="_blank" rel="noopener">Linux</a></li>
-<li><a href="https://github.com/kairen/minikube/releases/download/v0.33.1-multi-node/minikube-darwin-amd64" target="_blank" rel="noopener">Mac OS X</a></li>
-<li><a href="https://github.com/kairen/minikube/releases/download/v0.33.1-multi-node/minikube-windows-amd64.exe" target="_blank" rel="noopener">Windows</a></li>
+<li>所有節點的網路之間可以互相溝通。</li>
+<li>部署節點對其他節點不需要 SSH 密碼即可登入。</li>
+<li>所有節點都擁有 <code>root</code> 權限，並且不需要輸入密碼。</li>
+<li>所有節點需要安裝 Python，CentOS 預設應該都會裝。</li>
+<li>所有節點需要設定 /etc/hosts 解析到所有主機。</li>
+<li>部署節點(Basion主機) 需要安裝 Ansible。</li>
 </ul>
 <blockquote>
-<ul>
-<li><strong>IMPORTANT</strong>: 測試機器記得開啟 VT-x or AMD-v virtualization.</li>
-<li>Windows 使用者建議安裝 <a href="https://gitbook.tw/chapters/environment/install-git-in-windows.html" target="_blank" rel="noopener">Git bash</a> or <a href="https://cmder.net/" target="_blank" rel="noopener">Cmder</a> 來操作。</li>
-</ul>
+<p>建議部署這邊可以透過一台在同網域的 <code>Basion主機</code> 直接操作連線至多台主機環境</p>
 </blockquote>
-<hr>
-<h3 id="啟動-Minikube"><a href="#啟動-Minikube" class="headerlink" title="啟動 Minikube"></a>啟動 Minikube</h3><p>如果自己機器已經有 Minikube 的話，就把上面的 binary 檔放任意方便你執行的位置，然後再開始前請先刪除 Home 目錄的<code>.minikube</code>資料夾：</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> rm -rf <span class="hljs-variable">$HOME</span>/.minikube</span></span><br></pre></td></tr></table></figure>
-<p>當刪除上面檔案後，即可透過 Minikube 啟動單節點叢集:</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> minikube start --memory=8192 --cpus=4 --disk-size=40g</span></span><br><span class="line"></span><br><span class="line">// 完成啟動部署後顯示</span><br><span class="line">Everything looks great. Please enjoy minikube!</span><br></pre></td></tr></table></figure>
-<blockquote>
-<ul>
-<li><code>--vm-driver</code> 可以選擇使用其他 VM driver 來啟動虛擬機，如 xhyve、hyperv、hyperkit 與 kvm2 等等。</li>
+<h3 id="設置主機名"><a href="#設置主機名" class="headerlink" title="設置主機名"></a>設置主機名</h3><p>為方便識別裸機機器對應名稱，這邊修改每台實體機 <code>hostname</code></p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">#  Master</span></span><br><span class="line">$　hostnamectl <span class="hljs-built_in">set</span>-hostname paas01.paas.domain.tw</span><br><span class="line"><span class="hljs-comment">#  Infra node</span></span><br><span class="line">$　hostnamectl <span class="hljs-built_in">set</span>-hostname paas02.paas.domain.tw</span><br><span class="line"><span class="hljs-comment">#  AP node</span></span><br><span class="line">$　hostnamectl <span class="hljs-built_in">set</span>-hostname paas01.paas.domain.tw</span><br><span class="line">$　hostnamectl <span class="hljs-built_in">set</span>-hostname paas01.paas.domain.tw</span><br><span class="line">$　hostnamectl <span class="hljs-built_in">set</span>-hostname paas01.paas.domain.tw</span><br></pre></td></tr></table></figure>
+<h3 id="Network-Setting-並設置-「DNS-Server」"><a href="#Network-Setting-並設置-「DNS-Server」" class="headerlink" title="Network Setting 並設置 「DNS Server」"></a>Network Setting 並設置 「DNS Server」</h3><p>配置 CentOS 系統網路，透過CLI設定配置當前實體機網卡(ifcfg-xxx):</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> ifcfg-em1 是網卡名稱，如果是 eth0 修改對應網卡 ifcfg-eth0</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> vim /etc/sysconfig/network-scripts/ifcfg-em1</span></span><br><span class="line"></span><br><span class="line">TYPE=Ethernet</span><br><span class="line">PROXY_METHOD=none</span><br><span class="line">BROWSER_ONLY=no</span><br><span class="line">BOOTPROTO=none</span><br><span class="line">DEFROUTE=yes</span><br><span class="line">IPV4_FAILURE_FATAL=no</span><br><span class="line">IPV6INIT=yes</span><br><span class="line">IPV6_AUTOCONF=yes</span><br><span class="line">IPV6_DEFROUTE=yes</span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line">NAME=em1</span><br><span class="line">UUID=7c200433-ead4-43e3-a571-0dfeb0515a96</span><br><span class="line">DEVICE=em1</span><br><span class="line">ONBOOT=yes</span><br><span class="line">IPADDR=192.168.101.XXX　　　　</span><br><span class="line">PREFIX=24</span><br><span class="line">GATEWAY=192.168.101.254</span><br><span class="line">DNS1=8.8.8.8</span><br><span class="line">IPV6_PRIVACY=no</span><br><span class="line">DOMAIN=paas.domain.tw</span><br></pre></td></tr></table></figure>
+<h3 id="設定完後重啟-NetworkManager"><a href="#設定完後重啟-NetworkManager" class="headerlink" title="設定完後重啟 NetworkManager"></a>設定完後重啟 NetworkManager</h3><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl restart NetworkManager</span><br><span class="line">$ cat /etc/resolv.conf </span><br><span class="line"></span><br><span class="line">search paas.domain.tw <span class="hljs-comment"># restart後會增加cluster.local</span></span><br><span class="line">nameserver 8.8.8.8</span><br></pre></td></tr></table></figure>
+<h3 id="Bastion-node-設定-節點設置免-SSH-密碼"><a href="#Bastion-node-設定-節點設置免-SSH-密碼" class="headerlink" title="Bastion node 設定 (節點設置免 SSH 密碼)"></a>Bastion node 設定 (節點設置免 SSH 密碼)</h3><ul>
+<li>在部署環境建議透過 Bastion 的方式進行 Cluster部署，Bastion 可以是一台Notebook 也可以是一台固定的機器，最主要我們會透過Bastion機對整個 Cluster進行部署及操作</li>
+<li>在接下來的部署，我們會統一在 Bastion 機上面進行 Inventory 撰寫以及透過ansible 建置 Openshift</li>
+<li>在撒 ansible playbook 前，因為 ansible 會透過 ssh 對 cluster machine 進行指令操作，所以我們要先對 cluster nodes 進行 ssh 免密碼登入設定</li>
 </ul>
-</blockquote>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kubectl -n kube-system get po</span></span><br><span class="line">NAME                               READY     STATUS    RESTARTS   AGE</span><br><span class="line">calico-node-tcdmg                  2/2       Running   0          92s</span><br><span class="line">coredns-86c58d9df4-27ktl           1/1       Running   0          96s</span><br><span class="line">coredns-86c58d9df4-6gj4x           1/1       Running   0          96s</span><br><span class="line">etcd-minikube                      1/1       Running   0          45s</span><br><span class="line">kube-addon-manager-minikube        1/1       Running   0          114s</span><br><span class="line">kube-apiserver-minikube            1/1       Running   0          67s</span><br><span class="line">kube-controller-manager-minikube   1/1       Running   0          74s</span><br><span class="line">kube-proxy-pthlp                   1/1       Running   0          96s</span><br><span class="line">kube-scheduler-minikube            1/1       Running   0          60s</span><br><span class="line">storage-provisioner                1/1       Running   0          83s</span><br></pre></td></tr></table></figure>
-<p>確認節點處於 Ready 狀態：<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kubectl get no</span></span><br><span class="line">NAME       STATUS    ROLES     AGE       VERSION</span><br><span class="line">minikube   Ready     master    2m33s     v1.13.2</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kubectl get cs</span></span><br><span class="line">NAME                 STATUS    MESSAGE              ERROR</span><br><span class="line">scheduler            Healthy   ok</span><br><span class="line">controller-manager   Healthy   ok</span><br><span class="line">etcd-0               Healthy   &#123;"health": "true"&#125;</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h3 id="安裝-Ksonnet"><a href="#安裝-Ksonnet" class="headerlink" title="安裝 Ksonnet"></a>安裝 Ksonnet</h3><p><a href="https://ksonnet.io/" target="_blank" rel="noopener">Ksonnet</a> 是一個命令工具，組件配置參數按照環境 <code>env</code> 來組成，可以更輕鬆地管理由多個複雜部署到相應的 Cluster，簡化編寫和部署 component。</p>
-<ul>
-<li>Linux </li>
-</ul>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.0/ks_0.13.0_linux_amd64.tar.gz</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> tar xvf ks_0.13.0_linux_amd64.tar.gz</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo cp ks_0.13.0_linux_amd64 /usr/<span class="hljs-built_in">local</span>/bin/</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> chmod +x ks</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ks version</span></span><br><span class="line">ksonnet version: 0.13.0</span><br><span class="line">jsonnet version: v0.11.2</span><br><span class="line">client-go version: kubernetes-1.10.4</span><br></pre></td></tr></table></figure>
-<ul>
-<li>Mac OS X</li>
-</ul>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> brew install ksonnet/tap/ks</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>補充官網: <a href="https://www.kubeflow.org/docs/components/ksonnet/" target="_blank" rel="noopener">kubeflow 安裝 ksonnet 說明</a></p>
-</blockquote>
-<hr>
-<h3 id="透過-kfctl-部署-kubeflow-v0-5"><a href="#透過-kfctl-部署-kubeflow-v0-5" class="headerlink" title="透過 kfctl 部署 kubeflow v0.5"></a>透過 kfctl 部署 kubeflow v0.5</h3><p>在 kubeflow v0.5 版本不在是透過 script <code>kfctl.sh</code> 腳本執行，改成透過 golang 所生成的 binary file <code>kfctl</code> 來進行kubeflow部署。</p>
-<ul>
-<li>下載 kfctl release 版本 <a href="https://github.com/kubeflow/kubeflow/releases/" target="_blank" rel="noopener">Kubeflow releases page</a>.</li>
-</ul>
-<p><img src="https://i.imgur.com/rb6eCGI.png" alt=""></p>
-<blockquote>
-<p>請依照自己當前環境下載 kfctl binary </p>
-</blockquote>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kfctl_&lt;release tag&gt;_&lt;platform&gt;.tar.gz</span><br></pre></td></tr></table></figure>
-<ul>
-<li>Mac OS X </li>
-</ul>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget kfctl_v0.5.0_darwin.tar.gz</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> tar -xvf kfctl_v0.5.0_darwin.tar.gz</span></span><br><span class="line">x ./kfctl</span><br></pre></td></tr></table></figure>
-<ul>
-<li>配置 <code>kfctl</code> binary 執行路徑</li>
-<li>定義 {KFAPP} 資料夾目錄名稱</li>
-</ul>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">export</span> PATH=<span class="hljs-variable">$PATH</span>:&lt;path to kfctl <span class="hljs-keyword">in</span> your kubeflow installation&gt;</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> Default uses IAP. 可自行定義</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">export</span> KFAPP=kubeflow</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">1 </span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl init <span class="hljs-variable">$&#123;KFAPP&#125;</span></span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">2 </span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> <span class="hljs-variable">$&#123;KFAPP&#125;</span></span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl generate all -V</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">3 </span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl apply all -V</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>補充：<a href="https://www.kubeflow.org/docs/started/getting-started-k8s/#deploy-kubeflow" target="_blank" rel="noopener">kubeflow 官網詳細 deploy 資訊</a></p>
-</blockquote>
-<hr>
-<h3 id="1-初始化-kubeflow-components"><a href="#1-初始化-kubeflow-components" class="headerlink" title="#1 初始化 kubeflow components"></a>#1 初始化 kubeflow components</h3><p>執行 <code>kfctl init ${KFAPP}</code> 生成 <strong>app.yaml</strong> 定義中包含 components、package 配置</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl init <span class="hljs-variable">$&#123;KFAPP&#125;</span></span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> cat kubeflow/app.yaml</span></span><br><span class="line"></span><br><span class="line">apiVersion: kfdef.apps.kubeflow.org/v1alpha1</span><br><span class="line">kind: KfDef</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  name: kubeflow</span><br><span class="line">  namespace: kubeflow</span><br><span class="line">spec:</span><br><span class="line">  appdir: /Users/yylin/kubeflow/v0.5.0/minikube/kubeflow</span><br><span class="line">  componentParams:</span><br><span class="line">    ambassador:</span><br><span class="line">    - name: ambassadorServiceType</span><br><span class="line">      value: NodePort</span><br><span class="line">  components:</span><br><span class="line">  - metacontroller</span><br><span class="line">  - ambassador</span><br><span class="line">  - argo</span><br><span class="line">  - centraldashboard</span><br><span class="line">  - jupyter-web-app</span><br><span class="line">  - katib</span><br><span class="line">  - notebook-controller</span><br><span class="line">  - pipeline</span><br><span class="line">  - pytorch-operator</span><br><span class="line">  - tensorboard</span><br><span class="line">  - tf-job-operator</span><br><span class="line">  packages:</span><br><span class="line">  - argo</span><br><span class="line">  - common</span><br><span class="line">  - examples</span><br><span class="line">  - gcp</span><br><span class="line">  - jupyter</span><br><span class="line">  - katib</span><br><span class="line">  - metacontroller</span><br><span class="line">  - modeldb</span><br><span class="line">  - mpi-job</span><br><span class="line">  - pipeline</span><br><span class="line">  - pytorch-job</span><br><span class="line">  - seldon</span><br><span class="line">  - tensorboard</span><br><span class="line">  - tf-serving</span><br><span class="line">  - tf-training</span><br><span class="line">  repo: /Users/yylin/kubeflow/v0.5.0/minikube/kubeflow/.cache/master/kubeflow</span><br><span class="line">  useBasicAuth: false</span><br><span class="line">  useIstio: false</span><br><span class="line">  version: master</span><br><span class="line">status: &#123;&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h3 id="2-生成config"><a href="#2-生成config" class="headerlink" title="#2 生成config"></a>#2 生成config</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> <span class="hljs-variable">$&#123;KFAPP&#125;</span></span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl generate all -V</span></span><br></pre></td></tr></table></figure>
-<p>創建 <code>config files</code> 定義各種資源，components 部署相關資訊會透過<code>.jsonnet</code>來執行</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ tree -L 3</span><br><span class="line">.</span><br><span class="line">├── app.yaml</span><br><span class="line">└── ks_app</span><br><span class="line">    ├── app.yaml</span><br><span class="line">    ├── components</span><br><span class="line">    │   ├── ambassador.jsonnet</span><br><span class="line">    │   ├── argo.jsonnet</span><br><span class="line">    │   ├── centraldashboard.jsonnet</span><br><span class="line">    │   ├── jupyter-web-app.jsonnet</span><br><span class="line">    │   ├── katib.jsonnet</span><br><span class="line">    │   ├── metacontroller.jsonnet</span><br><span class="line">    │   ├── notebook-controller.jsonnet</span><br><span class="line">    │   ├── params.libsonnet</span><br><span class="line">    │   ├── pipeline.jsonnet</span><br><span class="line">    │   ├── pytorch-operator.jsonnet</span><br><span class="line">    │   ├── tensorboard.jsonnet</span><br><span class="line">    │   └── tf-job-operator.jsonnet</span><br><span class="line">    ├── environments</span><br><span class="line">    │   ├── base.libsonnet</span><br><span class="line">    │   └── default</span><br><span class="line">    ├── lib</span><br><span class="line">    │   └── ksonnet-lib</span><br><span class="line">    └── vendor</span><br><span class="line">        └── kubeflow</span><br><span class="line">        </span><br><span class="line">8 directories, 15 files</span><br></pre></td></tr></table></figure>
-<hr>
-<h3 id="3-部署"><a href="#3-部署" class="headerlink" title="#3 部署"></a>#3 部署</h3><p>最後等待部署完成，這部分會花比較長的時間，過程會需要安裝 <code>Components</code>所需要的Container (依照環境網路，所有Images下載部署完成時間約20~30分鐘)</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl apply all -V</span></span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">INFO[0190] All components apply succeeded                filename="ksonnet/ksonnet.go:192"</span><br></pre></td></tr></table></figure>
-<ul>
-<li>完成 kubeflow 部署後會顯示 <code>All components apply succeeded</code></li>
-<li>確認環境狀態</li>
-</ul>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kubectl -n kubeflow get pod</span></span><br><span class="line">NAME                                                       READY     STATUS    RESTARTS   AGE</span><br><span class="line">ambassador-b4d9cdb8-mng2c                                  1/1       Running   0          42m</span><br><span class="line">ambassador-b4d9cdb8-srj7k                                  1/1       Running   0          42m</span><br><span class="line">ambassador-b4d9cdb8-zlxpv                                  1/1       Running   0          42m</span><br><span class="line">argo-ui-cf5f88f78-d5h5d                                    1/1       Running   0          41m</span><br><span class="line">centraldashboard-c967f47b4-5xc8c                           1/1       Running   0          41m</span><br><span class="line">jupyter-web-app-7cc9c874bb-gzkfb                           1/1       Running   0          41m</span><br><span class="line">katib-ui-7c6887b55f-rbbbc                                  1/1       Running   0          41m</span><br><span class="line">metacontroller-0                                           1/1       Running   0          42m</span><br><span class="line">minio-8ccf48d9d-h69r6                                      1/1       Running   0          40m</span><br><span class="line">ml-pipeline-7885bc55dd-txmmz                               1/1       Running   0          40m</span><br><span class="line">ml-pipeline-persistenceagent-5564f6f75f-vpmhm              1/1       Running   1          40m</span><br><span class="line">ml-pipeline-scheduledworkflow-785bc5455c-l9mqn             1/1       Running   0          40m</span><br><span class="line">ml-pipeline-ui-66bf476679-xm4pm                            1/1       Running   0          40m</span><br><span class="line">ml-pipeline-viewer-controller-deployment-c84779fc5-p9ncm   1/1       Running   0          40m</span><br><span class="line">mysql-ffc889689-mldkf                                      1/1       Running   0          40m</span><br><span class="line">notebooks-controller-767b89b4d8-z5qj5                      1/1       Running   0          40m</span><br><span class="line">pytorch-operator-6cd9dbf586-7zwhp                          1/1       Running   0          39m</span><br><span class="line">studyjob-controller-855c6d8f84-f88fr                       1/1       Running   0          41m</span><br><span class="line">tensorboard-5b57bff466-rdjkc                               1/1       Running   0          39m</span><br><span class="line">tf-job-dashboard-6bddf98bc8-zzw7z                          1/1       Running   0          39m</span><br><span class="line">tf-job-operator-68455999cc-2w7vv                           1/1       Running   0          39m</span><br><span class="line">vizier-core-ccc5d9f5c-hpww6                                1/1       Running   0          41m</span><br><span class="line">vizier-core-rest-555957f4dc-tt59h                          1/1       Running   0          41m</span><br><span class="line">vizier-db-86dc7d89c5-fxcwk                                 1/1       Running   0          41m</span><br><span class="line">vizier-suggestion-bayesianoptimization-775474d6c9-xg4m8    1/1       Running   0          41m</span><br><span class="line">vizier-suggestion-grid-85d49b956f-ttqq2                    1/1       Running   0          41m</span><br><span class="line">vizier-suggestion-hyperband-54567d484f-v6jrb               1/1       Running   0          41m</span><br><span class="line">vizier-suggestion-random-64b5867867-wctrv                  1/1       Running   0          41m</span><br><span class="line">workflow-controller-cf79dfbff-j5n8x                        1/1       Running   0          41m</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="總整理-理解部署過程"><a href="#總整理-理解部署過程" class="headerlink" title="總整理-理解部署過程"></a>總整理-理解部署過程</h2><p>部署過程由四個 <code>CLI</code> 命令執行完成:</p>
-<ul>
-<li><p><strong>init</strong> - 初始化 kubeflow 安裝相關設定.</p>
-<ul>
-<li>生成 <strong>app.yaml</strong> 定義中包含 components、package 配置</li>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ssh-keygen </span></span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file in which to save the key (/root/.ssh/id_rsa): </span><br><span class="line">Enter passphrase (empty for no passphrase): </span><br><span class="line">Enter same passphrase again: </span><br><span class="line">Your identification has been saved in /root/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved in /root/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:YWid3TtIfGyFM8MsaZf1YYp9RcgC60plBJrhPNqEEDk root@basion.paas.nctu.me</span><br><span class="line">The key's randomart image is:</span><br><span class="line">+---[RSA 2048]----+</span><br><span class="line">|  oo  . ..o= =o=o|</span><br><span class="line">|  E. + * =++&amp;.=.o|</span><br><span class="line">|   .. X =.B+=B ..|</span><br><span class="line">|     = o * + ..  |</span><br><span class="line">|    . . S o o    |</span><br><span class="line">|       . .   .   |</span><br><span class="line">|        .        |</span><br><span class="line">|                 |</span><br><span class="line">|                 |</span><br><span class="line">+----[SHA256]-----+</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">    ssh-copy-id root@paas0$seq.paas.domain.tw; \</span><br><span class="line">    echo paas0$seq;\</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"><span class="hljs-built_in">test</span> ssh connection</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">    ssh root@paas0$seq.paas.domain.tw echo paas0$seq; \</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="檢查-SELinux-是否開啟-Enforcing-SELinux"><a href="#檢查-SELinux-是否開啟-Enforcing-SELinux" class="headerlink" title="檢查 SELinux 是否開啟 (Enforcing SELinux)"></a>檢查 SELinux 是否開啟 (Enforcing SELinux)</h3><p>要安裝 OpenShift 或是 OKD，都必須 啟用 SELinux，否則安裝會失敗。必須設定 SELINUX=enforcing 與 SELINUXTYPE=targeted。</p>
+<p>修改方式如下：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> cat /etc/selinux/config</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> enforcing</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> seenforcing</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> selinuxenabled</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sestatus</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> cat /etc/selinux/config</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> This file controls the state of SELinux on the system.</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> SELINUX= can take one of these three values:</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">     enforcing - SELinux security policy is enforced.</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">     permissive - SELinux prints warnings instead of enforcing.</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">     disabled - No SELinux policy is loaded.</span></span><br><span class="line">SELINUX=enforcing</span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> SELINUXTYPE= can take one of three values:</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">     targeted - Targeted processes are protected,</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">     minimum - Modification of targeted policy. Only selected processes are protected.</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">     mls - Multi Level Security protection.</span></span><br><span class="line">SELINUXTYPE=targeted</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">    ssh root@paas0$seq.paas.domain.tw sestatus; \</span><br><span class="line">    echo paas0$seq;\</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h2 id="配置-DNS-設定"><a href="#配置-DNS-設定" class="headerlink" title="配置 DNS 設定"></a>配置 DNS 設定</h2><p>此次實驗請於 Domain 提供平台，設置「區域檔紀錄」類型 A 配置每個節點如下配置：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Hostname</th>
+<th>Type</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>192.168.101.130</td>
+<td>paas01.paas.domain.tw</td>
+<td>A</td>
+<td>3600</td>
+</tr>
+<tr>
+<td>192.168.101.131</td>
+<td>paas02.paas.domain.tw</td>
+<td>A</td>
+<td>3600</td>
+</tr>
+<tr>
+<td>192.168.101.132</td>
+<td>paas03.paas.domain.tw</td>
+<td>A</td>
+<td>3600</td>
+</tr>
+<tr>
+<td>192.168.101.133</td>
+<td>paas04.paas.domain.tw</td>
+<td>A</td>
+<td>3600</td>
+</tr>
+<tr>
+<td>192.168.101.134</td>
+<td>paas05.paas.domain.tw</td>
+<td>A</td>
+<td>3600</td>
+</tr>
+<tr>
+<td>192.168.101.131</td>
+<td>*.apps.paas.domain.tw</td>
+<td>A</td>
+<td>3600</td>
+</tr>
+<tr>
+<td>192.168.101.130</td>
+<td>webconsole.paas.domain.tw</td>
+<td>A</td>
+<td>3600</td>
+</tr>
+</tbody>
+</table>
+<p><strong>remark</strong>: 部分DNS service 有提供設定wildcard domain 的服務，如果沒有提供的話，建議之後在上面透過Route 進出的apps，可以透過正向表列方式將domain指向 infra node</p>
+<h2 id="安裝依賴套件-Install-dependency-packages"><a href="#安裝依賴套件-Install-dependency-packages" class="headerlink" title="安裝依賴套件 (Install dependency packages)"></a>安裝依賴套件 (Install dependency packages)</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">    ssh root@paas0$seq.paas.domain.tw  yum install wget git net-tools bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct bash-completion.noarch bash-completion-extras.noarch python-passlib NetworkManager -y</span><br><span class="line">    echo paas0$seq;\</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="安裝-Docker-Install-docker"><a href="#安裝-Docker-Install-docker" class="headerlink" title="安裝 Docker (Install docker)"></a>安裝 Docker (Install docker)</h3><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw yum install docker-1.13.1 -y;</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw echo pupaas0$seq done;</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw systemctl enable docker;</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw systemctl restart docker ;</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw echo pupaas0$seq done;</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-keyword">for</span> seq <span class="hljs-keyword">in</span> &#123;1..5&#125;;</span></span><br><span class="line">do</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw docker info | grep Version;</span><br><span class="line">ssh root@paas0$seq.paas.domain.tw echo pupaas0$seq done;</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h2 id="安裝-Ansible"><a href="#安裝-Ansible" class="headerlink" title="安裝 Ansible"></a>安裝 Ansible</h2><p>此部分於部署節點 (此實驗採用 <code>Master節點</code>） 啟用 EPEL 倉庫以安裝 Ansible</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> 全局禁用EPEL套件庫，以便在安裝的後續步驟中不會有狀況</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum -y install epel-release;</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum -y --enablerepo=epel install ansible pyOpenSSL;</span></span><br></pre></td></tr></table></figure>
+<h2 id="B-Openshift-Ansible-下載"><a href="#B-Openshift-Ansible-下載" class="headerlink" title="B. Openshift Ansible 下載"></a>B. Openshift Ansible 下載</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget https://github.com/openshift/openshift-ansible/archive/openshift-ansible-3.11.136-1.zip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum install unzip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> unzip openshift-ansible-3.11.136-1.zip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> openshift-ansible-openshift-ansible-3.11.136-1/</span></span><br><span class="line">...</span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> ..</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> cp openshift-ansible-openshift-ansible-3.11.136-1/ansible.cfg .</span></span><br></pre></td></tr></table></figure>
+<h2 id="配置-Openshift-Ansible-「inventory-file」-描述"><a href="#配置-Openshift-Ansible-「inventory-file」-描述" class="headerlink" title="配置 Openshift Ansible 「inventory file」 描述"></a>配置 Openshift Ansible 「inventory file」 描述</h2><h2 id="Inventory"><a href="#Inventory" class="headerlink" title="Inventory"></a>Inventory</h2><ul>
+<li>Inventory 主要是設定整個Cluster 的重要角色</li>
+<li>這次的 Inventory 我們主要有幾個重點<ul>
+<li><strong>Core Settings</strong>: 主要 core componets 的設定</li>
+<li><strong>Container Runtime Setting</strong>: 這次我們主要會將Container runtime 轉換為RedHat 的另一個 Container runtime 專案  <a href="https://cri-o.io/" target="_blank" rel="noopener">CRIO</a></li>
+<li><strong>CA Expired Date Setting</strong>: 將憑證日期延長至20年</li>
+<li>因為部分的 add-on 有 persistent volume 需要(e.g. EFK)，其餘設定都暫時先用設定，夠過後續安裝的方式安裝。</li>
 </ul>
 </li>
-<li><p><strong>generate</strong> - 創建 <code>config files</code> 定義各種資源</p>
+</ul>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">#reate an OSEv3 group that contains the masters and nodes groups</span></span><br><span class="line">[OSEv3:children]</span><br><span class="line">masters</span><br><span class="line">nodes</span><br><span class="line">etcd</span><br><span class="line"><span class="hljs-comment">#</span></span><br><span class="line"><span class="hljs-comment"># # Set variables common for all OSEv3 hosts</span></span><br><span class="line">[OSEv3:vars]</span><br><span class="line"><span class="hljs-comment">##</span></span><br><span class="line">openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability,package_version</span><br><span class="line"><span class="hljs-comment">## # SSH user, this user should allow ssh based auth without requiring a password</span></span><br><span class="line">ansible_ssh_user=root</span><br><span class="line"></span><br><span class="line">debug_level=2</span><br><span class="line"><span class="hljs-comment">##</span></span><br><span class="line"><span class="hljs-comment">#Core Settings</span></span><br><span class="line"><span class="hljs-comment">#-----------------------------------------------------</span></span><br><span class="line">openshift_image_tag=<span class="hljs-string">"v3.11.0"</span></span><br><span class="line">openshift_pkg_version=<span class="hljs-string">"-3.11.0-1.el7.git.0.62803d0"</span></span><br><span class="line">openshift_version=<span class="hljs-string">"3.11.0"</span></span><br><span class="line">openshift_release=<span class="hljs-string">"3.11.0"</span></span><br><span class="line">openshift_master_default_subdomain=apps.paas.domain.tw</span><br><span class="line">openshift_deployment_type=origin</span><br><span class="line">openshift_hosted_infra_selector=<span class="hljs-string">""</span></span><br><span class="line">openshift_master_cluster_hostname=webconsole.paas.domain.tw</span><br><span class="line">openshift_master_cluster_public_hostname=webconsole.paas.domain.tw</span><br><span class="line">openshift_master_identity_providers=[&#123;<span class="hljs-string">'name'</span>: <span class="hljs-string">'htpasswd_auth'</span>, <span class="hljs-string">'login'</span>: <span class="hljs-string">'true'</span>, <span class="hljs-string">'challenge'</span>: <span class="hljs-string">'true'</span>, <span class="hljs-string">'kind'</span>: <span class="hljs-string">'HTPasswdPasswordIdentityProvider'</span>&#125;]</span><br><span class="line">openshift_master_console_port=8443</span><br><span class="line">openshift_master_api_port=8443</span><br><span class="line"><span class="hljs-comment">#-----------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">#Container runtime setting</span></span><br><span class="line"><span class="hljs-comment">#-----------------------------------------------------</span></span><br><span class="line"><span class="hljs-comment">#if you wanna change the crio</span></span><br><span class="line"><span class="hljs-comment"># https://docs.openshift.com/container-platform/3.11/crio/crio_runtime.html</span></span><br><span class="line">openshift_use_crio=True</span><br><span class="line">openshift_use_crio_only=False</span><br><span class="line">openshift_crio_enable_docker_gc=False</span><br><span class="line">openshift_crio_docker_gc_node_selector=&#123;<span class="hljs-string">'runtime'</span>: <span class="hljs-string">'cri-o'</span>&#125;</span><br><span class="line"><span class="hljs-comment">#-----------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">#CA expired date setting</span></span><br><span class="line"><span class="hljs-comment">#-----------------------------------------------------</span></span><br><span class="line">openshift_ca_cert_expire_days=7300</span><br><span class="line">openshift_node_cert_expire_days=7300</span><br><span class="line">openshift_master_cert_expire_days=7300</span><br><span class="line">etcd_ca_default_days=7300</span><br><span class="line"><span class="hljs-comment">#-----------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">osm_use_cockpit=<span class="hljs-literal">true</span></span><br><span class="line">osm_cockpit_plugins=[<span class="hljs-string">'cockpit-kubernetes'</span>]</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">## # host group for masters</span></span><br><span class="line">[masters]</span><br><span class="line">paas01.paas.domain.tw</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">## # host group for etcd</span></span><br><span class="line">[etcd]</span><br><span class="line">paas01.paas.domain.tw</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">## # host group for nodes</span></span><br><span class="line">[nodes]</span><br><span class="line">paas01.paas.domain.tw openshift_node_group_name=<span class="hljs-string">'node-config-master-crio'</span></span><br><span class="line">paas02.paas.domain.tw openshift_node_group_name=<span class="hljs-string">'node-config-infra-crio'</span></span><br><span class="line">paas03.paas.domain.tw openshift_node_group_name=<span class="hljs-string">'node-config-compute-crio'</span></span><br><span class="line">paas04.paas.domain.tw openshift_node_group_name=<span class="hljs-string">'node-config-compute-crio'</span></span><br><span class="line">paas05.paas.domain.tw openshift_node_group_name=<span class="hljs-string">'node-config-compute-crio'</span></span><br></pre></td></tr></table></figure>
+<h2 id="Prerequisites"><a href="#Prerequisites" class="headerlink" title="Prerequisites"></a>Prerequisites</h2><ul>
+<li>安裝 pre requisites rpm</li>
+<li>production mode 建議透過offline install 的方式安裝，保存安裝時所使用的rpm檔<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible-playbook -i inventory.ini openshift-ansible-openshift-ansible-3.11.136-1/playbooks/prerequisites.yml</span><br></pre></td></tr></table></figure>
 </li>
-<li><strong>apply</strong> - 創建和更新部署資源</li>
-<li><strong>delete</strong> - 刪除部署資源</li>
 </ul>
-<p>kfctl 除<code>init</code> 之外，所有命令都可以使用參數來指定要執行叢集資源集：</p>
-<ul>
-<li>k8s - all resources that run on Kubernetes.</li>
-<li>all - GCP and Kubernetes resources.</li>
+<h2 id="Deploy-Cluster"><a href="#Deploy-Cluster" class="headerlink" title="Deploy Cluster"></a>Deploy Cluster</h2><ul>
+<li>開始部署節點<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible-playbook -i inventory.ini openshift-ansible-openshift-ansible-3.11.136-1/playbooks/deploy_cluster.yml</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<hr>
-<h2 id="進入-kubeflow-UIs"><a href="#進入-kubeflow-UIs" class="headerlink" title="進入 kubeflow UIs"></a>進入 kubeflow UIs</h2><blockquote>
-<p>補充：<a href="https://www.kubeflow.org/docs/other-guides/accessing-uis/" target="_blank" rel="noopener">kubeflow UI 介紹說明</a></p>
-</blockquote>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">export</span> NAMESPACE=kubeflow</span></span><br><span class="line">kubectl port-forward svc/ambassador -n $&#123;NAMESPACE&#125; 8080:80</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kubectl port-forward svc/ambassador -n <span class="hljs-variable">$&#123;NAMESPACE&#125;</span> 8080:80</span></span><br><span class="line">Forwarding from 127.0.0.1:8080 -&gt; 80</span><br><span class="line">Forwarding from [::1]:8080 -&gt; 80</span><br><span class="line">Handling connection for 8080</span><br></pre></td></tr></table></figure>
-<p>透過本地端連線即可看到 <code>kubeflow UI</code><br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://i.imgur.com/L1luU39.png" alt=""></p>
-<hr>
-<h2 id="刪除-Kubeflow"><a href="#刪除-Kubeflow" class="headerlink" title="刪除 Kubeflow"></a>刪除 Kubeflow</h2><p>如果測試完畢需要移除<code>kubeflow</code></p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> <span class="hljs-variable">$&#123;KFAPP&#125;</span></span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> If you want to delete all the resources, including storage.</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl delete all --delete_storage</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> If you want to preserve storage, <span class="hljs-built_in">which</span> contains metadata and information</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> from mlpipeline.</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl delete all</span></span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="暫時退出-minikube"><a href="#暫時退出-minikube" class="headerlink" title="暫時退出 minikube"></a>暫時退出 minikube</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> minikube stop</span></span><br><span class="line">Stopping local Kubernetes cluster...</span><br><span class="line">Machine stopped.</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> minikube status</span></span><br><span class="line">host: Stopped</span><br><span class="line">kubelet:</span><br><span class="line">apiserver:</span><br><span class="line">kubectl:</span><br></pre></td></tr></table></figure>
-<h2 id="刪除-minikube-虛擬機與檔案"><a href="#刪除-minikube-虛擬機與檔案" class="headerlink" title="刪除 minikube 虛擬機與檔案"></a>刪除 minikube 虛擬機與檔案</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> minikube delete</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> rm -rf <span class="hljs-variable">$HOME</span>/.minikube</span></span><br></pre></td></tr></table></figure>
+<h2 id="後續設定"><a href="#後續設定" class="headerlink" title="後續設定"></a>後續設定</h2><ul>
+<li>增加 admin 帳號 (登入webconsole)</li>
+<li>inventory 一開始預設有指定透過/etc/origin/master/htpasswd 作為基本的 identity provider 驗證<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ htpasswd -c /etc/origin/master/htpasswd admin</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 <ul>
-<li>而檔案只要刪除 Home 目錄的 <code>.minikube</code> 資料夾，以及 <code>minikube</code> 執行檔即可</li>
+<li><p>對 htpasswd admin user 進行cluster role binding (cluster-admin)</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ oc adm policy add-cluster-role-to-user cluster-admin admin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最後我們就可以透過inventory 設定的url登入Openshift webconsole 介面了</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Webconsole: https://webconsole.paas.domain.me:8443</span><br><span class="line">Cluster console: https://console.apps.domain.nctu.me</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
 
         </div>
@@ -319,7 +353,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/deploy/">deploy</a>, <a class="has-link-grey -link" href="/tags/kubeflow/">kubeflow</a>, <a class="has-link-grey -link" href="/tags/minikube/">minikube</a>, <a class="has-link-grey -link" href="/tags/quickstart/">quickstart</a>
+                    <a class="has-link-grey -link" href="/tags/ansible/">ansible</a>, <a class="has-link-grey -link" href="/tags/openshift/">openshift</a>
                 </div>
             </div>
         </div>
@@ -345,17 +379,10 @@
 <div class="card card-transparent">
     <div class="level post-navigation is-flex-wrap is-mobile">
         
-        <div class="level-start">
-            <a class="level level-item has-link-grey  article-nav-prev" href="/2019/08/12/openshift-ansible-v3-11/">
-                <i class="level-item fas fa-chevron-left"></i>
-                <span class="level-item">透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集</span>
-            </a>
-        </div>
-        
         
         <div class="level-end">
-            <a class="level level-item has-link-grey  article-nav-next" href="/2019/02/03/kubeflow-0-4-release/">
-                <span class="level-item">Kubeflow v0.4.x 部署與概述</span>
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/05/03/minikube-for-kubeflow/">
+                <span class="level-item">利用 Minikube 快速測試部署 Kubeflow v0.5</span>
                 <i class="level-item fas fa-chevron-right"></i>
             </a>
         </div>
@@ -371,8 +398,8 @@
         
 <script>
     var disqus_config = function () {
-        this.page.url = 'http://yylin1.github.io/2019/05/03/minikube-for-kubeflow/';
-        this.page.identifier = '2019/05/03/minikube-for-kubeflow/';
+        this.page.url = 'http://yylin1.github.io/2019/08/12/openshift-ansible-v3-11/';
+        this.page.identifier = '2019/08/12/openshift-ansible-v3-11/';
     };
     (function() {
         var d = document, s = d.createElement('script');  
@@ -498,53 +525,89 @@
                 文章目錄
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#配置-Minikube-環境">
+        <a class="is-flex" href="#實驗節點資訊">
         <span class="has-mr-6">1</span>
-        <span>配置 Minikube 環境</span>
-        </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#啟動-Minikube">
-        <span class="has-mr-6">1.1</span>
-        <span>啟動 Minikube</span>
+        <span>實驗節點資訊</span>
         </a></li><li>
-        <a class="is-flex" href="#安裝-Ksonnet">
-        <span class="has-mr-6">1.2</span>
-        <span>安裝 Ksonnet</span>
-        </a></li><li>
-        <a class="is-flex" href="#透過-kfctl-部署-kubeflow-v0-5">
-        <span class="has-mr-6">1.3</span>
-        <span>透過 kfctl 部署 kubeflow v0.5</span>
-        </a></li><li>
-        <a class="is-flex" href="#1-初始化-kubeflow-components">
-        <span class="has-mr-6">1.4</span>
-        <span>#1 初始化 kubeflow components</span>
-        </a></li><li>
-        <a class="is-flex" href="#2-生成config">
-        <span class="has-mr-6">1.5</span>
-        <span>#2 生成config</span>
-        </a></li><li>
-        <a class="is-flex" href="#3-部署">
-        <span class="has-mr-6">1.6</span>
-        <span>#3 部署</span>
-        </a></li></ul></li><li>
-        <a class="is-flex" href="#總整理-理解部署過程">
+        <a class="is-flex" href="#實驗-部署節點架構圖">
         <span class="has-mr-6">2</span>
-        <span>總整理-理解部署過程</span>
+        <span>實驗-部署節點架構圖</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#OKD-System-Architecture">
+        <span class="has-mr-6">2.1</span>
+        <span>OKD: System Architecture</span>
         </a></li><li>
-        <a class="is-flex" href="#進入-kubeflow-UIs">
+        <a class="is-flex" href="#Master-Node">
+        <span class="has-mr-6">2.2</span>
+        <span>Master Node</span>
+        </a></li><li>
+        <a class="is-flex" href="#Infra-Node">
+        <span class="has-mr-6">2.3</span>
+        <span>Infra Node</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#A-事前準備">
         <span class="has-mr-6">3</span>
-        <span>進入 kubeflow UIs</span>
+        <span>A. 事前準備</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#設置主機名">
+        <span class="has-mr-6">3.1</span>
+        <span>設置主機名</span>
         </a></li><li>
-        <a class="is-flex" href="#刪除-Kubeflow">
+        <a class="is-flex" href="#Network-Setting-並設置-「DNS-Server」">
+        <span class="has-mr-6">3.2</span>
+        <span>Network Setting 並設置 「DNS Server」</span>
+        </a></li><li>
+        <a class="is-flex" href="#設定完後重啟-NetworkManager">
+        <span class="has-mr-6">3.3</span>
+        <span>設定完後重啟 NetworkManager</span>
+        </a></li><li>
+        <a class="is-flex" href="#Bastion-node-設定-節點設置免-SSH-密碼">
+        <span class="has-mr-6">3.4</span>
+        <span>Bastion node 設定 (節點設置免 SSH 密碼)</span>
+        </a></li><li>
+        <a class="is-flex" href="#檢查-SELinux-是否開啟-Enforcing-SELinux">
+        <span class="has-mr-6">3.5</span>
+        <span>檢查 SELinux 是否開啟 (Enforcing SELinux)</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#配置-DNS-設定">
         <span class="has-mr-6">4</span>
-        <span>刪除 Kubeflow</span>
+        <span>配置 DNS 設定</span>
         </a></li><li>
-        <a class="is-flex" href="#暫時退出-minikube">
+        <a class="is-flex" href="#安裝依賴套件-Install-dependency-packages">
         <span class="has-mr-6">5</span>
-        <span>暫時退出 minikube</span>
-        </a></li><li>
-        <a class="is-flex" href="#刪除-minikube-虛擬機與檔案">
+        <span>安裝依賴套件 (Install dependency packages)</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#安裝-Docker-Install-docker">
+        <span class="has-mr-6">5.1</span>
+        <span>安裝 Docker (Install docker)</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#安裝-Ansible">
         <span class="has-mr-6">6</span>
-        <span>刪除 minikube 虛擬機與檔案</span>
+        <span>安裝 Ansible</span>
+        </a></li><li>
+        <a class="is-flex" href="#B-Openshift-Ansible-下載">
+        <span class="has-mr-6">7</span>
+        <span>B. Openshift Ansible 下載</span>
+        </a></li><li>
+        <a class="is-flex" href="#配置-Openshift-Ansible-「inventory-file」-描述">
+        <span class="has-mr-6">8</span>
+        <span>配置 Openshift Ansible 「inventory file」 描述</span>
+        </a></li><li>
+        <a class="is-flex" href="#Inventory">
+        <span class="has-mr-6">9</span>
+        <span>Inventory</span>
+        </a></li><li>
+        <a class="is-flex" href="#Prerequisites">
+        <span class="has-mr-6">10</span>
+        <span>Prerequisites</span>
+        </a></li><li>
+        <a class="is-flex" href="#Deploy-Cluster">
+        <span class="has-mr-6">11</span>
+        <span>Deploy Cluster</span>
+        </a></li><li>
+        <a class="is-flex" href="#後續設定">
+        <span class="has-mr-6">12</span>
+        <span>後續設定</span>
         </a></li></ul>
         </div>
     </div>
@@ -1472,7 +1535,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/artificial-intelligence.png" alt="利用 Minikube 快速測試部署 Kubeflow v0.5" height="28">
+                    <img src="/images/artificial-intelligence.png" alt="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集" height="28">
                 
                 </a>
                 <p class="is-size-7">
