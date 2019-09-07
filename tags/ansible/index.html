@@ -108,6 +108,9 @@
                 href="/archives">Archives</a>
                 
                 <a class="navbar-item"
+                href="/gossip">Gossip</a>
+                
+                <a class="navbar-item"
                 href="/categories">Categories</a>
                 
                 <a class="navbar-item"
@@ -140,9 +143,11 @@
     </div>
 </nav>
     
+    
     <section class="section">
         <div class="container">
             <div class="columns">
+                <!-- 将main_column_class() 改为 col() -->
                 <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
     <div class="card-content">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -360,7 +365,7 @@
                     
                     <p class="is-size-6 is-flex is-flex-center has-text-grey">
                         <i class="fas fa-map-marker-alt has-mr-7"></i>
-                        <span>Taichung, Taiwan</span>
+                        <span>Hsinchu, Taiwan</span>
                     </p>
                     
                 </div>
@@ -578,10 +583,7 @@
 </div>
 
     
-    
-        <div class="column-right-shadow is-hidden-widescreen ">
         
-            
 <div class="card widget">
     <div class="card-content">
         <h3 class="menu-label">
@@ -686,6 +688,9 @@
     </div>
 </div>
 
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
         
             <div class="card widget">
     <div class="card-content">
@@ -965,6 +970,10 @@
         </div>
     
 </div>
+
+
+<!-- 粘贴的部分 -->
+
 
                 
 
@@ -973,112 +982,6 @@
 
 <div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
     
-        
-<div class="card widget">
-    <div class="card-content">
-        <h3 class="menu-label">
-            最新文章
-        </h3>
-        
-        <article class="media">
-            
-            <a href="/2019/08/12/openshift-ansible-v3-11/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/openshift 3.11.jpg" alt="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-12T15:41:13.000Z">2019-08-12</time></div>
-                    <a href="/2019/08/12/openshift-ansible-v3-11/" class="has-link-black-ter is-size-6">透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Openshift/">Openshift</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/05/03/minikube-for-kubeflow/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/minikube_for_kubeflow.jpg" alt="利用 Minikube 快速測試部署 Kubeflow v0.5">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-03T15:46:54.000Z">2019-05-03</time></div>
-                    <a href="/2019/05/03/minikube-for-kubeflow/" class="has-link-black-ter is-size-6">利用 Minikube 快速測試部署 Kubeflow v0.5</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/02/03/kubeflow-0-4-release/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/kubeflow-deploy-0-4.png" alt="Kubeflow v0.4.x 部署與概述">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-03T05:28:29.000Z">2019-02-03</time></div>
-                    <a href="/2019/02/03/kubeflow-0-4-release/" class="has-link-black-ter is-size-6">Kubeflow v0.4.x 部署與概述</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/01/28/portainer-set-tls/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/portainer-tls.png" alt="Portainer 透過 TLS 認證">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-28T14:46:42.000Z">2019-01-28</time></div>
-                    <a href="/2019/01/28/portainer-set-tls/" class="has-link-black-ter is-size-6">Portainer 透過 TLS 認證</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Docker/">Docker</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/01/22/kubeflow-job-scheduling/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/kubeflow-job-scheduling.png" alt="如何更換 Kubeflow 預設 Scheduling">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-22T15:34:29.000Z">2019-01-22</time></div>
-                    <a href="/2019/01/22/kubeflow-job-scheduling/" class="has-link-black-ter is-size-6">如何更換 Kubeflow 預設 Scheduling</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-    </div>
-</div>
-
-    
         <div class="card widget">
     <div class="card-content">
         <div class="menu">
@@ -1356,6 +1259,10 @@
     
     
 </div>
+
+
+<!-- 粘贴的部分 -->
+
 
             </div>
         </div>
