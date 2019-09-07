@@ -2,7 +2,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>http://yylin1.github.io/2019/08/12/openshift-ansible-v3-11/</loc>
-    <lastmod>2019-08-12T15:56:14.598Z</lastmod>
+    <lastmod>2019-09-07T03:40:13.130Z</lastmod>
+  </url>  <url>
+    <loc>http://yylin1.github.io/2019/08/18/coscup/</loc>
+    <lastmod>2019-08-18T11:31:51.729Z</lastmod>
   </url>  <url>
     <loc>http://yylin1.github.io/2019/05/03/minikube-for-kubeflow/</loc>
     <lastmod>2019-08-12T06:07:26.212Z</lastmod>

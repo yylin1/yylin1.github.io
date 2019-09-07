@@ -8,7 +8,7 @@
 
 
     <meta name="description" content="本篇將介紹透過 OpenShift Ansible 來快速部署 RedHat OpenShift 社區版本 OKD (The Origin Community Distribution of Kubernetes) 的 release-3.11 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。 共同編輯: Hank Lin - 靠著13%技術與87">
-<meta name="keywords" content="openshift,ansible">
+<meta name="keywords" content="ansible,openshift">
 <meta property="og:type" content="article">
 <meta property="og:title" content="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
 <meta property="og:url" content="http://yylin1.github.io/2019/08/12/openshift-ansible-v3-11/index.html">
@@ -16,7 +16,7 @@
 <meta property="og:description" content="本篇將介紹透過 OpenShift Ansible 來快速部署 RedHat OpenShift 社區版本 OKD (The Origin Community Distribution of Kubernetes) 的 release-3.11 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。 共同編輯: Hank Lin - 靠著13%技術與87">
 <meta property="og:locale" content="zh-TW">
 <meta property="og:image" content="http://yylin1.github.io/images/openshift%203.11.jpg">
-<meta property="og:updated_time" content="2019-08-12T15:56:14.598Z">
+<meta property="og:updated_time" content="2019-09-07T03:40:13.130Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
 <meta name="twitter:description" content="本篇將介紹透過 OpenShift Ansible 來快速部署 RedHat OpenShift 社區版本 OKD (The Origin Community Distribution of Kubernetes) 的 release-3.11 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。 共同編輯: Hank Lin - 靠著13%技術與87">
@@ -170,7 +170,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    16 分鐘 閱讀文 (大約 2440 個字)
+                    16 分鐘 閱讀文 (大約 2443 個字)
                 </span>
                 
                 
@@ -184,7 +184,7 @@
         </h1>
         <div class="content">
             <p>本篇將介紹透過 <a href="https://github.com/openshift/openshift-ansible" target="_blank" rel="noopener">OpenShift Ansible</a> 來快速部署 RedHat OpenShift 社區版本 <code>OKD (The Origin Community Distribution of Kubernetes)</code> 的 <code>release-3.11</code> 版本，此篇文章主要是用來筆記學習裸機機器(Bare-metal Server)部署過程與環境架構。</p>
-<p>共同編輯: <a href="https://github.com/chlin62" target="_blank" rel="noopener">Hank Lin - 靠著13%技術與87%嘴砲</a></p>
+<p>共同編輯: <a href="https://chlin62.github.io/okd-311-deploy-cluster/" target="_blank" rel="noopener">Hank Lin - 靠著13%技術與87%嘴砲</a></p>
 <a id="more"></a>
 <h2 id="實驗節點資訊"><a href="#實驗節點資訊" class="headerlink" title="實驗節點資訊"></a>實驗節點資訊</h2><p>本次安裝作業系統採用 <strong>CentOS 7</strong>，測試環境為實體主機：</p>
 <table>
@@ -427,6 +427,13 @@
 <div class="card card-transparent">
     <div class="level post-navigation is-flex-wrap is-mobile">
         
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2019/08/18/coscup/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">Coscup</span>
+            </a>
+        </div>
+        
         
         <div class="level-end">
             <a class="level level-item has-link-grey  article-nav-next" href="/2019/05/03/minikube-for-kubeflow/">
@@ -506,7 +513,7 @@
                         文章
                     </p>
                     <p class="title has-text-weight-normal">
-                        18
+                        19
                     </p>
                 </div>
             </div>
@@ -818,6 +825,25 @@
         
         <article class="media">
             
+            <a href="/2019/08/18/coscup/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Coscup">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-18T11:31:51.000Z">2019-08-18</time></div>
+                    <a href="/2019/08/18/coscup/" class="has-link-black-ter is-size-6">Coscup</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/08/12/openshift-ansible-v3-11/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/openshift 3.11.jpg" alt="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
@@ -892,25 +918,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/01/22/kubeflow-job-scheduling/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/kubeflow-job-scheduling.png" alt="如何更換 Kubeflow 預設 Scheduling">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-22T15:34:29.000Z">2019-01-22</time></div>
-                    <a href="/2019/01/22/kubeflow-job-scheduling/" class="has-link-black-ter is-size-6">如何更換 Kubeflow 預設 Scheduling</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -929,7 +936,7 @@
                     <span class="level-item">八月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -1210,6 +1217,25 @@
         
         <article class="media">
             
+            <a href="/2019/08/18/coscup/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Coscup">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-18T11:31:51.000Z">2019-08-18</time></div>
+                    <a href="/2019/08/18/coscup/" class="has-link-black-ter is-size-6">Coscup</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/08/12/openshift-ansible-v3-11/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/openshift 3.11.jpg" alt="透過 Ansible 快速部署 OpenShift 3.11(OKD) 叢集">
@@ -1284,25 +1310,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/01/22/kubeflow-job-scheduling/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/kubeflow-job-scheduling.png" alt="如何更換 Kubeflow 預設 Scheduling">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-22T15:34:29.000Z">2019-01-22</time></div>
-                    <a href="/2019/01/22/kubeflow-job-scheduling/" class="has-link-black-ter is-size-6">如何更換 Kubeflow 預設 Scheduling</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Kubeflow/">Kubeflow</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -1321,7 +1328,7 @@
                     <span class="level-item">八月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
