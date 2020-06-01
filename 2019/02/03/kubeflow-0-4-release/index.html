@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>Kubeflow v0.4.x 部署與概述 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/kubeflow-deploy-0-4.png" alt="Kubeflow v0.4.x 部署與概述">
         </span>
     </div>
@@ -195,7 +189,7 @@
 </li>
 </ul>
 <p><strong># Quickly get running with your ML Workflow</strong></p>
-<p><img src="https://i.imgur.com/oU86YTx.png" alt=""></p>
+<p><img src="https://i.imgur.com/oU86YTx.png" alt></p>
 <ul>
 <li><p>Kubeflow目標不是在於重建其他服務，而是提供一個最佳開發系統（更直接的）部署到任何基礎設施中，有效確保 ML 在之間移動性，並輕鬆將任務擴展至任何基礎設施。</p>
 </li>
@@ -270,20 +264,20 @@
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kubeflow edit svc ambassador</span><br><span class="line"></span><br><span class="line">sessionAffinity: None</span><br><span class="line">  <span class="hljs-built_in">type</span>: NodePort</span><br><span class="line">status:</span><br></pre></td></tr></table></figure>
 <p>再次查看Service確認NodePort 對應 Port<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kubeflow get svc -o wide</span><br><span class="line">NAME                                     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE       SELECTOR</span><br><span class="line">ambassador                               NodePort    10.103.129.210   &lt;none&gt;        80:32078/TCP        14m       service=ambassador</span><br></pre></td></tr></table></figure></p>
 <p>完成後連接 <code>http://Master_IP:Port</code> 即可看到 kubeflow Central UI</p>
-<p><img src="https://i.imgur.com/PEOizuf.png" alt=""></p>
+<p><img src="https://i.imgur.com/PEOizuf.png" alt></p>
 <hr>
 <h2 id="測試-Jupyter-Notebook"><a href="#測試-Jupyter-Notebook" class="headerlink" title="測試 Jupyter Notebook"></a>測試 Jupyter Notebook</h2><p>Kubeflow v0.4 更新 JupyterHub UI介面，創建Jupyter Notebook 比之前配置更容易。可以選擇已安裝最新版本的 ML Images，或附上自己自定義Image，即可配置<code>Spawn</code>生成。</p>
 <p>這邊需要再次先建立一個 <code>NFS PV</code>來提供給 Kubeflow Jupyter使用：</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: jupyter-notebook-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 20Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  nfs:</span><br><span class="line">    server: &#123;NFS-server IP&#125;</span><br><span class="line">    path: /nfs-data/jupytertest</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 <p><code>NFS PV</code> 建立好後這邊 UI 點選Jupyter Notebook登入測試，並輸入任意<code>帳號密碼</code>進行登入：</p>
-<p><img src="https://i.imgur.com/zkIWIkP.png" alt=""></p>
+<p><img src="https://i.imgur.com/zkIWIkP.png" alt></p>
 <p><strong>Spawner Optinos</strong> 這邊可以輸入Notebook 資源，包含 Image、CPU、Memory、GPU數量、Workspace Volume、Data Volumes，最後點選Spawn來完成建立 Server，如下圖所示：</p>
-<p><img src="https://i.imgur.com/4KRHrPA.png" alt=""></p>
-<p><img src="https://i.imgur.com/NywKU10.png" alt=""></p>
-<p>配置叢集節點GPU分配需求<br><img src="https://i.imgur.com/PrKHHr8.png" alt=""></p>
-<p>配置好後及快速生成一個乾淨並帶有GPU使用的 <strong>Jupyter Notebook</strong><br><img src="https://i.imgur.com/7iiyIys.png" alt=""></p>
+<p><img src="https://i.imgur.com/4KRHrPA.png" alt></p>
+<p><img src="https://i.imgur.com/NywKU10.png" alt></p>
+<p>配置叢集節點GPU分配需求<br><img src="https://i.imgur.com/PrKHHr8.png" alt></p>
+<p>配置好後及快速生成一個乾淨並帶有GPU使用的 <strong>Jupyter Notebook</strong><br><img src="https://i.imgur.com/7iiyIys.png" alt></p>
 <h2 id="Kubeflow-Pipelines-UI-待補"><a href="#Kubeflow-Pipelines-UI-待補" class="headerlink" title="Kubeflow Pipelines UI (待補)"></a>Kubeflow Pipelines UI (待補)</h2><p>Kubeflow主要是為了簡化在Kubernetes上面運行機器學習任務的流程，最終希望能夠實現一套完整工作流(workflow)模型。所謂工作流，或者稱之為流水線(pipelines)，來實現 ML 從數據到模型的一整套 End-to-End 的過程 : </p>
-<p><img src="https://i.imgur.com/shEDXxm.png" alt=""><br><img src="https://i.imgur.com/tEocDzK.png" alt=""></p>
+<p><img src="https://i.imgur.com/shEDXxm.png" alt><br><img src="https://i.imgur.com/tEocDzK.png" alt></p>
 <h3 id="相關文章（補充"><a href="#相關文章（補充" class="headerlink" title="# 相關文章（補充)"></a># 相關文章（補充)</h3><ul>
 <li><a href="http://gaocegege.com/Blog/kfp" target="_blank" rel="noopener">Kubeflow Pipelines: 面向机器学习场景的流水线系统的使用与实现</a></li>
 <li><a href="https://soolaugust.github.io/learn-k8s-from-scratch/kubeflow-intro.html" target="_blank" rel="noopener">再談Kubeflow - pipline</a></li>
@@ -383,8 +377,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -454,22 +447,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1139,8 +1129,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1287,7 +1276,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

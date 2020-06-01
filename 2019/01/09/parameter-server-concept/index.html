@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>Parameter Server 學習筆記 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/PS-concept.png" alt="Parameter Server 學習筆記">
         </span>
     </div>
@@ -209,7 +203,7 @@
 <blockquote>
 <p>Parameter Server 架構圖:</p>
 </blockquote>
-<p><img src="https://i.imgur.com/93RXOgT.png" alt=""></p>
+<p><img src="https://i.imgur.com/93RXOgT.png" alt></p>
 <h3 id="架構概念解釋："><a href="#架構概念解釋：" class="headerlink" title="架構概念解釋："></a>架構概念解釋：</h3><ul>
 <li><p>Server節點可以跟其他Server節點溝通，每個Server負責自己分到的參數，<code>Server group共同維持所有參數的更新</code>。</p>
 </li>
@@ -225,7 +219,7 @@
 <blockquote>
 <p>範例: Parameter Server 示意圖  </p>
 </blockquote>
-<p><img src="https://i.imgur.com/HwYPB7c.gif" alt=""></p>
+<p><img src="https://i.imgur.com/HwYPB7c.gif" alt></p>
 <p>上圖中，每個子節點都只維護自己分配到的參數（圖中的黑色），自己部分更新之後，將計算結果（例如：梯度）傳回到主節點，進行全局的更新（比如平均操作之類的），主節點再向子節點傳送新的參數。</p>
 <blockquote>
 <p>Ref: <a href="https://blog.csdn.net/cyh_24/article/details/50545780" target="_blank" rel="noopener">[Parameter Server 详解-仙道菜]</a></p>
@@ -247,7 +241,7 @@
 <li>全局共享的參數可以被表示成各種形式：vector、matrices或者相應的 sparse 類型，這方便機器學習算法的開發。並且提供的線性代數數據類型都具有高性能的多線程庫。</li>
 </ul>
 <hr>
-<h2 id="3-Parameter-Server-關鍵概念"><a href="#3-Parameter-Server-關鍵概念" class="headerlink" title="3. Parameter Server 關鍵概念"></a>3. Parameter Server 關鍵概念</h2><h3 id="1-key-value-，Range-Push-and-Pull"><a href="#1-key-value-，Range-Push-and-Pull" class="headerlink" title="1. (key, value)，Range Push and Pull"></a>1. (key, value)，Range Push and Pull</h3><p><img src="https://i.imgur.com/EvxBA4m.png" alt=""></p>
+<h2 id="3-Parameter-Server-關鍵概念"><a href="#3-Parameter-Server-關鍵概念" class="headerlink" title="3. Parameter Server 關鍵概念"></a>3. Parameter Server 關鍵概念</h2><h3 id="1-key-value-，Range-Push-and-Pull"><a href="#1-key-value-，Range-Push-and-Pull" class="headerlink" title="1. (key, value)，Range Push and Pull"></a>1. (key, value)，Range Push and Pull</h3><p><img src="https://i.imgur.com/EvxBA4m.png" alt></p>
 <ul>
 <li><p>Parameter Server中，參數都是可以被表示成<code>(key, value)</code>的集合，比如一個最小化損失函數的問題，key 就是feature ID，而value 就是它的權值。對於稀疏參數，不存在的key，就可以認為是0。</p>
 </li>
@@ -271,12 +265,12 @@
 <li>伺服器端更新參數的時候還有計算正則項，這樣的操作可以由使用者自定義。</li>
 </ul>
 <h3 id="4-Asychronous-Tasks-and-Dependency"><a href="#4-Asychronous-Tasks-and-Dependency" class="headerlink" title="4. Asychronous Tasks and Dependency"></a>4. Asychronous Tasks and Dependency</h3><p>同步(Synchronous)與非同步(Asynchronous)差異：</p>
-<p><img src="https://i.imgur.com/uBiLLcf.png" alt=""></p>
+<p><img src="https://i.imgur.com/uBiLLcf.png" alt></p>
 <p>如上圖，如果 iter1 需要在 iter0 computation，進行 push 跟 pull 都完成後才能開始;<code>Synchronous</code> 將所有計算完的梯度放在一起處理，當每次更新梯度時，需要等所以分發的資料計算完成，並回傳結果來把梯度累加計算平均，在進行更新變數。</p>
 <blockquote>
 <p>好處在於使用 loss 的下降時比較穩定，壞處就是要等最慢的Work計算完成時間。</p>
 </blockquote>
-<h4 id="補充Asychronous-架構說明："><a href="#補充Asychronous-架構說明：" class="headerlink" title="補充Asychronous 架構說明："></a>補充Asychronous 架構說明：</h4><p><img src="https://i.imgur.com/3bZhCC9.png" alt=""></p>
+<h4 id="補充Asychronous-架構說明："><a href="#補充Asychronous-架構說明：" class="headerlink" title="補充Asychronous 架構說明："></a>補充Asychronous 架構說明：</h4><p><img src="https://i.imgur.com/3bZhCC9.png" alt></p>
 <blockquote>
 <p>Ref: [Paper][Online job scheduling in Distributed Machine Learning Clusters]</p>
 <blockquote>
@@ -293,7 +287,7 @@
 <p>Asychronous 的優點是能夠提高系統的使用效率（節省任務等待的過程），但是它的缺點就是容易降低算法的收斂速率。</p>
 </blockquote>
 <hr>
-<p>考慮到使用者使用的時候會有不同的情况，Parameter Server 為使用者提供了多種任務依賴的方式：<img src="https://i.imgur.com/4Y4rov1.png" alt=""></p>
+<p>考慮到使用者使用的時候會有不同的情况，Parameter Server 為使用者提供了多種任務依賴的方式：<img src="https://i.imgur.com/4Y4rov1.png" alt></p>
 <blockquote>
 <p><strong>Sequential</strong>： 这里其实是 synchronous task，任务之间是有顺序的，只有上一个任务完成，才能开始下一个任务；<br><strong>Eventual</strong>： 跟 sequential 相反，所有任务之间没有顺序，各自独立完成自己的任务，<br><strong>Bounded Delay</strong>： 这是sequential 跟 eventual 之间的trade-off，可以设置一个 τ 作为最大的延时时间。也就是说，只有 &gt;τ 之前的任务都被完成了，才能开始一个新的任务；极端的情况：</p>
 <ol>
@@ -341,8 +335,8 @@
 </li>
 </ul>
 <h3 id="Replication-and-Consistency"><a href="#Replication-and-Consistency" class="headerlink" title="Replication and Consistency"></a>Replication and Consistency</h3><p>參數伺服器集群中每個節點都負責不同區域的參數，那麼，類似於hash table，使用hash ring進行實現，key和server id都插入到hash ring上。</p>
-<p><img src="https://i.imgur.com/Kpyx4DF.png" alt=""></p>
-<h3 id="備份和一致性"><a href="#備份和一致性" class="headerlink" title="備份和一致性"></a>備份和一致性</h3><p>使用類似hadoop 的chain 備份方式，對於一個master 節點，如果有更新，先更新它，然後再去更新備份的伺服器。<br><img src="https://i.imgur.com/a8R7kHL.png" alt=""><br>在更新的時候，由於機器學習算法的特點，可以將多次梯度聚合之後再去更新備份伺服器，從而減少帶寬。</p>
+<p><img src="https://i.imgur.com/Kpyx4DF.png" alt></p>
+<h3 id="備份和一致性"><a href="#備份和一致性" class="headerlink" title="備份和一致性"></a>備份和一致性</h3><p>使用類似hadoop 的chain 備份方式，對於一個master 節點，如果有更新，先更新它，然後再去更新備份的伺服器。<br><img src="https://i.imgur.com/a8R7kHL.png" alt><br>在更新的時候，由於機器學習算法的特點，可以將多次梯度聚合之後再去更新備份伺服器，從而減少帶寬。</p>
 <h2 id="Server-Management"><a href="#Server-Management" class="headerlink" title="Server Management"></a>Server Management</h2><p>由於key 的range 特性，當參數伺服器集群中增加一個節點時，步驟如下：</p>
 <ul>
 <li>Server Manager 節點給新節點分配一個key range，這可能會導致其他節點上的key range 切分。</li>
@@ -363,7 +357,7 @@
 <li>task scheduler廣播變化，其他節點 free掉一些訓練數據</li>
 </ul>
 <p>當一個節點離開的時候，task scheduler可能會尋找一個替代，但恢復節點是十分耗時的工作，同時，損失一些數據對最後的結果可能影響並不是很大。所以，系統會讓用戶進行選擇，是恢復節點還是不做處理。這種機制甚至可以允許用戶刪掉跑的最慢的節點來提升速度。</p>
-<h2 id="5-何時使用分散式深度學習"><a href="#5-何時使用分散式深度學習" class="headerlink" title="5. 何時使用分散式深度學習?"></a>5. 何時使用分散式深度學習?</h2><h2 id=""><a href="#" class="headerlink" title=""></a><img src="https://i.imgur.com/vTUS2wt.png" alt=""></h2><blockquote>
+<h2 id="5-何時使用分散式深度學習"><a href="#5-何時使用分散式深度學習" class="headerlink" title="5. 何時使用分散式深度學習?"></a>5. 何時使用分散式深度學習?</h2><h2 id><a href="#" class="headerlink" title></a><img src="https://i.imgur.com/vTUS2wt.png" alt></h2><blockquote>
 <p>分散式的深度學習並不總是最佳的選擇，需要視情況而定：</p>
 </blockquote>
 <p>進行分散式訓練，由於同步、資料和參數與網路傳輸等，分散式系統相比單機訓練要多不少額外的必要開銷。</p>
@@ -485,8 +479,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -556,22 +549,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1261,8 +1251,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1409,7 +1398,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

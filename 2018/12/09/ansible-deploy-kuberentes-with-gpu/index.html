@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>如何透過 Ansible Playbooks 部屬 Kubernetes+GPU 叢集 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/ansible_deploy_kubernetes_GPU.png" alt="如何透過 Ansible Playbooks 部屬 Kubernetes+GPU 叢集">
         </span>
     </div>
@@ -323,7 +317,7 @@
 <p>完成後，即可透過 API Server 的 Proxy 來存取 <a href="https://192.168.0.98:8443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login" target="_blank" rel="noopener">https://192.168.0.98:8443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login</a></p>
 <p>登入查詢<code>kubernetes-dashboard Token</code>:</p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl -n kube-system get secret</span><br><span class="line">NAME                                             TYPE                                  DATA      AGE</span><br><span class="line">deployment-controller-token-kmcmz           kubernetes.io/service-account-token   3         1h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ kubectl -n kube-system describe secret deployment-controller-token-kmcmz</span><br><span class="line">Name:         deployment-controller-token-kmcmz</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io/service-account.name=deployment-controller</span><br><span class="line">              kubernetes.io/service-account.uid=e4e91ed4-fb9b-11e8-baef-d05099d079fb</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io/service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">ca.crt:     1428 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZXBsb3ltZW50LWNvbnRyb2xsZXItdG9rZW4ta21jbXoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVwbG95bWVudC1jb250cm9sbGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiZTRlOTFlZDQtZmI5Yi0xMWU4LWJhZWYtZDA1MDk5ZDA3OWZiIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRlcGxveW1lbnQtY29udHJvbGxlciJ9.IRQUhsVU4AJ36-qNClW7htzFJis1Mf_YSySIBKYuZ7uuaCzGcXRZtJ-nPo0SFBq7XufBMydjKwKP6tmsG1NsjttC3ETX-OnCV7u9BW0DK4HX6YloS-6Ik2rN9nHOa5iRpSNwCB2l6axGofoLkIosRCYMhdUyI5E9ZIrNKV-AvKehZkFtxXQCE3DbWGiklj1QPVq2oypfkwBEZG4GSlFkxPoIkzQQTbmZDfH036hi9DpBcUJIU41IJb9npdx65NA39Oskjdwiym1z_JlAhlhnE-uCPc-IjHirw_bEcn7mhDBf-1O2kr0IVmAbczFi82aoCagTDtUjBLP7BJ3k0v0gxQ</span><br></pre></td></tr></table></figure>
-<p>顯示畫面：<br><img src="https://i.imgur.com/sxMHIiQ.png" alt=""></p>
+<p>顯示畫面：<br><img src="https://i.imgur.com/sxMHIiQ.png" alt></p>
 <h2 id="重置叢集狀態"><a href="#重置叢集狀態" class="headerlink" title="重置叢集狀態"></a>重置叢集狀態</h2><p>最後若想要重新部署叢集的話，可以透過 <code>reset-cluster.yml</code> 來清除叢集：</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ansible-playbook -i inventory/hosts.ini reset-cluster.yml</span><br></pre></td></tr></table></figure>
 <h2 id="補充-部署修正網卡一致"><a href="#補充-部署修正網卡一致" class="headerlink" title="[#補充]部署修正網卡一致"></a>[#補充]部署修正網卡一致</h2><ul>
@@ -452,8 +446,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -523,22 +516,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1192,8 +1182,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1340,7 +1329,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

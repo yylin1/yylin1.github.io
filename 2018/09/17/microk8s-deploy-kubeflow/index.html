@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>透過 Microk8s 快速部署 Kubeflow - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/microk8s.png" alt="透過 Microk8s 快速部署 Kubeflow">
         </span>
     </div>
@@ -228,18 +222,18 @@
 <h2 id="部署完成後環境"><a href="#部署完成後環境" class="headerlink" title="部署完成後環境"></a>部署完成後環境</h2><p>完成後檢查 Kubeflow 元件部署結果：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">multipass@kubeflow:~$ kubectl -n kubeflow get po -o wide</span><br><span class="line">NAME                                  READY     STATUS    RESTARTS   AGE       IP          NODE</span><br><span class="line">ambassador-68954d75f4-2n6lv           2/2       Running   4          4h        10.1.1.55   kubeflow</span><br><span class="line">ambassador-68954d75f4-7dgvl           2/2       Running   4          4h        10.1.1.56   kubeflow</span><br><span class="line">ambassador-68954d75f4-bgs8h           2/2       Running   5          4h        10.1.1.44   kubeflow</span><br><span class="line">mxnet-operator-f46557c4f-wmntn        1/1       Running   2          3h        10.1.1.52   kubeflow</span><br><span class="line">spartakus-volunteer-d54b65666-klrfk   1/1       Running   2          4h        10.1.1.45   kubeflow</span><br><span class="line">tf-hub-0                              1/1       Running   2          4h        10.1.1.47   kubeflow</span><br><span class="line">tf-job-dashboard-784cdcbb4f-j2cjx     1/1       Running   2          4h        10.1.1.51   kubeflow</span><br><span class="line">tf-job-operator-85b46d47b7-xfwmp      1/1       Running   2          4h        10.1.1.48   kubeflow</span><br></pre></td></tr></table></figure>
 <h3 id="運行JupyterHub測試"><a href="#運行JupyterHub測試" class="headerlink" title="運行JupyterHub測試"></a>運行JupyterHub測試</h3><p>透過查看vm狀態中，<code>完成後連接 http://IP:Port</code>，並輸入<code>任意帳號密碼</code>進行登入。</p>
-<p><img src="https://i.imgur.com/aecctnI.png" alt=""></p>
+<p><img src="https://i.imgur.com/aecctnI.png" alt></p>
 <p><strong>Spawner options</strong>可以自行配置Jupyter Notebook 資源狀態</p>
 <blockquote>
 <p>Image: 預設會有多種映像檔可以使用<br>其他參數可調整 CPU、Memory、GPU資源限制</p>
 </blockquote>
-<p><img src="https://i.imgur.com/nEaOr0L.png" alt=""></p>
+<p><img src="https://i.imgur.com/nEaOr0L.png" alt></p>
 <p>按下Spawn kubeflow就會啟動一個pod配置資源給Jupyter notebook，部署過程時Image下載需要花一點時間。</p>
-<p><img src="https://i.imgur.com/Acr64W9.png" alt=""></p>
+<p><img src="https://i.imgur.com/Acr64W9.png" alt></p>
 <blockquote>
 <p>配置過程中有時會後有狀況，可能需要多嘗試</p>
 </blockquote>
-<p>完成後即可在透過Jupyter Notebook 編寫Model進行DL訓練<br><img src="https://i.imgur.com/sCqtj53.png" alt=""></p>
+<p>完成後即可在透過Jupyter Notebook 編寫Model進行DL訓練<br><img src="https://i.imgur.com/sCqtj53.png" alt></p>
 <h2 id="Kubernetes-Addons"><a href="#Kubernetes-Addons" class="headerlink" title="Kubernetes Addons"></a>Kubernetes Addons</h2><p>microk8s在 Kubernetes 安裝了一個<code>準系統</code>。這代表只要安裝和運行 api-server、controller-manager、scheduler、kubelet，cni、kube-proxy。可以使用該 <code>microk8s.enable</code> 命令運行 kube-dns 和 Dashboard 等附加服務。</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">microk8s.enable dns dashboard</span><br></pre></td></tr></table></figure>
 <p>使用該<code>disable</code>命令隨時禁用這些插件<br><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">microk8s.disable dashboard dns</span><br></pre></td></tr></table></figure></p>
@@ -335,8 +329,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -406,22 +399,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1083,8 +1073,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1231,7 +1220,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

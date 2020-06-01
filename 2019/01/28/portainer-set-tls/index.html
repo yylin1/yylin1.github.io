@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>Portainer 透過 TLS 認證 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/portainer-tls.png" alt="Portainer 透過 TLS 認證">
         </span>
     </div>
@@ -197,8 +191,8 @@
 <li><p>Portainer允許管理Docker containers, images, volumes, networks等。它與獨立的Docker引擎和Docker Swarm兼容。</p>
 </li>
 </ul>
-<p><img src="https://i.imgur.com/v1Fx5WR.png" alt=""></p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><img src="https://d1jiktx90t87hr.cloudfront.net/354/wp-content/uploads/sites/2/2018/12/endpoints1.png" alt=""></h2><h3 id="版本限制"><a href="#版本限制" class="headerlink" title="版本限制"></a>版本限制</h3><p>Portainer 支持以下Docker版本：</p>
+<p><img src="https://i.imgur.com/v1Fx5WR.png" alt></p>
+<h2 id><a href="#" class="headerlink" title></a><img src="https://d1jiktx90t87hr.cloudfront.net/354/wp-content/uploads/sites/2/2018/12/endpoints1.png" alt></h2><h3 id="版本限制"><a href="#版本限制" class="headerlink" title="版本限制"></a>版本限制</h3><p>Portainer 支持以下Docker版本：</p>
 <ul>
 <li>Docker 1.10 to the latest version</li>
 <li>Standalone Docker Swarm &gt;= 1.2.3</li>
@@ -249,14 +243,14 @@
 <p>返回docker信息即為完成憑證認證</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl -k https://140.128.18.88:2375/info --cert cert-dp.pem --key key-dp.pem </span><br><span class="line">&#123;<span class="hljs-string">"ID"</span>:<span class="hljs-string">"F2HY:7GDT:YA3J:74UZ:2AKP:GW2Z:MIIT:GPG3:NOHZ:EKCW:ZFCA:M575"</span>,<span class="hljs-string">"Containers"</span>:2,<span class="hljs-string">"ContainersRunning"</span>:1,<span class="hljs-string">"ContainersPaused"</span>:0,<span class="hljs-string">"ContainersStopped"</span>:1,<span class="hljs-string">"Images"</span>:22,<span class="hljs-string">"Driver"</span>:<span class="hljs-string">"overlay2"</span>,<span class="hljs-string">"DriverStatus"</span>:[[<span class="hljs-string">"Backing Filesystem"</span>,<span class="hljs-string">"extfs"</span>],[<span class="hljs-string">"Supports d_type"</span>,<span class="hljs-string">"true"</span>],[<span class="hljs-string">"Native Overlay Diff"</span>,<span class="hljs-string">"true"</span>]],<span class="hljs-string">"SystemStatus"</span>:null,<span class="hljs-string">"Plugins"</span>:&#123;<span class="hljs-string">"Volume"</span>:[<span class="hljs-string">"local"</span>],<span class="hljs-string">"Network"</span>:[<span class="hljs-string">"bridge"</span>,<span class="hljs-string">"host"</span>,<span class="hljs-string">"macvlan"</span>,<span class="hljs-string">"null"</span>,<span class="hljs-string">"overlay"</span>],<span class="hljs-string">"Authorization"</span>:null,<span class="hljs-string">"Log"</span>:[<span class="hljs-string">"awslogs"</span>,<span class="hljs-string">"fluentd"</span>,<span class="hljs-string">"gcplogs"</span>,<span class="hljs-string">"gelf"</span>,<span class="hljs-string">"journald"</span>,<span class="hljs-string">"json-file"</span>,<span class="hljs-string">"local"</span>,<span class="hljs-string">"logentries"</span>,<span class="hljs-string">"splunk"</span>,<span class="hljs-string">"syslog"</span>]&#125;,<span class="hljs-string">"MemoryLimit"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"SwapLimit"</span>:<span class="hljs-literal">false</span>,<span class="hljs-string">"KernelMemory"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"CpuCfsPeriod"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"CpuCfsQuota"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"CPUShares"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"CPUSet"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"IPv4Forwarding"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"BridgeNfIptables"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"BridgeNfIp6tables"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"Debug"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"NFd"</span>:31,<span class="hljs-string">"OomKillDisable"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"NGoroutines"</span>:44,<span class="hljs-string">"SystemTime"</span>:<span class="hljs-string">"2019-01-28T15:26:15.584473249+08:00"</span>,<span class="hljs-string">"LoggingDriver"</span>:<span class="hljs-string">"json-file"</span>,<span class="hljs-string">"CgroupDriver"</span>:<span class="hljs-string">"cgroupfs"</span>,<span class="hljs-string">"NEventsListener"</span>:0,<span class="hljs-string">"KernelVersion"</span>:<span class="hljs-string">"4.13.0-36-generic"</span>,<span class="hljs-string">"OperatingSystem"</span>:<span class="hljs-string">"Ubuntu 16.04.4 LTS"</span>,<span class="hljs-string">"OSType"</span>:<span class="hljs-string">"linux"</span>,<span class="hljs-string">"Architecture"</span>:<span class="hljs-string">"x86_64"</span>,<span class="hljs-string">"IndexServerAddress"</span>:<span class="hljs-string">"https://index.docker.io/v1/"</span>,<span class="hljs-string">"RegistryConfig"</span>:&#123;<span class="hljs-string">"AllowNondistributableArtifactsCIDRs"</span>:[],<span class="hljs-string">"AllowNondistributableArtifactsHostnames"</span>:[],<span class="hljs-string">"InsecureRegistryCIDRs"</span>:[<span class="hljs-string">"127.0.0.0/8"</span>],<span class="hljs-string">"IndexConfigs"</span>:&#123;<span class="hljs-string">"docker.io"</span>:&#123;<span class="hljs-string">"Name"</span>:<span class="hljs-string">"docker.io"</span>,<span class="hljs-string">"Mirrors"</span>:[],<span class="hljs-string">"Secure"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"Official"</span>:<span class="hljs-literal">true</span>&#125;&#125;,<span class="hljs-string">"Mirrors"</span>:[]&#125;,<span class="hljs-string">"NCPU"</span>:4,<span class="hljs-string">"MemTotal"</span>:16739332096,<span class="hljs-string">"GenericResources"</span>:null,<span class="hljs-string">"DockerRootDir"</span>:<span class="hljs-string">"/var/lib/docker"</span>,<span class="hljs-string">"HttpProxy"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"HttpsProxy"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"NoProxy"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"Name"</span>:<span class="hljs-string">"lab506-s1"</span>,<span class="hljs-string">"Labels"</span>:[],<span class="hljs-string">"ExperimentalBuild"</span>:<span class="hljs-literal">false</span>,<span class="hljs-string">"ServerVersion"</span>:<span class="hljs-string">"18.09.1"</span>,<span class="hljs-string">"ClusterStore"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"ClusterAdvertise"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"Runtimes"</span>:&#123;<span class="hljs-string">"nvidia"</span>:&#123;<span class="hljs-string">"path"</span>:<span class="hljs-string">"nvidia-container-runtime"</span>&#125;,<span class="hljs-string">"runc"</span>:&#123;<span class="hljs-string">"path"</span>:<span class="hljs-string">"runc"</span>&#125;&#125;,<span class="hljs-string">"DefaultRuntime"</span>:<span class="hljs-string">"runc"</span>,<span class="hljs-string">"Swarm"</span>:&#123;<span class="hljs-string">"NodeID"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"NodeAddr"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"LocalNodeState"</span>:<span class="hljs-string">"inactive"</span>,<span class="hljs-string">"ControlAvailable"</span>:<span class="hljs-literal">false</span>,<span class="hljs-string">"Error"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"RemoteManagers"</span>:null&#125;,<span class="hljs-string">"LiveRestoreEnabled"</span>:<span class="hljs-literal">false</span>,<span class="hljs-string">"Isolation"</span>:<span class="hljs-string">""</span>,<span class="hljs-string">"InitBinary"</span>:<span class="hljs-string">"docker-init"</span>,<span class="hljs-string">"ContainerdCommit"</span>:&#123;<span class="hljs-string">"ID"</span>:<span class="hljs-string">"9754871865f7fe2f4e74d43e2fc7ccd237edcbce"</span>,<span class="hljs-string">"Expected"</span>:<span class="hljs-string">"9754871865f7fe2f4e74d43e2fc7ccd237edcbce"</span>&#125;,<span class="hljs-string">"RuncCommit"</span>:&#123;<span class="hljs-string">"ID"</span>:<span class="hljs-string">"96ec2177ae841256168fcf76954f7177af9446eb"</span>,<span class="hljs-string">"Expected"</span>:<span class="hljs-string">"96ec2177ae841256168fcf76954f7177af9446eb"</span>&#125;,<span class="hljs-string">"InitCommit"</span>:&#123;<span class="hljs-string">"ID"</span>:<span class="hljs-string">"fec3683"</span>,<span class="hljs-string">"Expected"</span>:<span class="hljs-string">"fec3683"</span>&#125;,<span class="hljs-string">"SecurityOptions"</span>:[<span class="hljs-string">"name=apparmor"</span>,<span class="hljs-string">"name=seccomp,profile=default"</span>],<span class="hljs-string">"ProductLicense"</span>:<span class="hljs-string">"Community Engine"</span>,<span class="hljs-string">"Warnings"</span>:[<span class="hljs-string">"WARNING: No swap limit support"</span>]&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="完成後配置遠端節點-Endpoints"><a href="#完成後配置遠端節點-Endpoints" class="headerlink" title="完成後配置遠端節點 Endpoints"></a>完成後配置遠端節點 Endpoints</h3><p>Portainer透過上傳CA key，這邊直接解壓縮<code>shell</code>生成<code>tls-client-certs-{CODE}.tar.gz</code>的壓縮檔直接加入對應的TLS。</p>
-<p><img src="https://i.imgur.com/Ip80daq.png" alt=""></p>
+<p><img src="https://i.imgur.com/Ip80daq.png" alt></p>
 <hr>
 <h2 id="設置-docker默認-runtime-為-nvidia"><a href="#設置-docker默認-runtime-為-nvidia" class="headerlink" title="設置 docker默認 runtime 為 nvidia"></a>設置 docker默認 runtime 為 nvidia</h2><p>由於環境Portainer預設執行為<code>docker runtime</code>，導致如果啟動Nvidia-Docker所執行的GPU Container會無法使用，這邊 Docker default runtime 改成 nvidia。</p>
 <p>新增<code>&quot;default-runtime&quot;: &quot;nvidia&quot;</code>指派配置，直接用docker取代nvidia-docker。<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/docker/daemon.json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="hljs-string">"default-runtime"</span>: <span class="hljs-string">"nvidia"</span>,</span><br><span class="line">    <span class="hljs-string">"runtimes"</span>: &#123;</span><br><span class="line">        <span class="hljs-string">"nvidia"</span>: &#123;</span><br><span class="line">            <span class="hljs-string">"path"</span>: <span class="hljs-string">"/usr/bin/nvidia-container-runtime"</span>,</span><br><span class="line">            <span class="hljs-string">"runtimeArgs"</span>: []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>完成後儲存，並重新啟動 Docker：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo systemctl daemon-reload &amp;&amp; sudo systemctl restart docker</span><br></pre></td></tr></table></figure></p>
 <p>Portainer 即可正常創建GPU Container: </p>
-<p><img src="https://i.imgur.com/4bddhEY.png" alt=""></p>
-<p><img src="https://i.imgur.com/KGj02Bu.png" alt=""></p>
+<p><img src="https://i.imgur.com/4bddhEY.png" alt></p>
+<p><img src="https://i.imgur.com/KGj02Bu.png" alt></p>
 <hr>
 <h2 id="Related-Posts"><a href="#Related-Posts" class="headerlink" title="Related Posts"></a>Related Posts</h2><ul>
 <li><a href="http://sakananote2.blogspot.com/2018/06/portainer-with-opensuse-leap-15.html" target="_blank" rel="noopener">[Portainer with openSUSE Leap 15 小記]</a></li>
@@ -349,8 +343,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -420,22 +413,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1089,8 +1079,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1237,7 +1226,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

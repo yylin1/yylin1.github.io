@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>認識 Bastion Host 部署管理機 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/bastion-host.png" alt="認識 Bastion Host 部署管理機">
         </span>
     </div>
@@ -226,7 +220,7 @@
 <blockquote>
 <p>安全隱憂的，起因於 agent service 於連線時會在 /tmp/ 目錄建立一個檔案 /tmp/ssh-xxxxxx/agent.xxxx，在正常的情況下，它會用原使用者透過 ssh-add 所設定的密鑰對，替我們回答目的伺服器所發起的密鑰驗證要求。</p>
 </blockquote>
-<p><img src="https://cdn-images-1.medium.com/max/1600/1*HLs0qwn9LdoedmIlQ8VlVw.png" alt=""></p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*HLs0qwn9LdoedmIlQ8VlVw.png" alt></p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Host hosta</span><br><span class="line">  User userfoo</span><br><span class="line">  Hostname 123.123.123.123</span><br><span class="line"> </span><br><span class="line">Host hostb</span><br><span class="line">  User userbar</span><br><span class="line">  Hostname 192.168.1.1</span><br><span class="line">  Port 22</span><br><span class="line">  ProxyCommand ssh -q -W %h:%p hosta</span><br><span class="line">  IdentityFile ~/.ssh/keys/xxxx.pem</span><br><span class="line">``` </span><br><span class="line">此配置告訴本地SSH客戶端通過直接連接連接到主機A. 現在，如果你鍵入 ssh hostB 它將要做的是首先連接到 主機A 然後通過參數 ProxyCommand 指定的主機和 Port 轉發你的SSH客戶端-W，在這種情況下 `192.168.1.1` 強調這是一個內部主機。然後，您的本地 SSH 客戶端將對 主機B 進行身份驗證，就像您直接連接到它一樣。</span><br><span class="line"></span><br><span class="line">這裡的另一個觀察是你不需要記住關於主機的任何信息，當你可以簡單地用Host線對它進行別名時，它不需要IP或模糊的主機名，端口或用戶名。</span><br><span class="line"></span><br><span class="line">ProxyCommand 不用將 pem 透過 ssh-add 匯入，省下一步指令，接著執行底下指令就可以 ssh 到指定機器，跟方法一比起來更安全又快速</span><br><span class="line"></span><br><span class="line">```bash=</span><br><span class="line">$ ssh hostb</span><br></pre></td></tr></table></figure>
 <p>這個方法可以讓我們直接登入遠端主機，省略第二次的 ssh 指令。</p>
 
@@ -315,8 +309,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -386,22 +379,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1007,8 +997,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1155,7 +1144,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

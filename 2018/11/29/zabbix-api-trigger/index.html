@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>透過 Zabbix API 監測 Trigger 狀態 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/zabbix_trigger.png" alt="透過 Zabbix API 監測 Trigger 狀態">
         </span>
     </div>
@@ -200,18 +194,18 @@
 </blockquote>
 </li>
 </ul>
-<p><img src="https://i.imgur.com/xX8gHUR.png" alt=""></p>
+<p><img src="https://i.imgur.com/xX8gHUR.png" alt></p>
 <ul>
 <li><p>接續會顯示<code>Compute</code>節點中可以觀察的三台Node主機 → 這邊我們直接點選<code>node-1.domain.tld</code>預備測試的節點進入設置</p>
 </li>
 <li><p>進入節點點擊上方的觸發器（Triggers），然後即可點擊創建觸發器（Create trigger），這將會向我們顯示一個觸發器定義表單</p>
 </li>
 </ul>
-<p><img src="https://i.imgur.com/v9L91MO.jpg" alt=""></p>
+<p><img src="https://i.imgur.com/v9L91MO.jpg" alt></p>
 <ul>
 <li>找到’新增主機（New host）’，點擊旁邊的觸發器（Triggers），然後點擊創建觸發器（Create trigger）。這將會向我們展現一個觸發器定義表單。</li>
 </ul>
-<p><img src="https://i.imgur.com/p2rUviG.jpg" alt=""></p>
+<p><img src="https://i.imgur.com/p2rUviG.jpg" alt></p>
 <hr>
 <h2 id="2-設置Zabbix-Trigger表達式"><a href="#2-設置Zabbix-Trigger表達式" class="headerlink" title="2. 設置Zabbix Trigger表達式"></a>2. 設置Zabbix Trigger表達式</h2><p>由於我們需要持續觀察<code>Computer</code>節點上面CPU狀態，Trigger設定這邊可以直接透過語法進行觀察如下:</p>
 <ul>
@@ -232,7 +226,7 @@
 <ul>
 <li>把Trigger表達式打在<code>Expression</code>中</li>
 </ul>
-<p><img src="https://i.imgur.com/pI0Ztrh.jpg" alt=""></p>
+<p><img src="https://i.imgur.com/pI0Ztrh.jpg" alt></p>
 <blockquote>
 <p>可以限制Trigger Severity警告提式: 這邊直接設定為<code>High</code>警告</p>
 </blockquote>
@@ -241,18 +235,18 @@
 <h2 id="3-顯示觸發器狀態"><a href="#3-顯示觸發器狀態" class="headerlink" title="3. 顯示觸發器狀態"></a>3. 顯示觸發器狀態</h2><ul>
 <li>創建好的Trigger即可馬上列表出目前狀態</li>
 </ul>
-<p><img src="https://i.imgur.com/L2o9mzF.jpg" alt=""></p>
+<p><img src="https://i.imgur.com/L2o9mzF.jpg" alt></p>
 <p>如果要查看Trigger目前監控狀態可以透過，前往監控（Monitoring） → 觸發器（Triggers），3分鐘後（我們需要等待3分鐘以評估這個觸發器的3分鐘平均值），觸發器會在這裡顯示。應該會有一個綠色的’OK’在’狀態（Status）’列中閃爍。</p>
-<p><img src="https://i.imgur.com/pgFiP79.jpg" alt=""></p>
+<p><img src="https://i.imgur.com/pgFiP79.jpg" alt></p>
 <p>接下來可以透過存放於Compute <code>node-1.domain.tld</code>相關VM，來提升CPU使用率，達到Compute超標，這邊範例測試為<code>超標CPU 50%</code>表示為警告。</p>
 <ul>
-<li><p>一般情況，綠色為<code>system.cpu.util[,idle]</code>狀態幾乎是很空閒的<br><img src="https://i.imgur.com/wcVt11H.jpg" alt=""></p>
+<li><p>一般情況，綠色為<code>system.cpu.util[,idle]</code>狀態幾乎是很空閒的<br><img src="https://i.imgur.com/wcVt11H.jpg" alt></p>
 </li>
 <li><p>超標狀態，可以明顯看到右側綠色能使用的<code>system.cpu.util[,idle]</code>明顯剩餘50%以下</p>
 </li>
 </ul>
-<p><img src="https://i.imgur.com/f59EMx8.jpg" alt=""></p>
-<p>從Zabbix 觀察Trigger狀態後，此處出現一個閃爍的紅色’PROBLEM’,顯然，這說明了CPU負載已經超過了你在觸發器裡定義的閾值。<br><img src="https://i.imgur.com/y8zNGRQ.jpg" alt=""></p>
+<p><img src="https://i.imgur.com/f59EMx8.jpg" alt></p>
+<p>從Zabbix 觀察Trigger狀態後，此處出現一個閃爍的紅色’PROBLEM’,顯然，這說明了CPU負載已經超過了你在觸發器裡定義的閾值。<br><img src="https://i.imgur.com/y8zNGRQ.jpg" alt></p>
 <hr>
 <h2 id="4-透過Python獲得Zabbix-API-獲取Trigger超標狀態"><a href="#4-透過Python獲得Zabbix-API-獲取Trigger超標狀態" class="headerlink" title="4. 透過Python獲得Zabbix API 獲取Trigger超標狀態"></a>4. 透過Python獲得Zabbix API 獲取Trigger超標狀態</h2><ul>
 <li>參考 GitHub: <a href="https://github.com/yylin1/zabbix-get-api/tree/master/zabbix-API" target="_blank" rel="noopener">連結</a></li>
@@ -357,8 +351,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -428,22 +421,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1061,8 +1051,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1209,7 +1198,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

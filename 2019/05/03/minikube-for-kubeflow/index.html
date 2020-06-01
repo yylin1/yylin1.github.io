@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>利用 Minikube 快速測試部署 Kubeflow v0.5 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/minikube_for_kubeflow.jpg" alt="利用 Minikube 快速測試部署 Kubeflow v0.5">
         </span>
     </div>
@@ -250,7 +244,7 @@
 <ul>
 <li>下載 kfctl release 版本 <a href="https://github.com/kubeflow/kubeflow/releases/" target="_blank" rel="noopener">Kubeflow releases page</a>.</li>
 </ul>
-<p><img src="https://i.imgur.com/rb6eCGI.png" alt=""></p>
+<p><img src="https://i.imgur.com/rb6eCGI.png" alt></p>
 <blockquote>
 <p>請依照自己當前環境下載 kfctl binary </p>
 </blockquote>
@@ -307,7 +301,7 @@
 </blockquote>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">export</span> NAMESPACE=kubeflow</span></span><br><span class="line">kubectl port-forward svc/ambassador -n $&#123;NAMESPACE&#125; 8080:80</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kubectl port-forward svc/ambassador -n <span class="hljs-variable">$&#123;NAMESPACE&#125;</span> 8080:80</span></span><br><span class="line">Forwarding from 127.0.0.1:8080 -&gt; 80</span><br><span class="line">Forwarding from [::1]:8080 -&gt; 80</span><br><span class="line">Handling connection for 8080</span><br></pre></td></tr></table></figure>
 <p>透過本地端連線即可看到 <code>kubeflow UI</code><br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://i.imgur.com/L1luU39.png" alt=""></p>
+<p><img src="https://i.imgur.com/L1luU39.png" alt></p>
 <hr>
 <h2 id="刪除-Kubeflow"><a href="#刪除-Kubeflow" class="headerlink" title="刪除 Kubeflow"></a>刪除 Kubeflow</h2><p>如果測試完畢需要移除<code>kubeflow</code></p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> <span class="hljs-variable">$&#123;KFAPP&#125;</span></span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> If you want to delete all the resources, including storage.</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl delete all --delete_storage</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> If you want to preserve storage, <span class="hljs-built_in">which</span> contains metadata and information</span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> from mlpipeline.</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> kfctl delete all</span></span><br></pre></td></tr></table></figure>
@@ -403,8 +397,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -474,22 +467,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1135,8 +1125,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1283,7 +1272,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

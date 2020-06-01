@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>快速部署 Kubeflow v0.3 容器機器學習平台 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/kubeflow_deploy.jpeg" alt="快速部署 Kubeflow v0.3 容器機器學習平台">
         </span>
     </div>
@@ -199,7 +193,7 @@
 <blockquote>
 <p>在不同基礎設施上協助實現Machine learning 工作流程「更加簡單」與「便於攜帶」、「可擴展性」的部署，在不同基礎設施上(Local Laptop、GPU Server cluster、Cloud Production Cluster)</p>
 </blockquote>
-<p><img src="https://i.imgur.com/fPEG7eK.png" alt=""></p>
+<p><img src="https://i.imgur.com/fPEG7eK.png" alt></p>
 <h2 id="簡述Kubelfow工作流程："><a href="#簡述Kubelfow工作流程：" class="headerlink" title="簡述Kubelfow工作流程："></a>簡述Kubelfow工作流程：</h2><ol>
 <li>下載<code>Kubeflow shell script</code> 和 配置文件</li>
 <li>自定義 <code>ksonnet</code>部署所需的JSON組件</li>
@@ -347,23 +341,23 @@
 <p>這時候就可以透過 kubeflow UI，能引導到 登入JupyterHub，但這邊需要修改 Kubernetes Service，透過以下指令進行：</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment"># 修改 svc 將 Type 修改成 LoadBalancer，並且新增 externalIPs 指定為 Master IP。</span></span><br><span class="line">$ kubectl -n kubeflow edit svc ambassador</span><br><span class="line">...</span><br><span class="line">sessionAffinity: None</span><br><span class="line">  <span class="hljs-built_in">type</span>: NodePort</span><br><span class="line">status:</span><br><span class="line">  loadBalancer: &#123;&#125;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 修改後就可以透過 NodePort 接上 Port 進入顯示 Jupyter Notebook</span></span><br><span class="line">NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE       SELECTOR</span><br><span class="line">ambassador                 NodePort    10.98.216.151    &lt;none&gt;        80:32752/TCP     15m       service=ambassador</span><br></pre></td></tr></table></figure>
 <p>完成後連接 <code>http://Master_IP:Port</code>即可看到kubeflow UI。</p>
-<p><img src="https://i.imgur.com/dH1fh00.png" alt=""></p>
+<p><img src="https://i.imgur.com/dH1fh00.png" alt></p>
 <p>可以透過上方連結查看<code>Jupyter Hub</code>、<code>TFjob Dashboard</code>、<code>Kubernetes Dashboard</code> 等。</p>
-<p><img src="https://i.imgur.com/pBzrG66.png" alt=""></p>
+<p><img src="https://i.imgur.com/pBzrG66.png" alt></p>
 <h2 id="測試-Jupyter-Notebook"><a href="#測試-Jupyter-Notebook" class="headerlink" title="測試 Jupyter Notebook"></a>測試 Jupyter Notebook</h2><p>這邊需要再次先建立一個 NFS PV 來提供給 <code>Kubeflow Jupyter</code>使用：</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: notebook-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 20Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  nfs:</span><br><span class="line">    server: 172.22.132.81</span><br><span class="line">    path: /nfs-data/kubeflow-pv2</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 <p>NFS PV 建立好後這邊UI點選<code>Jupyter Notebook</code>登入測試，並輸入<code>任意帳號密碼</code>進行登入：</p>
-<p><img src="https://i.imgur.com/1wwlLqP.png" alt=""><br>Spawner Optinos 這邊可以輸入Notebook Pod節點資源，包含Image、CPU、Memory、GPU數量，最後點選<code>Spawn</code>來完成建立 Server，如下圖所示：</p>
-<p><img src="https://i.imgur.com/9pyuZqp.png" alt=""></p>
-<p>kubeflow v0.3版本開始加入，在部署Jupyter Hub時的Event log方便了解部署狀態<br><img src="https://i.imgur.com/BmpbGhB.png" alt=""></p>
-<p>部署完後即可直接操作擁有GPU的Jupyter Notebook<br><img src="https://i.imgur.com/Udsm6ng.png" alt=""></p>
+<p><img src="https://i.imgur.com/1wwlLqP.png" alt><br>Spawner Optinos 這邊可以輸入Notebook Pod節點資源，包含Image、CPU、Memory、GPU數量，最後點選<code>Spawn</code>來完成建立 Server，如下圖所示：</p>
+<p><img src="https://i.imgur.com/9pyuZqp.png" alt></p>
+<p>kubeflow v0.3版本開始加入，在部署Jupyter Hub時的Event log方便了解部署狀態<br><img src="https://i.imgur.com/BmpbGhB.png" alt></p>
+<p>部署完後即可直接操作擁有GPU的Jupyter Notebook<br><img src="https://i.imgur.com/Udsm6ng.png" alt></p>
 <h3 id="補充-透過TFJobs-Dashboard-顯示TFJob狀態"><a href="#補充-透過TFJobs-Dashboard-顯示TFJob狀態" class="headerlink" title="補充: 透過TFJobs Dashboard 顯示TFJob狀態"></a>補充: 透過TFJobs Dashboard 顯示<code>TFJob</code>狀態</h3><p>可以透過<a href="https://www.kubeflow.org/docs/guides/components/tftraining/" target="_blank" rel="noopener">TensorFlow Training (TFJob)</a>定義TFjob，即可從<code>TFJobs Dashboard</code>查看Job資訊，也可以直接透過Dashboard建立/刪除TFJob。</p>
 <blockquote>
 <p>這邊透單測試Tensorflow Benchmark GPU測試 <a href="https://github.com/yylin1/tf-operator-benchmarks/blob/master/tf-cnn/tf-benchmark-gpu-example.yaml" target="_blank" rel="noopener">範例</a></p>
 </blockquote>
-<p><img src="https://i.imgur.com/FreVFsv.png" alt=""></p>
-<p>查看 <code>PS</code>狀態:<br><img src="https://i.imgur.com/txqyKGf.png" alt=""></p>
-<p>查看 <code>Worker</code>狀態:<br><img src="https://i.imgur.com/GsMPOwy.png" alt=""></p>
+<p><img src="https://i.imgur.com/FreVFsv.png" alt></p>
+<p>查看 <code>PS</code>狀態:<br><img src="https://i.imgur.com/txqyKGf.png" alt></p>
+<p>查看 <code>Worker</code>狀態:<br><img src="https://i.imgur.com/GsMPOwy.png" alt></p>
 <h2 id="查看GPU資源狀態"><a href="#查看GPU資源狀態" class="headerlink" title="查看GPU資源狀態"></a>查看GPU資源狀態</h2><p>可以透過執行以下指令確認是否GPU可被分配資源：<br><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get nodes <span class="hljs-string">"-o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu"</span></span><br><span class="line">NAME      GPU</span><br><span class="line">k8s-g1    1</span><br><span class="line">k8s-g11   1</span><br><span class="line">k8s-g2    1</span><br><span class="line">k8s-g3    1</span><br><span class="line">k8s-m1    &lt;none&gt;</span><br><span class="line">k8s-m2    &lt;none&gt;</span><br><span class="line">k8s-m3    &lt;none&gt;</span><br></pre></td></tr></table></figure></p>
 <p>後續有陸續關注，關於 kubeflow CLI 的專案<a href="https://github.com/kubeflow/arena" target="_blank" rel="noopener"><code>kubeflow/Arena</code></a>，主要供資料科學家運行和監控機器學習培訓工作並以簡單的方式檢查其結果。目前它支持單獨/分佈式TensorFlow訓練。部署基於Kubernetes，helm和Kubeflow。</p>
 <p>同時，最終用戶需要 GPU 資源和節點管理。Arena還提供top檢查Kubernetes集群中可用GPU資源的命令。</p>
@@ -461,8 +455,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -532,22 +525,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1205,8 +1195,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1353,7 +1342,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html  lang="zh">
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
 <title>監控工具 Zabbix API 使用記錄 - Yi Yang&#39;s Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
@@ -102,23 +102,17 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item"
-                href="/">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 
-                <a class="navbar-item"
-                href="/archives">Archives</a>
+                <a class="navbar-item" href="/archives">Archives</a>
                 
-                <a class="navbar-item"
-                href="/gossip">Gossip</a>
+                <a class="navbar-item" href="/gossip">Gossip</a>
                 
-                <a class="navbar-item"
-                href="/categories">Categories</a>
+                <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item"
-                href="/tags">Tags</a>
+                <a class="navbar-item" href="/tags">Tags</a>
                 
-                <a class="navbar-item"
-                href="/about">About</a>
+                <a class="navbar-item" href="/about">About</a>
                 
             </div>
             
@@ -156,7 +150,7 @@
                 <div class="column is-6-tablet is-6-desktop is-9-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <span  class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/zabbix_api.png" alt="監控工具 Zabbix API 使用記錄">
         </span>
     </div>
@@ -189,7 +183,7 @@
         </h1>
         <div class="content">
             <p>此篇主要記錄為，在Openstack環境下觀察第三方監控工具Zabbix使用API獲取歷史數據。<br><a id="more"></a></p>
-<h2 id="Zabbix-API-監控架構"><a href="#Zabbix-API-監控架構" class="headerlink" title="Zabbix API 監控架構"></a>Zabbix API 監控架構</h2><p><img src="/images/zabbix_architecture.png" alt=""></p>
+<h2 id="Zabbix-API-監控架構"><a href="#Zabbix-API-監控架構" class="headerlink" title="Zabbix API 監控架構"></a>Zabbix API 監控架構</h2><p><img src="/images/zabbix_architecture.png" alt></p>
 <h2 id="透過-Python-zabbix-api-amp-CURL"><a href="#透過-Python-zabbix-api-amp-CURL" class="headerlink" title="透過 Python zabbix api &amp; CURL"></a>透過 Python zabbix api &amp; CURL</h2><h3 id="1-user-login方法獲取-zabbix-server-的認證結果"><a href="#1-user-login方法獲取-zabbix-server-的認證結果" class="headerlink" title="1. user.login方法獲取 zabbix server 的認證結果"></a>1. user.login方法獲取 zabbix server 的認證結果</h3><h4 id="curl-命令："><a href="#curl-命令：" class="headerlink" title="curl 命令："></a>curl 命令：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -i -X POST -H <span class="hljs-string">'Content-Type:application/json'</span> -d <span class="hljs-string">'&#123;"jsonrpc":</span></span><br><span class="line"><span class="hljs-string">"2.0","method":"user.login","params":&#123;"user":"admin","password":"zabbix"&#125;,"auth":</span></span><br><span class="line"><span class="hljs-string">null,"id":0&#125;'</span> http://10.111.200.8/zabbix/api_jsonrpc.php</span><br></pre></td></tr></table></figure>
 <h4 id="curl-命令運行結果："><a href="#curl-命令運行結果：" class="headerlink" title="curl 命令運行結果："></a>curl 命令運行結果：</h4><figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="hljs-string">"jsonrpc"</span>:<span class="hljs-string">"2.0"</span>,<span class="hljs-string">"result"</span>:<span class="hljs-string">"df432b915671b77035d5e26f85c8bf5c"</span>,<span class="hljs-string">"id"</span>:0&#125;</span><br></pre></td></tr></table></figure>
 <p>or </p>
@@ -322,8 +316,7 @@
 
 
 
-<div
-    class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-3 column-left ">
     
     
 <div class="card widget">
@@ -393,22 +386,19 @@
         
         <div class="level is-mobile">
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Github" href="https://github.com/yylin1">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/yylin1">
                 
                 <i class="fab fa-github"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Facebook" href="https://facebook.com/frank.yiyanglin">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Facebook" href="https://facebook.com/frank.yiyanglin">
                 
                 <i class="fab fa-facebook"></i>
                 
             </a>
             
-            <a class="level-item button is-white is-marginless" target="_blank"
-                title="Envelope" href="mailto:frank.yylin@gmail.com">
+            <a class="level-item button is-white is-marginless" target="_blank" title="Envelope" href="mailto:frank.yylin@gmail.com">
                 
                 <i class="far fa-envelope"></i>
                 
@@ -1138,8 +1128,7 @@
                 </a>
                 <p class="is-size-7">
                 &copy; 2020 Yi Yang&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
                 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                 &nbsp;<i class="fa fa-user-md"></i> 本站瀏覽人數<span id="busuanzi_value_site_uv"></span>人
                 </p>
@@ -1286,7 +1275,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="searchbox ins-search">
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="請輸入關鍵字...">
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
