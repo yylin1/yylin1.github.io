@@ -73,7 +73,8 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: icarus_2019
+theme: icarus-3.1.0
+#theme: Butterfly
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
